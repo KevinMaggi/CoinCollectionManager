@@ -19,7 +19,7 @@ import jakarta.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "coins", uniqueConstraints = {
-		@UniqueConstraint(columnNames = {"grade", "country", "minting_year", "descriptio", "note"})})
+		@UniqueConstraint(columnNames = {"grade", "country", "minting_year", "description", "note"})})
 public class Coin {
 	
 	/**
