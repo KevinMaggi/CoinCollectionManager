@@ -8,6 +8,10 @@
 
 	<name>Coin Collection Manager [aggregator]</name>
 	<description>Aggregator POM for Coin Collection Manager project</description>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<modules>
 		<module>../coin-collection-manager-bom</module>
