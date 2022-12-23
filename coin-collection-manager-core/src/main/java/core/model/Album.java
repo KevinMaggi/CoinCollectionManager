@@ -1,4 +1,4 @@
-package core;
+package core.model;
 
 import java.util.UUID;
 
@@ -15,7 +15,8 @@ import jakarta.persistence.UniqueConstraint;
  * Represents an album that can contain coin.
  */
 @Entity
-@Table (name = "albums", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "volume"})})
+@Table (name = "albums", uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"name", "volume"})})
 public class Album {
 	
 	/**

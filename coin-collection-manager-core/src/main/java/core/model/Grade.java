@@ -1,4 +1,4 @@
-package core;
+package core.model;
 
 /**
  * Represents the grade relative to the coin's conditions/quality (according to the Sheldon coin grading scale).
