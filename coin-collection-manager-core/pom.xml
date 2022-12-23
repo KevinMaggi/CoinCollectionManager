@@ -7,8 +7,15 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-  <artifactId>coin-collection-manager-core</artifactId>
+	<artifactId>coin-collection-manager-core</artifactId>
 
-  <name>Coin Collection Manager [core]</name>
-  <description>Core module for Coin Collection Manager project (model and repository)</description>
+	<name>Coin Collection Manager [core]</name>
+	<description>Core module for Coin Collection Manager project (model and repository)</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+	</dependencies>
 </project>
