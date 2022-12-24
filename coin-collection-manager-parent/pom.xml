@@ -20,9 +20,16 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		
+		<!-- Dependencies version -->
 		<hibernate.version>6.1.6.Final</hibernate.version>
 		<junit.version>5.9.1</junit.version>
 		<assertj.version>3.23.1</assertj.version>
+		
+		<!-- Plugin version -->
+		<compiler.version>3.10.1</compiler.version>
+		<surefire.version>2.22.2</surefire.version>
+		<site.version>3.12.1</site.version>
+		<jacoco.version>0.8.8</jacoco.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -53,20 +60,20 @@
 			<plugins>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.10.1</version>
+					<version>${compiler.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.2</version>
+					<version>${surefire.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>${site.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.8</version>
+					<version>${jacoco.version}</version>
 					<executions>
 						<execution>
 							<goals>
