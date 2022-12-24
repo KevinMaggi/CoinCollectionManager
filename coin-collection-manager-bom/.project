@@ -21,9 +21,24 @@
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/.gitignore</location>
 		</link>
 		<link>
+			<name>.mvn</name>
+			<type>2</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/.mvn</location>
+		</link>
+		<link>
 			<name>README.md</name>
 			<type>1</type>
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/README.md</location>
+		</link>
+		<link>
+			<name>mvnw</name>
+			<type>1</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/mvnw</location>
+		</link>
+		<link>
+			<name>mvnw.cmd</name>
+			<type>1</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/mvnw.cmd</location>
 		</link>
 	</linkedResources>
 </projectDescription>
