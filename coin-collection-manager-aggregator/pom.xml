@@ -18,4 +18,13 @@
 		<module>../coin-collection-manager-parent</module>
 		<module>../coin-collection-manager-core</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>jacoco</id>
+			<modules>
+				<module>../coin-collection-manager-report</module>
+			</modules>
+		</profile>
+  </profiles>
 </project>
