@@ -42,6 +42,18 @@
 						</excludes>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<configuration>
+						<targetClasses>
+							<param>core.utility.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>core.utility.*</param>
+						</targetTests>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
