@@ -25,13 +25,13 @@ class YearAttributeConverterTestCase {
 	class ClassToRecord {
 		@Test
 		@DisplayName("Test that returns null when null year is passed")
-		public void testConvertToDatabaseColumnWhenYearIsNull() {
+		void testConvertToDatabaseColumnWhenYearIsNull() {
 			assertThat(converter.convertToDatabaseColumn(null)).isNull();
 		}
 		
 		@Test
 		@DisplayName("Test that returns the correct short when a non null year is passed")
-		public void testConvertToDatabaseColumnWhenYearIsNotNull() {
+		void testConvertToDatabaseColumnWhenYearIsNotNull() {
 			Year year = Year.of(VALID_INT_YEAR);
 			assertThat(converter.convertToDatabaseColumn(year)).isEqualTo(VALID_INT_YEAR);
 		}
@@ -42,13 +42,13 @@ class YearAttributeConverterTestCase {
 	class RecordToClass {
 		@Test
 		@DisplayName("Test that returns null when null short is passed")
-		public void testConvertToEntityAttributeWhenShortIsNull() {
+		void testConvertToEntityAttributeWhenShortIsNull() {
 			assertThat(converter.convertToEntityAttribute(null)).isNull();
 		}
 		
 		@Test
 		@DisplayName("Test that returns the correct year when a non null short is passed")
-		public void testConvertToEntityAttributeWhenShortIsNotNull() {
+		void testConvertToEntityAttributeWhenShortIsNotNull() {
 			int year_int = VALID_YEAR_YEAR.getValue();
 			assertThat(converter.convertToEntityAttribute(year_int)).isEqualTo(VALID_YEAR_YEAR);
 		}
