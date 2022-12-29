@@ -32,6 +32,7 @@
 		<jacoco.version>0.8.8</jacoco.version>
 		<pitest.version>1.10.3</pitest.version>
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
+		<sonar.version>3.9.1.2184</sonar.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -133,6 +134,11 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
