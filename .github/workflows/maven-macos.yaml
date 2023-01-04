@@ -1,13 +1,15 @@
-name: Build with Maven (Linux)
+name: Build with Maven (MacOS)
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
   build:
-    name: Build on Linux
-    runs-on: ubuntu-latest
+    name: Build on MacOS
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -26,5 +28,5 @@ jobs:
         run: ../mvnw verify $MAVEN_PROFILES $ADDITIONAL_MAVEN_ARGS
         working-directory: coin-collection-manager-aggregator
         env: 
-          MAVEN_PROFILES: -Ppitest,coveralls
-          ADDITIONAL_MAVEN_ARGS: -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.pull_request.number }}
+          MAVEN_PROFILES: 
+          ADDITIONAL_MAVEN_ARGS: 
