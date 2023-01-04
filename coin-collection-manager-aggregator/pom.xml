@@ -26,5 +26,12 @@
 				<module>../coin-collection-manager-report</module>
 			</modules>
 		</profile>
+		<profile>
+		<!-- For coveralls is required jacoco report: in this way coveralls profile is autonomous -->
+			<id>coveralls</id>
+			<modules>
+				<module>../coin-collection-manager-report</module>
+			</modules>
+		</profile>
   </profiles>
 </project>

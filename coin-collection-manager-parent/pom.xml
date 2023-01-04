@@ -33,6 +33,7 @@
 		<pitest.version>1.10.3</pitest.version>
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
 		<sonar.version>3.9.1.2184</sonar.version>
+		<coveralls.version>4.3.0</coveralls.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -140,6 +141,19 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>${sonar.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>${coveralls.version}</version>
+					<dependencies>
+					<!-- This is required when using JDK 9 or higher since javax.xml.bind has been removed from the JDK -->
+						<dependency>
+							<groupId>javax.xml.bind</groupId>
+							<artifactId>jaxb-api</artifactId>
+							<version>2.3.1</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -163,6 +177,22 @@
 					<plugin>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-maven</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+		<!-- For coveralls is required jacoco report: in this way coveralls profile is standalone -->
+			<id>coveralls</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.eluder.coveralls</groupId>
+						<artifactId>coveralls-maven-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

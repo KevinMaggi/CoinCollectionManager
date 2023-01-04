@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>.github</name>
+			<type>2</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/.github</location>
+		</link>
+		<link>
 			<name>.gitignore</name>
 			<type>1</type>
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/.gitignore</location>
