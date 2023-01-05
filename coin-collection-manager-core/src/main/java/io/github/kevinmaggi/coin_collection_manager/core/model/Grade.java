@@ -1,4 +1,4 @@
-package io.github.KevinMaggi.CoinCollectionManager.core.model;
+package io.github.kevinmaggi.coin_collection_manager.core.model;
 
 /**
  * Represents the grade relative to the coin's conditions/quality (according to the Sheldon coin grading scale).

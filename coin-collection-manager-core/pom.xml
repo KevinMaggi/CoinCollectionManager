@@ -54,10 +54,10 @@
 					<artifactId>pitest-maven</artifactId>
 					<configuration>
 						<targetClasses>
-							<param>io.github.KevinMaggi.CoinCollectionManager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
 						</targetClasses>
 						<targetTests>
-							<param>io.github.KevinMaggi.CoinCollectionManager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
 						</targetTests>
 					</configuration>
 				</plugin>
