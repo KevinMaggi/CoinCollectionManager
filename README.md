@@ -7,4 +7,16 @@ Coin collection manager application developed with TDD, build automation and con
 
 [![Coverage Status](https://coveralls.io/repos/github/KevinMaggi/CoinCollectionManager/badge.svg?branch=main)](https://coveralls.io/github/KevinMaggi/CoinCollectionManager?branch=main)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=coverage)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)<br/>
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)<br/>
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=bugs)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)<br/>
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=KevinMaggi_CoinCollectionManager&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=KevinMaggi_CoinCollectionManager)
+
 TODO: define more
