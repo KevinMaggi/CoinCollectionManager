@@ -1,4 +1,4 @@
-package core.utility;
+package io.github.KevinMaggi.CoinCollectionManager.core.utility;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

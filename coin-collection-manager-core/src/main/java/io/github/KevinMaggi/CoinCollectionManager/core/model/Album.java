@@ -1,4 +1,4 @@
-package core.model;
+package io.github.KevinMaggi.CoinCollectionManager.core.model;
 
 import java.util.UUID;
 

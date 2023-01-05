@@ -1,11 +1,11 @@
-package core.model;
+package io.github.KevinMaggi.CoinCollectionManager.core.model;
 
 import java.time.Year;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import core.utility.YearAttributeConverter;
+import io.github.KevinMaggi.CoinCollectionManager.core.utility.YearAttributeConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
