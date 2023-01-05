@@ -3,7 +3,6 @@ package io.github.kevinmaggi.coin_collection_manager.core.repository;
 import java.util.List;
 import java.util.UUID;
 
-import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 
 /**
@@ -26,20 +25,20 @@ public interface CoinRepository {
 	public Coin findById(UUID id);
 	
 	/**
-	 * Get a Coin by its name
+	 * Get Coins by their description
 	 * 
-	 * @param name	Coin's name
-	 * @return		the Coin
+	 * @param name	Coins' description
+	 * @return		a list with the corresponding Coins
 	 */
-	public Coin findByName(String name);
+	public List<Coin> findByDescription(String description);
 	
 	/**
 	 * Get all the Coins in a specific Album
 	 * 
-	 * @param album	the Album
+	 * @param id	the Album's id
 	 * @return		a list with all the Coins
 	 */
-	public List<Coin> findByAlbum(Album album); //TODO or UUID?
+	public List<Coin> findByAlbum(UUID id);
 	
 	/**
 	 * Persist (add or update) a Coin in the database

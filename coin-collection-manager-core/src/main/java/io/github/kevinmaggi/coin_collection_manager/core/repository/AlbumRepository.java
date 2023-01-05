@@ -12,7 +12,7 @@ public interface AlbumRepository {
 	/**
 	 * Get all the Albums contained in the database
 	 * 
-	 * @return 		A list with all the Albums
+	 * @return 		a list with all the Albums
 	 */
 	public List<Album> findAll();
 	
@@ -25,12 +25,12 @@ public interface AlbumRepository {
 	public Album findById(UUID id);
 	
 	/**
-	 * Get an Album by its name
+	 * Get Albums by their name
 	 * 
-	 * @param name	Album's name
-	 * @return		the Album
+	 * @param name	Albums' name
+	 * @return		a list with the corresponding Albums
 	 */
-	public Album findByName(String name);
+	public List<Album> findByName(String name);
 	
 	/**
 	 * Persist (add or update) an Album in the database
@@ -43,7 +43,7 @@ public interface AlbumRepository {
 	/**
 	 * Remove an Album from the database
 	 * 
-	 * @param album	the album to delete
+	 * @param album	the Album to delete
 	 */
 	public void delete(Album album);
 }
