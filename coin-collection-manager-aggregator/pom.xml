@@ -17,6 +17,7 @@
 		<module>../coin-collection-manager-bom</module>
 		<module>../coin-collection-manager-parent</module>
 		<module>../coin-collection-manager-core</module>
+		<module>../coin-collection-manager-business</module>
 	</modules>
 
 	<profiles>
