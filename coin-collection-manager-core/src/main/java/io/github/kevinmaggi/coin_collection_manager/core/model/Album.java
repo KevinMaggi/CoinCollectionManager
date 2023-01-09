@@ -1,13 +1,7 @@
 package io.github.kevinmaggi.coin_collection_manager.core.model;
 
-import java.util.UUID;
-
-import org.hibernate.annotations.UuidGenerator;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -17,15 +11,7 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table (name = "albums", uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"name", "volume"})})
-public class Album {
-	
-	/**
-	 * Auto generated identifier.
-	 */
-	@Id
-	@GeneratedValue
-	@UuidGenerator
-	private UUID id;
+public class Album extends BaseEntity {
 	
 	/**
 	 * Name of the album.
@@ -57,6 +43,15 @@ public class Album {
 	@Column(name = "number_of_occupied_slots")
 	private int occupiedSlots;
 
+	/**
+	 * Constructs a new {@code Album} specifying all its characteristics.
+	 * 
+	 * @param name			Name of the album
+	 * @param volume		Volume of the album
+	 * @param location		Where the album is located
+	 * @param numberOfSlots	Number of total slots of the album
+	 * @param occupiedSlots	Number of coins that the album already stores
+	 */
 	public Album(String name, int volume, String location, int numberOfSlots, int occupiedSlots) {
 		super();
 		this.name = name;
@@ -66,7 +61,9 @@ public class Album {
 		this.occupiedSlots = occupiedSlots;
 	}
 	
-	protected Album() {}
+	protected Album() {
+		super();
+	}
 
 	public String getName() {
 		return name;
