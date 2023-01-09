@@ -12,8 +12,8 @@ public interface CoinRepository extends BaseRepository<Coin> {
 	/**
 	 * Get {@code Coin}s by their description.
 	 * 
-	 * @param name	{@code Coin}s' description
-	 * @return		a list with the corresponding {@code Coin}s
+	 * @param description	{@code Coin}s' description
+	 * @return				a list with the corresponding {@code Coin}s
 	 */
 	public List<Coin> findByDescription(String description);
 	

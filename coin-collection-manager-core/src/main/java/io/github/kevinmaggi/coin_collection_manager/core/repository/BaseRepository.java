@@ -30,7 +30,7 @@ public interface BaseRepository<T extends BaseEntity> {
 	/**
 	 * Persist (add or update) a {@code T entity} in the database.
 	 * 
-	 * @param coin	the {@code T entity} to save
+	 * @param t	the {@code T entity} to save
 	 * @return		the {@code T entity}
 	 */
 	T save(T t);
@@ -38,8 +38,8 @@ public interface BaseRepository<T extends BaseEntity> {
 	/**
 	 * Remove a {@code T entity} from the database.
 	 * 
-	 * @param coin	the {@code T entity} to delete
+	 * @param t	the {@code T entity} to delete
 	 */
-	void delete(T coin);
+	void delete(T t);
 
 }
