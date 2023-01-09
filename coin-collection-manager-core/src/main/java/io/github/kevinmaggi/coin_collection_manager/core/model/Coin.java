@@ -1,9 +1,9 @@
-package core.model;
+package io.github.kevinmaggi.coin_collection_manager.core.model;
 
 import java.time.Year;
 import java.util.UUID;
 
-import core.utility.YearAttributeConverter;
+import io.github.kevinmaggi.coin_collection_manager.core.utility.YearAttributeConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package core.model;
+package io.github.kevinmaggi.coin_collection_manager.core.model;
 
 /**
  * Represents the grade relative to the {@code Coin}'s conditions/quality

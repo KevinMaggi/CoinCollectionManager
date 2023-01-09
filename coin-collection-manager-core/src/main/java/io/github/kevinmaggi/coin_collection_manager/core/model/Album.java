@@ -1,4 +1,4 @@
-package core.model;
+package io.github.kevinmaggi.coin_collection_manager.core.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

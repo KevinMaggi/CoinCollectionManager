@@ -1,4 +1,4 @@
-package core.utility;
+package io.github.kevinmaggi.coin_collection_manager.core.utility;
 
 import java.time.Year;
 

@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>io.github.KevinMaggi</groupId>
+		<artifactId>coin-collection-manager-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../coin-collection-manager-parent</relativePath>
+	</parent>
+
+	<artifactId>coin-collection-manager-report</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Coin Collection Manager [report]</name>
+	<description>A Report aggregator POM for the Coin Collection Manager project</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coin-collection-manager-core</artifactId>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jacoco</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/core/model/*</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<id>report-aggregate</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>report-aggregate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>coveralls</id>
+			<build>
+				<plugins>
+					<plugin>
+					<!-- For coveralls is required jacoco report: in this way coveralls profile is standalone -->
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/core/model/*</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<id>report-aggregate</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>report-aggregate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eluder.coveralls</groupId>
+						<artifactId>coveralls-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>report-coveralls</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<jacocoReports>${project.reporting.outputDirectory}/jacoco-aggregate/jacoco.xml</jacocoReports>
+							<scanForSources>true</scanForSources>
+							<sourceDirectories>
+								<sourceDirectory>../coin-collection-manager-core/</sourceDirectory>
+							</sourceDirectories>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
