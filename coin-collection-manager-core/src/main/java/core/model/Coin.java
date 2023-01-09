@@ -3,14 +3,10 @@ package core.model;
 import java.time.Year;
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
-
 import core.utility.YearAttributeConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -20,15 +16,7 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(name = "coins", uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"grade", "country", "minting_year", "description", "note"})})
-public class Coin {
-	
-	/**
-	 * Auto generated identifier.
-	 */
-	@Id
-	@GeneratedValue
-	@UuidGenerator
-	private UUID id;
+public class Coin extends BaseEntity {
 	
 	/**
 	 * Coin's conditions/quality.
@@ -62,11 +50,21 @@ public class Coin {
 	private String note;
 	
 	/**
-	 * Album where the coin is located
+	 * Album where the coin is located.
 	 */
 	@Column(name = "album")
 	private UUID album;
 
+	/**
+	 * Constructs a new {@code Coin} specifying all its characteristics.
+	 * 
+	 * @param grade			{@code Grade} of the coin
+	 * @param country		Country fo the coin
+	 * @param mintingYear	Minting year of the coin
+	 * @param description	Description of the coin
+	 * @param note			Possible notes of the coin
+	 * @param album			{@code Album} in which the coin is stored
+	 */
 	public Coin(Grade grade, String country, Year mintingYear, String description, String note, UUID album) {
 		super();
 		this.grade = grade;
@@ -77,7 +75,9 @@ public class Coin {
 		this.album = album;
 	}
 
-	protected Coin() {}
+	protected Coin() {
+		super();
+	}
 
 	public Grade getGrade() {
 		return grade;
