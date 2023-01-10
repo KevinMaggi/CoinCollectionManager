@@ -91,6 +91,7 @@
 							<scanForSources>true</scanForSources>
 							<sourceDirectories>
 								<sourceDirectory>../coin-collection-manager-core/</sourceDirectory>
+								<sourceDirectory>../coin-collection-manager-business/</sourceDirectory>
 							</sourceDirectories>
 						</configuration>
 					</plugin>
