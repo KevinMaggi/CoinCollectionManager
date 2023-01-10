@@ -29,6 +29,7 @@
 		<compiler.version>3.10.1</compiler.version>
 		<surefire.version>2.22.2</surefire.version>
 		<site.version>3.12.1</site.version>
+		<javadoc.version>3.4.1</javadoc.version>
 		<jacoco.version>0.8.8</jacoco.version>
 		<pitest.version>1.10.3</pitest.version>
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
@@ -73,6 +74,18 @@
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${site.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${javadoc.version}</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -159,6 +172,16 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>javadoc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>jacoco</id>
 			<build>
