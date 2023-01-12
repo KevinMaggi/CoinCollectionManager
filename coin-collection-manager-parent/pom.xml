@@ -24,7 +24,7 @@
 		<hibernate.version>6.1.6.Final</hibernate.version>
 		<postgresql.version>42.5.1</postgresql.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
-		<slf4j.version>2.0.6</slf4j.version>
+		<slf4j.version>1.7.36</slf4j.version> <!-- Version 1.7.36 (for TC.v 1.17.6). See in the dependency more details -->
 		<junit.version>5.9.1</junit.version>
 		<assertj.version>3.23.1</assertj.version>
 		
@@ -60,7 +60,10 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<!-- Provider for SLF4J. TestContainers depends on SLF4J API, but no provider is provided -->
+				<!-- Provider for SLF4J. TestContainers depends on SLF4J API, but no provider is provided. 
+				The version should be 1.7.36 because is the version of SLF4J API used by that version of TestContainers.
+				Can be used a more recent version, but in that case the order of dependency in inherited POM is relevant
+				(SLF4J-simple should be imported before of TestContainers) in order to have it working. -->
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
 				<version>${slf4j.version}</version>
