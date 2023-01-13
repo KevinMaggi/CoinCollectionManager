@@ -84,9 +84,11 @@
 					<configuration>
 						<targetClasses>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql.*</param>
 						</targetTests>
 					</configuration>
 				</plugin>
@@ -104,7 +106,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<exclude></exclude>
+								<exclude>**/Postgres*TestCase.java</exclude>
 							</excludes>
 						</configuration>
 					</plugin>
