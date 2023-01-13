@@ -24,22 +24,25 @@ public interface BaseRepository<T extends BaseEntity> {
 	 * 
 	 * @param id 	{@code T entity} id
 	 * @return 		the {@code T entity}
+	 * @throws IllegalArgumentException 	If the {@code id} is null
 	 */
-	T findById(UUID id);
+	T findById(UUID id) throws IllegalArgumentException;
 
 	/**
 	 * Persist (add or update) a {@code T entity} in the database.
 	 * 
 	 * @param t	the {@code T entity} to save
 	 * @return		the {@code T entity}
+	 * @throws IllegalArgumentException 	If the {@code T entity} is null
 	 */
-	T save(T t);
+	T save(T t) throws IllegalArgumentException;
 
 	/**
 	 * Remove a {@code T entity} from the database.
 	 * 
 	 * @param t	the {@code T entity} to delete
+	 * @throws IllegalArgumentException 	If the {@code T entity} is null
 	 */
-	void delete(T t);
+	void delete(T t) throws IllegalArgumentException;
 
 }
