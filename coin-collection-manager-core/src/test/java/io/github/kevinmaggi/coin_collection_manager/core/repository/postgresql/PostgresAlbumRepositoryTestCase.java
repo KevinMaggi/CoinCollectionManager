@@ -175,22 +175,40 @@ class PostgresAlbumRepositoryTestCase {
 		}
 		
 		@Test
-		@DisplayName("Test new entity is added to database and returned when it is not persisted")
+		@DisplayName("Test new entity is added to database and it is returned when it is not persisted")
 		void testSaveWhenNewEntityIsPassedShouldBeAddedToDbAndReturned() {
 			em.getTransaction().begin();
 			Album album = repo.save(ALBUM_1);
 			em.getTransaction().commit();
 			
-			assertThat(album).isEqualTo(ALBUM_1);
+			assertThat(album).isSameAs(ALBUM_1);
 			assertThat(em.createQuery("SELECT a FROM Album a", Album.class).getResultList()).contains(ALBUM_1);
 		}
 		
 		@Test
-		@DisplayName("Test entity is updated in database and returned when it is already persisted")
-		void testSaveWhenPersistedEntityIsPassedShouldBeUpdatedInDbAndReturned() {
+		@DisplayName("Test entity is updated in database and it is returned when it is already persisted and managed")
+		void testSaveWhenPersistedManagedEntityIsPassedShouldBeUpdatedInDbAndReturned() {
 			em.getTransaction().begin();
 			em.persist(ALBUM_1);
 			em.getTransaction().commit();
+			ALBUM_1.setName(ALBUM_NEW_NAME);
+			
+			em.getTransaction().begin();
+			Album album = repo.save(ALBUM_1);
+			em.getTransaction().commit();
+			
+			assertThat(album).isSameAs(ALBUM_1);
+			assertThat(em.createQuery("SELECT a FROM Album a", Album.class).getResultList()).contains(ALBUM_1);
+			assertThat(em.find(Album.class, ALBUM_1.getId()).getName()).isEqualTo(ALBUM_NEW_NAME);
+		}
+		
+		@Test
+		@DisplayName("Test entity is updated in database and it is returned an equal one when it is already persisted but not managed")
+		void testSaveWhenPersistedUnmanagedEntityIsPassedShouldBeUpdatedInDbAndReturned() {
+			em.getTransaction().begin();
+			em.persist(ALBUM_1);
+			em.getTransaction().commit();
+			em.clear();
 			ALBUM_1.setName(ALBUM_NEW_NAME);
 			
 			em.getTransaction().begin();
