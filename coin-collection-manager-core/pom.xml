@@ -82,6 +82,8 @@
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
 					<configuration>
+						<timeoutConstant>12000</timeoutConstant>
+						<timeoutFactor>2</timeoutFactor>
 						<targetClasses>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql.*</param>
