@@ -9,19 +9,37 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
-public class PostgresAlbumRepository implements AlbumRepository {
+/**
+ * Implementation of repository layer for {@code Album} entity for Postgres DBs.
+ */
+public class PostgresAlbumRepository extends PostgresRepository implements AlbumRepository {
 
-	private EntityManager em;
-
+	/**
+	 * Simple constructor.
+	 * 
+	 * @param em {@code EntityManager} to use for database operation
+	 */
 	public PostgresAlbumRepository(EntityManager em) {
-		this.em = em;
+		super(em);
 	}
 
+	/**
+	 * Get all the {@code Album}s contained in the database.
+	 * 
+	 * @return		A list with all the {@code Album}s
+	 */
 	@Override
 	public List<Album> findAll() {
 		return em.createQuery("SELECT a FROM Album a", Album.class).getResultList();
 	}
 
+	/**
+	 * Get a {@code Album} by its id.
+	 * 
+	 * @param id 	{@code Album} id
+	 * @return 		the {@code Album}
+	 * @throws IllegalArgumentException 	If the {@code id} is null
+	 */
 	@Override
 	public Album findById(UUID id) throws IllegalArgumentException {
 		if (id == null)
@@ -30,6 +48,13 @@ public class PostgresAlbumRepository implements AlbumRepository {
 			return em.find(Album.class, id);
 	}
 
+	/**
+	 * Persist (add or update) a {@code Album} in the database.
+	 * 
+	 * @param album	the {@code Album} to save
+	 * @return		the {@code Album}
+	 * @throws IllegalArgumentException 	If the {@code Album} is null
+	 */
 	@Override
 	public Album save(Album album) throws IllegalArgumentException {
 		if (album == null)
@@ -43,6 +68,12 @@ public class PostgresAlbumRepository implements AlbumRepository {
 		}
 	}
 
+	/**
+	 * Remove a {@code Album} from the database.
+	 * 
+	 * @param album	the {@code Album} to delete
+	 * @throws IllegalArgumentException 	If the {@code Album} is null
+	 */
 	@Override
 	public void delete(Album album) throws IllegalArgumentException {
 		if (album == null)
@@ -51,6 +82,14 @@ public class PostgresAlbumRepository implements AlbumRepository {
 			em.remove(album);
 	}
 
+	/**
+	 * Get {@code Album}s by their name.
+	 * 
+	 * @param name		{@code Album}s' name
+	 * @param volume 	{@code Album}'s volume
+	 * @return			a list with the corresponding {@code Album}s
+	 * @throws IllegalArgumentException 	If the {@code name} is null
+	 */
 	@Override
 	public Album findByNameAndVolume(String name, int volume) throws IllegalArgumentException {
 		if (name == null)
