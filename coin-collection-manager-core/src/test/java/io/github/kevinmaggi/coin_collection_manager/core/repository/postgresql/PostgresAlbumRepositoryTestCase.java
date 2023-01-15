@@ -118,7 +118,7 @@ class PostgresAlbumRepositoryTestCase {
 		}
 		
 		@Test
-		@DisplayName("Test that is returned the (a) correct object if the target is found")
+		@DisplayName("Test that is returned the correct object if the target is found")
 		void testFindByNameAndVolumeWhenTargetIsFound() {
 			populateDB();
 			
@@ -152,7 +152,6 @@ class PostgresAlbumRepositoryTestCase {
 		@Test
 		@DisplayName("Test that remove a persisted album")
 		void testDeleteWhenPersistedAlbumShouldRemoveIt() {
-			System.out.println("qua");
 			populateDB();
 			
 			em.getTransaction().begin();
