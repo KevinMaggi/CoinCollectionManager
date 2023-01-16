@@ -1,5 +1,7 @@
 package io.github.kevinmaggi.coin_collection_manager.core.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -103,5 +105,22 @@ public class Album extends BaseEntity {
 
 	public void setOccupiedSlots(int occupiedSlots) {
 		this.occupiedSlots = occupiedSlots;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name, this.volume);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Album other = (Album) obj;
+		return Objects.equals(this.name, other.name) && Objects.equals(this.volume, other.volume);
 	}
 }
