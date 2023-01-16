@@ -42,3 +42,9 @@ jobs:
         with:
           name: junit-report
           path: '**/target/site'
+      - name: Archive PiTest Report
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: pitest-report
+          path: '**coin-collection-manager-report/target/pit-reports'
