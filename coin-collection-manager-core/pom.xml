@@ -22,8 +22,37 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-hikaricp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- Provider for SLF4J. TestContainers depends on SLF4J API, but no provider is provided -->
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -53,15 +82,38 @@
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
 					<configuration>
+						<timeoutConstant>12000</timeoutConstant>
+						<timeoutFactor>2</timeoutFactor>
 						<targetClasses>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.kevinmaggi.coin_collection_manager.core.utility.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql.*</param>
 						</targetTests>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>skip-testcontainers</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/Postgres*.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

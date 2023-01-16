@@ -1,6 +1,7 @@
 package io.github.kevinmaggi.coin_collection_manager.core.model;
 
 import java.time.Year;
+import java.util.Objects;
 import java.util.UUID;
 
 import io.github.kevinmaggi.coin_collection_manager.core.utility.YearAttributeConverter;
@@ -125,5 +126,24 @@ public class Coin extends BaseEntity {
 
 	public void setAlbum(UUID album) {
 		this.album = album;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.grade, this.country, this.mintingYear, this.description, this.note);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Coin other = (Coin) obj;
+		return Objects.equals(this.grade, other.grade) && Objects.equals(this.country, other.country) && 
+				Objects.equals(this.mintingYear, other.mintingYear) && Objects.equals(this.description, other.description) && 
+				Objects.equals(this.note, other.note);
 	}
 }
