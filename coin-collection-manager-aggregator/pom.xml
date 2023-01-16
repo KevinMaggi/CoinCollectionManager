@@ -11,6 +11,8 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<javadoc.version>3.4.1</javadoc.version>
 	</properties>
 
 	<modules>
@@ -18,8 +20,37 @@
 		<module>../coin-collection-manager-parent</module>
 		<module>../coin-collection-manager-core</module>
 	</modules>
+	
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${javadoc.version}</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>aggregate-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 	<profiles>
+		<profile>
+			<id>javadoc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>jacoco</id>
 			<modules>
@@ -29,6 +60,12 @@
 		<profile>
 		<!-- For coveralls is required jacoco report: in this way coveralls profile is autonomous -->
 			<id>coveralls</id>
+			<modules>
+				<module>../coin-collection-manager-report</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>pitest</id>
 			<modules>
 				<module>../coin-collection-manager-report</module>
 			</modules>
