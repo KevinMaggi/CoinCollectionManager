@@ -94,7 +94,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>pitest</id>
+			<id>pitest-report</id>
 			<build>
 				<plugins>
 					<plugin>
