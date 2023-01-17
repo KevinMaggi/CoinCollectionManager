@@ -30,3 +30,13 @@ jobs:
         env: 
           MAVEN_PROFILES: -Pskip-testcontainers
           ADDITIONAL_MAVEN_ARGS: 
+      - name: Generate JUnit Report
+        if: ${{ failure() }}
+        run: ..\mvnw.cmd surefire-report:report-only site:site -DgenerateReports=false
+        working-directory: coin-collection-manager-aggregator
+      - name: Archive JUnit Report
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
+        with:
+          name: junit-report
+          path: '**/target/site'
