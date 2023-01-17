@@ -65,7 +65,9 @@
 			</modules>
 		</profile>
 		<profile>
-			<id>pitest</id>
+			<!-- Needed because of the need of including the report module conditionally. I can't only invoke goal report-aggregate
+			explicitly: it doesn't work because pitest fail looking for partial report also on aggregator project. -->
+			<id>pitest-report</id>
 			<modules>
 				<module>../coin-collection-manager-report</module>
 			</modules>

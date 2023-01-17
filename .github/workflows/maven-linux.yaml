@@ -30,14 +30,14 @@ jobs:
         run: ../mvnw verify $MAVEN_PROFILES $ADDITIONAL_COVERALLS_ARGS $SONAR
         working-directory: coin-collection-manager-aggregator
         env: 
-          MAVEN_PROFILES: -Ppitest,coveralls
+          MAVEN_PROFILES: -Pcoveralls
           ADDITIONAL_COVERALLS_ARGS: -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.pull_request.number }}
           SONAR: sonar:sonar -Dsonar.projectKey=KevinMaggi_CoinCollectionManager -Dsonar.organization=kevinmaggi -Dsonar.host.url=https://sonarcloud.io
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Generate JUnit Report
         if: ${{ failure() }}
-        run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false
+        run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false -Daggregate=true
         working-directory: coin-collection-manager-aggregator
       - name: Archive JUnit Report
         uses: actions/upload-artifact@v3
@@ -45,9 +45,18 @@ jobs:
         with:
           name: junit-report
           path: '**/target/site'
+      - name: Run mutation testing
+        id: mutationTesting
+        if: ${{ success() }}
+        run: ../mvnw verify -Ppitest
+        working-directory: coin-collection-manager-aggregator
+      - name: Generate PiTest Report
+        if: ${{ failure() && steps.mutationTesting.outcome == 'failure' }}
+        run: ../mvnw verify -Ppitest-report
+        working-directory: coin-collection-manager-aggregator
       - name: Archive PiTest Report
         uses: actions/upload-artifact@v3
-        if: ${{ always() }}
+        if: ${{ failure() && steps.mutationTesting.outcome == 'failure' }}
         with:
           name: pitest-report
-          path: '**coin-collection-manager-report/target/pit-reports'
+          path: '**/coin-collection-manager-report/target/pit-reports'
