@@ -19,6 +19,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>coin-collection-manager-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coin-collection-manager-business</artifactId>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -32,6 +36,8 @@
 						<configuration>
 							<excludes>
 								<exclude>**/core/model/*</exclude>
+								<exclude>**/business/transaction/exception/*</exclude>
+								<exclude>**/business/transaction/function/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>
@@ -58,6 +64,8 @@
 						<configuration>
 							<excludes>
 								<exclude>**/core/model/*</exclude>
+								<exclude>**/business/transaction/exception/*</exclude>
+								<exclude>**/business/transaction/function/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>
@@ -87,6 +95,7 @@
 							<scanForSources>true</scanForSources>
 							<sourceDirectories>
 								<sourceDirectory>../coin-collection-manager-core/</sourceDirectory>
+								<sourceDirectory>../coin-collection-manager-business/</sourceDirectory>
 							</sourceDirectories>
 						</configuration>
 					</plugin>

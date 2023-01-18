@@ -19,6 +19,7 @@
 		<module>../coin-collection-manager-bom</module>
 		<module>../coin-collection-manager-parent</module>
 		<module>../coin-collection-manager-core</module>
+		<module>../coin-collection-manager-business</module>
 	</modules>
 	
 	<build>
@@ -72,5 +73,5 @@
 				<module>../coin-collection-manager-report</module>
 			</modules>
 		</profile>
-  </profiles>
+	</profiles>
 </project>
