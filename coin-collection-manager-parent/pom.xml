@@ -27,6 +27,7 @@
 		<slf4j.version>1.7.36</slf4j.version> <!-- Version 1.7.36 (for TC.v 1.17.6). See in the dependency more details -->
 		<junit.version>5.9.1</junit.version>
 		<assertj.version>3.23.1</assertj.version>
+		<mockito.version>4.11.0</mockito.version>
 		
 		<!-- Plugin version -->
 		<compiler.version>3.10.1</compiler.version>
@@ -86,6 +87,13 @@
 				<artifactId>assertj-core</artifactId>
 				<version>${assertj.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-bom</artifactId>
+				<version>${mockito.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -3,7 +3,7 @@ package io.github.kevinmaggi.coin_collection_manager.business.transaction.except
 /**
  * This exception is thrown when a database operation fails for some reason.
  */
-public class DatabaseOperationException extends Exception {
+public class DatabaseOperationException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
