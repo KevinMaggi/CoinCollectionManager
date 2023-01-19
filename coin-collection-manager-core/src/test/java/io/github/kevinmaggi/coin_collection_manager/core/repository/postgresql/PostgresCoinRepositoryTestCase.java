@@ -29,17 +29,19 @@ public class PostgresCoinRepositoryTestCase {
 	private UUID ALBUM_UUID_1 = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 	private UUID ALBUM_UUID_2 = UUID.fromString("123e4567-e89b-12d3-a456-426614174001");
 	
+	private Year YEAR = Year.of(2004);
+	
 	private UUID INVALID_UUID = UUID.fromString("123e4567-e89b-12d3-a456-426652340000");
 	private String INVALID_COUNTRY = "Finland";
 	private String INVALID_DESCRIPTION = "New 10 member of EU";
-	private Coin INVALID_COIN = new Coin(Grade.G, INVALID_COUNTRY, Year.of(2004), INVALID_DESCRIPTION, "", ALBUM_UUID_1);
+	private Coin INVALID_COIN = new Coin(Grade.AG, INVALID_COUNTRY, YEAR, INVALID_DESCRIPTION, "", ALBUM_UUID_1);
 	
 	private String DESCRIPTION_1 = "2€ comm. World Food Programme";
 	private String DESCRIPTION_2 = "2€ comm. Olympics Game of Athen 2004";
 	private String COUNTRY_1 = "Italy";
 	private String COUNTRY_2 = "Greece";
-	private Coin COIN_1 = new Coin(Grade.AG, COUNTRY_1, Year.of(2004), DESCRIPTION_1, "", ALBUM_UUID_1);
-	private Coin COIN_2 = new Coin(Grade.AG, COUNTRY_2, Year.of(2004), DESCRIPTION_2, "", ALBUM_UUID_2);
+	private Coin COIN_1 = new Coin(Grade.AG, COUNTRY_1, YEAR, DESCRIPTION_1, "", ALBUM_UUID_1);
+	private Coin COIN_2 = new Coin(Grade.AG, COUNTRY_2, YEAR, DESCRIPTION_2, "", ALBUM_UUID_2);
 	
 	// Tests
 	@Container
@@ -253,6 +255,70 @@ public class PostgresCoinRepositoryTestCase {
 			populateDB();
 			
 			assertThat(repo.findByAlbum(ALBUM_UUID_1)).containsExactly(COIN_1);
+		}
+	}
+	
+	@Nested
+	@DisplayName("Tests for method PostgresCoinRepository::findByGradeCountryYearDescriptionAndNote")
+	class FindByGradeCountryYearDescriptionAndNote {
+		@Test
+		@DisplayName("Test that exception is thrown if null Grade value is passed")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenNullGradeIsPassedShouldThrowException() {
+			assertThatThrownBy(() -> repo.findByGradeCountryYearDescriptionAndNote(null, COUNTRY_1, YEAR, DESCRIPTION_1, ""))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Grade can't be null");
+		}
+		
+		@Test
+		@DisplayName("Test that exception is thrown if null country value is passed")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenNullCountryIsPassedShouldThrowException() {
+			assertThatThrownBy(() -> repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, null, YEAR, DESCRIPTION_1, ""))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Country can't be null");
+		}
+		
+		@Test
+		@DisplayName("Test that exception is thrown if null year value is passed")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenNullYearIsPassedShouldThrowException() {
+			assertThatThrownBy(() -> repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, COUNTRY_1, null, DESCRIPTION_1, ""))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Year can't be null");
+		}
+		
+		@Test
+		@DisplayName("Test that exception is thrown if null description value is passed")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenNullDescriptionIsPassedShouldThrowException() {
+			assertThatThrownBy(() -> repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, COUNTRY_1, YEAR, null, ""))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Description can't be null");
+		}
+		
+		@Test
+		@DisplayName("Test that exception is thrown if null note value is passed")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenNullNoteIsPassedShouldThrowException() {
+			assertThatThrownBy(() -> repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, COUNTRY_1, YEAR, DESCRIPTION_1, null))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Note can't be null");
+		}
+		
+		@Test
+		@DisplayName("Test that null is returned if the coin is not found")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenCoinIsNotFoundShoudReturnNull() {
+			populateDB();
+			
+			assertThat(
+					repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, INVALID_COUNTRY, YEAR, INVALID_DESCRIPTION, INVALID_DESCRIPTION)
+					).isNull();
+		}
+		
+		@Test
+		@DisplayName("Test that correct coin si returned if the coin is found")
+		void testfindByGradeCountryYearDescriptionAndNoteWhenCoinIsFoundShouldReturnIt() {
+			populateDB();
+			
+			assertThat(
+					repo.findByGradeCountryYearDescriptionAndNote(Grade.AG, COUNTRY_2, YEAR, DESCRIPTION_2, "")
+					).isEqualTo(COIN_2);
 		}
 	}
 	

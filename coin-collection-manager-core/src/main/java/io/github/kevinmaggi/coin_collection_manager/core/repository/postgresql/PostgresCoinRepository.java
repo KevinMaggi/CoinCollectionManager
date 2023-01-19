@@ -1,11 +1,14 @@
 package io.github.kevinmaggi.coin_collection_manager.core.repository.postgresql;
 
+import java.time.Year;
 import java.util.List;
 import java.util.UUID;
 
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
+import io.github.kevinmaggi.coin_collection_manager.core.model.Grade;
 import io.github.kevinmaggi.coin_collection_manager.core.repository.CoinRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 /**
@@ -112,6 +115,45 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 			TypedQuery<Coin> q = em.createQuery("SELECT c FROM Coin c WHERE c.album = :album", Coin.class);
 			q.setParameter("album", id);
 			return q.getResultList();
+		}
+	}
+
+	/**
+	 * Get a specific {@code Coin}.
+	 * 
+	 * @param grade			the {@code Grade} of the {@code Coin}
+	 * @param country		the country of the {@code Coin}
+	 * @param year			the minting year of the {@code Coin}
+	 * @param description	the description of the {@code Coin}
+	 * @param note			the note relative to the {@code Coin}
+	 * @return				the {@code Coin}
+	 */
+	@Override
+	public Coin findByGradeCountryYearDescriptionAndNote(Grade grade, String country, Year year, String description, String note) {
+		if (grade == null)
+			throw new IllegalArgumentException("Grade can't be null");
+		else if (country == null)
+			throw new IllegalArgumentException("Country can't be null");
+		if (year == null)
+			throw new IllegalArgumentException("Year can't be null");
+		if (description == null)
+			throw new IllegalArgumentException("Description can't be null");
+		if (note == null)
+			throw new IllegalArgumentException("Note can't be null");
+		else {
+			try {
+				String query = "SELECT c FROM Coin c WHERE "
+						+ "c.grade = :grade AND c.country = :country AND c.mintingYear = :year AND c.description = :description AND c.note = :note";
+				TypedQuery<Coin> q = em.createQuery(query, Coin.class);
+				q.setParameter("grade", grade);
+				q.setParameter("country", country);
+				q.setParameter("year", year);
+				q.setParameter("description", description);
+				q.setParameter("note", note);
+				return q.getSingleResult();
+			} catch (NoResultException e) {
+				return null;
+			}
 		}
 	}
 
