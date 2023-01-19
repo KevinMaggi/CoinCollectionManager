@@ -18,13 +18,13 @@ public class Album extends BaseEntity {
 	/**
 	 * Name of the album.
 	 */
-	@Column(name ="name")
+	@Column(name ="name", nullable = false)
 	private String name;
 	
 	/**
 	 * Volume of the album.
 	 */
-	@Column(name = "volume")
+	@Column(name = "volume", nullable = false)
 	private int volume;
 	
 	/**

@@ -22,32 +22,32 @@ public class Coin extends BaseEntity {
 	/**
 	 * Coin's conditions/quality.
 	 */
-	@Column(name = "grade")
+	@Column(name = "grade", nullable = false)
 	private Grade grade;
 	
 	/**
 	 * Coin's country.
 	 */
-	@Column(name = "country")
+	@Column(name = "country", nullable = false)
 	private String country;
 	
 	/**
 	 * Coin's year of minting.
 	 */
-	@Column(name = "minting_year", columnDefinition = "int")
+	@Column(name = "minting_year", columnDefinition = "int", nullable = false)
 	@Convert(converter = YearAttributeConverter.class)
 	private Year mintingYear;
 	
 	/**
 	 * Coin's description (e.g. "1$", "0.01£", "2€ commemorative: 30th anniversary of the Flag of Europe").
 	 */
-	@Column(name = "description")
+	@Column(name = "description", nullable = false)
 	private String description;
 	
 	/**
 	 * Possible notes (e.g. "minting error", "for exchange", ...).
 	 */
-	@Column(name = "note")
+	@Column(name = "note", nullable = false)
 	private String note;
 	
 	/**
