@@ -89,9 +89,10 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 	 * 
 	 * @param description	{@code Coin}s' description
 	 * @return				a list with the corresponding {@code Coin}s
+	 * @throws IllegalArgumentException 	If the {@code description} is null
 	 */
 	@Override
-	public List<Coin> findByDescription(String description) {
+	public List<Coin> findByDescription(String description) throws IllegalArgumentException {
 		if (description == null)
 			throw new IllegalArgumentException("Description can't be null");
 		else {
@@ -106,9 +107,10 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 	 * 
 	 * @param id	the {@code Album}'s id
 	 * @return		a list with all the {@code Coin}s
+	 * @throws IllegalArgumentException 	If the {@code id} is null
 	 */
 	@Override
-	public List<Coin> findByAlbum(UUID id) {
+	public List<Coin> findByAlbum(UUID id) throws IllegalArgumentException {
 		if (id == null)
 			throw new IllegalArgumentException("Album's id can't be null");
 		else {
@@ -127,9 +129,11 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 	 * @param description	the description of the {@code Coin}
 	 * @param note			the note relative to the {@code Coin}
 	 * @return				the {@code Coin}
+	 * @throws IllegalArgumentException 	If any argument is null
 	 */
 	@Override
-	public Coin findByGradeCountryYearDescriptionAndNote(Grade grade, String country, Year year, String description, String note) {
+	public Coin findByGradeCountryYearDescriptionAndNote(Grade grade, String country, Year year, String description, String note) 
+			throws IllegalArgumentException {
 		if (grade == null)
 			throw new IllegalArgumentException("Grade can't be null");
 		else if (country == null)
