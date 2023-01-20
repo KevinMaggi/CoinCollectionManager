@@ -245,6 +245,8 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not yet in db")
 			void testUpdateCoinWhenItIsNotYetPersistedShouldThrowException() {
+				when(coinRepo.findById(any())).thenThrow(IllegalArgumentException.class);
+				
 				assertThatThrownBy(() -> coinManager.updateCoin(COIN_1))
 					.isInstanceOf(CoinNotFoundException.class)
 					.hasMessage(COIN_NOT_FOUND_MSG);
@@ -255,7 +257,7 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not in db anymore")
 			void testUpdateCoinWhenItIsNotPersistedAnymoreShouldThrowException() {
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 				doReturn(UUID_COIN).when(SPIED_COIN).getId();
 				when(coinRepo.findById(any())).thenReturn(null);
 				
@@ -275,7 +277,7 @@ class CoinTransactionalManagerTestCase {
 		@Test
 		@DisplayName("Test that code is executed and exception is thrown if the coin is in the db but the new album is full")
 		void testAddCoinWhenItIsNotYetPersistedAndAlbumIsFullShouldExecuteCodeAndThrowException() {
-			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 			doReturn(UUID_COIN).when(SPIED_COIN).getId();
 			when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
 			when(albumRepo.findById(any())).thenReturn(ALBUM_NOT_FULL).thenReturn(ALBUM_FULL);
@@ -299,7 +301,7 @@ class CoinTransactionalManagerTestCase {
 		void testAddCoinWhenItIsNotYetPersistedAndAlbumIsNotFullShouldExecuteCode() {
 			Album SPIED_ALBUM_NOT_FULL = spy(ALBUM_NOT_FULL);	// need to see if updated slots
 			Album SPIED_ALBUM_FULL = spy(ALBUM_FULL);	// need to see if updated slots
-			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 			doReturn(UUID_COIN).when(SPIED_COIN).getId();
 			when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
 			when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM_FULL).thenReturn(SPIED_ALBUM_NOT_FULL);
@@ -326,7 +328,7 @@ class CoinTransactionalManagerTestCase {
 		@DisplayName("Test that code is executed if the coin is in the db and the new album is the same")
 		void testAddCoinWhenItIsNotYetPersistedAndAlbumIsTheSameShouldExecuteCode() {
 			Album SPIED_ALBUM_NOT_FULL = spy(ALBUM_NOT_FULL);	// need to see if updated slots
-			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+			Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 			doReturn(UUID_COIN).when(SPIED_COIN).getId();
 			when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
 			when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM_NOT_FULL);
@@ -361,7 +363,7 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not in db anymore")
 			void testUpdateCoinWhenItIsNotPersistedAnymoreShouldThrowException() {
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 				doReturn(UUID_COIN).when(SPIED_COIN).getId();
 				when(coinRepo.findById(any())).thenReturn(null);
 				
@@ -381,7 +383,7 @@ class CoinTransactionalManagerTestCase {
 			@DisplayName("Test that code is executed if the coin is in the db")
 			void testAddCoinWhenItIsNotYetPersistedAndAlbumIsNotFullShouldExecuteCode() {
 				Album SPIED_ALBUM = spy(ALBUM_NOT_FULL);		// need to see if updated slots
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 is has an id (generated)
+				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
 				doReturn(UUID_COIN).when(SPIED_COIN).getId();
 				
 				when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
