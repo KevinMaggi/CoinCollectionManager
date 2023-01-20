@@ -87,7 +87,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 	/**
 	 * Get {@code Coin}s by their description.
 	 * 
-	 * @param description	{@code Coin}s' description
+	 * @param description	{@code Coin}s' (part of) description
 	 * @return				a list with the corresponding {@code Coin}s
 	 * @throws IllegalArgumentException 	If the {@code description} is null
 	 */
@@ -96,8 +96,8 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 		if (description == null)
 			throw new IllegalArgumentException("Description can't be null");
 		else {
-			TypedQuery<Coin> q = em.createQuery("SELECT c FROM Coin c WHERE c.description = :description", Coin.class);
-			q.setParameter("description", description);
+			TypedQuery<Coin> q = em.createQuery("SELECT c FROM Coin c WHERE c.description LIKE :description", Coin.class);
+			q.setParameter("description", "%" + description + "%");
 			return q.getResultList();
 		}
 	}

@@ -14,7 +14,7 @@ public interface CoinRepository extends BaseRepository<Coin> {
 	/**
 	 * Get {@code Coin}s by their description.
 	 * 
-	 * @param description	{@code Coin}s' description
+	 * @param description	{@code Coin}s' (part of) description
 	 * @return				a list with the corresponding {@code Coin}s
 	 * @throws IllegalArgumentException 	If the {@code description} is null
 	 */

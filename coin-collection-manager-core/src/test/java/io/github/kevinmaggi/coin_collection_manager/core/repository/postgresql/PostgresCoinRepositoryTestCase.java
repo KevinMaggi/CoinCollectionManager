@@ -230,6 +230,14 @@ public class PostgresCoinRepositoryTestCase {
 			
 			assertThat(repo.findByDescription(DESCRIPTION_1)).containsExactly(COIN_1);
 		}
+		
+		@Test
+		@DisplayName("Test that correct list is returned if part of descrition is found")
+		void testFindByDescriptionWhenPartOfTargetIsFoundShouldReturnCorrectList() {
+			populateDB();
+			
+			assertThat(repo.findByDescription(DESCRIPTION_1.substring(5))).containsExactly(COIN_1);
+		}
 	}
 	
 	@Nested
