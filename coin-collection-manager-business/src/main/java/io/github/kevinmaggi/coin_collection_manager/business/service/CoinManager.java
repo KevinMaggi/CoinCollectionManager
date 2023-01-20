@@ -3,7 +3,10 @@ package io.github.kevinmaggi.coin_collection_manager.business.service;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.kevinmaggi.coin_collection_manager.business.service.exception.CoinNotFoundException;
 import io.github.kevinmaggi.coin_collection_manager.business.service.exception.DatabaseException;
+import io.github.kevinmaggi.coin_collection_manager.business.service.exception.DuplicateCoinException;
+import io.github.kevinmaggi.coin_collection_manager.business.service.exception.FullAlbumException;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 
 /**
@@ -50,21 +53,29 @@ public interface CoinManager {
 	 * 
 	 * @param coin	The coin to add
 	 * @return		The coin added
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws FullAlbumException		if try to add a coin to a full album
+	 * @throws DuplicateCoinException	if try to add a coin already present in DB
 	 */
-	public Coin addCoin(Coin coin);
+	public Coin addCoin(Coin coin) throws DatabaseException, FullAlbumException, DuplicateCoinException;
 	
 	/**
 	 * Updates a {@code Coin} in the DB.
 	 * 
 	 * @param coin	The coin to update
 	 * @return		The updated coin
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws FullAlbumException		if try to add a coin to a full album
+	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
 	 */
-	public Coin updateCoin(Coin coin);
+	public Coin updateCoin(Coin coin) throws DatabaseException, FullAlbumException, CoinNotFoundException;
 	
 	/**
 	 * Removes a {@code Coin} from the DB.
 	 * 
 	 * @param coin	The coin to remove
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
 	 */
-	public void deleteCoin(Coin coin);
+	public void deleteCoin(Coin coin) throws DatabaseException, CoinNotFoundException;
 }
