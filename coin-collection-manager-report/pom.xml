@@ -38,6 +38,7 @@
 								<exclude>**/core/model/*</exclude>
 								<exclude>**/business/transaction/exception/*</exclude>
 								<exclude>**/business/transaction/function/*</exclude>
+								<exclude>**/business/service/exception/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>
@@ -66,6 +67,7 @@
 								<exclude>**/core/model/*</exclude>
 								<exclude>**/business/transaction/exception/*</exclude>
 								<exclude>**/business/transaction/function/*</exclude>
+								<exclude>**/business/service/exception/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>

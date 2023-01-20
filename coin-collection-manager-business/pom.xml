@@ -18,6 +18,7 @@
 		<sonar.coverage.exclusions>
 			**/business/transaction/exception/*.*,
 			**/business/transaction/function/*.*,
+			**/business/service/exception/*.*,
 		</sonar.coverage.exclusions>
 	</properties>
 
@@ -92,6 +93,7 @@
 						<excludes>
 							<exclude>**/transaction/exception/*</exclude>
 							<exclude>**/transaction/function/*</exclude>
+							<exclude>**/service/exception/*</exclude>
 						</excludes>
 					</configuration>
 				</plugin>

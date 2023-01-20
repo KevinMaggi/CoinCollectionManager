@@ -3,6 +3,7 @@ package io.github.kevinmaggi.coin_collection_manager.business.service;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.kevinmaggi.coin_collection_manager.business.service.exception.DatabaseException;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 
 /**
@@ -13,32 +14,36 @@ public interface CoinManager {
 	 * Finds all {@code Coin}s in DB.
 	 * 
 	 * @return	A list of all the {@code Coin}s
+	 * @throws DatabaseException	if an error occurs during database querying
 	 */
-	public List<Coin> findAllCoin();
+	public List<Coin> findAllCoins() throws DatabaseException;
 	
 	/**
 	 * Finds a specific {@code Coin}.
 	 * 
 	 * @param id	Id of the coin
 	 * @return		The coin
+	 * @throws DatabaseException	if an error occurs during database querying
 	 */
-	public Coin findCoinById(UUID id);
+	public Coin findCoinById(UUID id) throws DatabaseException;
 	
 	/**
 	 * Finds {@code Coin}s contained in an {@code Album}.
 	 * 
 	 * @param album	The album
 	 * @return		A list of all the coins
+	 * @throws DatabaseException	if an error occurs during database querying
 	 */
-	public List<Coin> findCoinByAlbum(UUID album);
+	public List<Coin> findCoinsByAlbum(UUID album) throws DatabaseException;
 	
 	/**
 	 * Finds a {@code Coin} with a specific description.
 	 * 
 	 * @param description	The description
-	 * @return				The coin
+	 * @return				A list with {@code Coin}s with that description
+	 * @throws DatabaseException	if an error occurs during database querying
 	 */
-	public Coin findCoinByDescription(String description);
+	public List<Coin> findCoinsByDescription(String description) throws DatabaseException;
 	
 	/**
 	 * Adds a {@code Coin} to the DB.
