@@ -353,6 +353,8 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not yet in db")
 			void testUpdateCoinWhenItIsNotYetPersistedShouldThrowException() {
+				when(coinRepo.findById(any())).thenThrow(IllegalArgumentException.class);
+				
 				assertThatThrownBy(() -> coinManager.deleteCoin(COIN_1))
 					.isInstanceOf(CoinNotFoundException.class)
 					.hasMessage(COIN_NOT_FOUND_MSG);
