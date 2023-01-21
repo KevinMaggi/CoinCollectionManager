@@ -14,6 +14,9 @@ import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 import io.github.kevinmaggi.coin_collection_manager.core.repository.*;
 
+/**
+ * This class is an implementation of {@code CoinManager} using {@code TransactionalManager}.
+ */
 public class CoinTransactionalManager extends TransactionalManager implements CoinManager {
 	
 	private static final String DB_EXCEPTION_MSG = "Something went wrong during the DB querying";
