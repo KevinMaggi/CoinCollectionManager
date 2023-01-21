@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import io.github.kevinmaggi.coin_collection_manager.business.service.exception.AlbumNotFoundException;
-import io.github.kevinmaggi.coin_collection_manager.business.service.exception.CoinNotFoundException;
 import io.github.kevinmaggi.coin_collection_manager.business.service.exception.DatabaseException;
 import io.github.kevinmaggi.coin_collection_manager.business.service.exception.DuplicateAlbumException;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
