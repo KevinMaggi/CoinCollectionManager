@@ -33,6 +33,8 @@
 		<compiler.version>3.10.1</compiler.version>
 		<surefire.version>2.22.2</surefire.version>
 		<site.version>3.12.1</site.version>
+		<build-helper.version>3.3.0</build-helper.version>
+		<failsafe.version>2.22.2</failsafe.version>
 		<jacoco.version>0.8.8</jacoco.version>
 		<pitest.version>1.10.3</pitest.version>
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
@@ -112,6 +114,38 @@
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${site.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>${build-helper.version}</version>
+					<executions>
+						<execution>
+							<id>add-test-source</id>
+							<phase>generate-test-sources</phase>
+							<goals>
+								<goal>add-test-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>src/it/java</source>
+								</sources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${failsafe.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
