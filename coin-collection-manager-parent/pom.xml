@@ -40,6 +40,7 @@
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
 		<sonar.version>3.9.1.2184</sonar.version>
 		<coveralls.version>4.3.0</coveralls.version>
+		<docker-plugin.version>0.40.3</docker-plugin.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -138,6 +139,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<version>${failsafe.version}</version>
+					<configuration>
+						<systemPropertyVariables>
+							<postgres.port>${postgres.mapped.port}</postgres.port>
+						</systemPropertyVariables>
+					</configuration>
 					<executions>
 						<execution>
 							<goals>
@@ -230,6 +236,39 @@
 							<version>2.3.1</version>
 						</dependency>
 					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker-plugin.version}</version>
+					<configuration>
+						<images>
+							<image>
+								<name>postgres:15.1</name>
+								<run>
+									<ports>
+										<port>postgres.mapped.port:5432</port>
+									</ports>
+								</run>
+							</image>
+						</images>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker-start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

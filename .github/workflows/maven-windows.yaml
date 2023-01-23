@@ -24,6 +24,14 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
           restore-keys: ${{ runner.os }}-maven-
+      - name: Docker configurztion
+        run: >
+          sc config docker
+          binpath="dockerd.exe --run-service -H tcp://localhost:2375"
+      - name: Docker restart
+        run: restart-service *docker*
+      - name: Docker info
+        run: docker info
       - name: Build with Maven Wrapper
         run: ..\mvnw.cmd verify $env:MAVEN_PROFILES $env:ADDITIONAL_MAVEN_ARGS
         working-directory: coin-collection-manager-aggregator
