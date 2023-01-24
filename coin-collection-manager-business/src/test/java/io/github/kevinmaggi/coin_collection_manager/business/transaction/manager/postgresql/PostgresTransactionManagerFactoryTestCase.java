@@ -47,7 +47,9 @@ class PostgresTransactionManagerFactoryTestCase {
 	@Test
 	@DisplayName("Test that ::getCoinRepository the first time instantiate and return")
 	void testGetCoinRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
-		assertThat(factory.getCoinRepository()).isNotNull();
+		PostgresCoinRepository cr = new PostgresCoinRepository(em);
+		
+		assertThat(factory.getCoinRepository()).usingRecursiveComparison().isEqualTo(cr);
 	}
 	
 	@Test
@@ -61,7 +63,9 @@ class PostgresTransactionManagerFactoryTestCase {
 	@Test
 	@DisplayName("Test that ::getAlbumRepository the first time instantiate and return")
 	void testGetAlbumRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
-		assertThat(factory.getAlbumRepository()).isNotNull();
+		PostgresAlbumRepository ar = new PostgresAlbumRepository(em);
+		
+		assertThat(factory.getAlbumRepository()).usingRecursiveComparison().isEqualTo(ar);
 	}
 	
 	@Test
@@ -73,13 +77,17 @@ class PostgresTransactionManagerFactoryTestCase {
 	}
 	
 	@Test
-	@DisplayName("Test that ::getTransactionManagerRepository the first time instantiate and return")
+	@DisplayName("Test that ::getTransactionManager the first time instantiate and return")
 	void testGetTransactionManagerRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
-		assertThat(factory.getTransactionManager()).isNotNull();
+		PostgresAlbumRepository ar = new PostgresAlbumRepository(em);
+		PostgresCoinRepository cr = new PostgresCoinRepository(em);
+		PostgresTransactionManager tm = new PostgresTransactionManager(em, cr, ar);
+		
+		assertThat(factory.getTransactionManager()).usingRecursiveComparison().isEqualTo(tm);
 	}
 	
 	@Test
-	@DisplayName("Test that ::getTransactionManagermRepository the next time returns the same transaction manager")
+	@DisplayName("Test that ::getTransactionManager the next time returns the same transaction manager")
 	void testGetTransactionManagerRepositoryWhenFirstTimeCallThenReturnTheSame() {
 		PostgresTransactionManager tm = factory.getTransactionManager();
 		
