@@ -118,6 +118,20 @@ public class PostgresTransactionManagerTestCase {
 			verify(coinRepo).findAll();
 			assertThat(em.getTransaction().isActive()).isFalse();
 		}
+		
+		@Test
+		@DisplayName("Test that should rollback and re-throw exception if code throws other exception")
+		void testDoInTransactionWhenCodeThrowsOtherExceptionShouldRethrowIt() {
+			RuntimeException ex = new RuntimeException("ex msg");
+			when(coinRepo.findAll()).thenThrow(ex);
+			
+			CoinTransactionCode<?> code = (CoinRepository repo) -> {return repo.findAll();};
+			
+			assertThatThrownBy(() -> tm.doInTransaction(code))
+				.isSameAs(ex);
+			verify(coinRepo).findAll();
+			assertThat(em.getTransaction().isActive()).isFalse();
+		}
 	}
 	
 	@Nested
@@ -165,6 +179,20 @@ public class PostgresTransactionManagerTestCase {
 				.isInstanceOf(DatabaseOperationException.class)
 				.hasMessage(MSG_GENERIC)
 				.hasCauseInstanceOf(PersistenceException.class);
+			verify(albumRepo).findAll();
+			assertThat(em.getTransaction().isActive()).isFalse();
+		}
+		
+		@Test
+		@DisplayName("Test that should rollback and re-throw exception if code throws other exception")
+		void testDoInTransactionWhenCodeThrowsOtherExceptionShouldRethrowIt() {
+			RuntimeException ex = new RuntimeException("ex msg");
+			when(albumRepo.findAll()).thenThrow(ex);
+			
+			AlbumTransactionCode<?> code = (AlbumRepository repo) -> {return repo.findAll();};
+			
+			assertThatThrownBy(() -> tm.doInTransaction(code))
+				.isSameAs(ex);
 			verify(albumRepo).findAll();
 			assertThat(em.getTransaction().isActive()).isFalse();
 		}
@@ -218,6 +246,21 @@ public class PostgresTransactionManagerTestCase {
 				.isInstanceOf(DatabaseOperationException.class)
 				.hasMessage(MSG_GENERIC)
 				.hasCauseInstanceOf(PersistenceException.class);
+			verify(coinRepo).findAll();
+			verify(albumRepo).findAll();
+			assertThat(em.getTransaction().isActive()).isFalse();
+		}
+		
+		@Test
+		@DisplayName("Test that should rollback and re-throw exception if code throws other exception")
+		void testDoInTransactionWhenCodeThrowsOtherExceptionShouldRethrowIt() {
+			RuntimeException ex = new RuntimeException("ex msg");
+			Supplier<?> func = () -> {coinRepo.findAll(); albumRepo.findAll(); throw ex;};
+			
+			CoinAlbumTransactionCode<?> code = (CoinRepository cRepo, AlbumRepository aRepo) -> {return func.get();};
+			
+			assertThatThrownBy(() -> tm.doInTransaction(code))
+				.isSameAs(ex);
 			verify(coinRepo).findAll();
 			verify(albumRepo).findAll();
 			assertThat(em.getTransaction().isActive()).isFalse();

@@ -45,9 +45,11 @@ public class PostgresTransactionManager implements TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
 	@Override
-	public <R> R doInTransaction(CoinTransactionCode<R> code) throws DatabaseOperationException {
+	public <R> R doInTransaction(CoinTransactionCode<R> code) throws DatabaseOperationException, RuntimeException {
 		try {
 			em.getTransaction().begin();
 			R result = code.apply(coinRepo);
@@ -59,6 +61,9 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			throw e;
 		}
 	}
 
@@ -69,9 +74,11 @@ public class PostgresTransactionManager implements TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
 	@Override
-	public <R> R doInTransaction(AlbumTransactionCode<R> code) throws DatabaseOperationException {
+	public <R> R doInTransaction(AlbumTransactionCode<R> code) throws DatabaseOperationException, RuntimeException {
 		try {
 			em.getTransaction().begin();
 			R result = code.apply(albumRepo);
@@ -83,6 +90,9 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			throw e;
 		}
 	}
 
@@ -93,9 +103,11 @@ public class PostgresTransactionManager implements TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
 	@Override
-	public <R> R doInTransaction(CoinAlbumTransactionCode<R> code) throws DatabaseOperationException {
+	public <R> R doInTransaction(CoinAlbumTransactionCode<R> code) throws DatabaseOperationException, RuntimeException {
 		try {
 			em.getTransaction().begin();
 			R result = code.apply(coinRepo, albumRepo);
@@ -107,6 +119,9 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			throw e;
 		}
 	}
 
