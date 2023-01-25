@@ -61,7 +61,7 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			em.getTransaction().rollback();
 			throw e;
 		}
@@ -90,7 +90,7 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			em.getTransaction().rollback();
 			throw e;
 		}
@@ -119,7 +119,7 @@ public class PostgresTransactionManager implements TransactionManager {
 		} catch (PersistenceException e) {
 			em.getTransaction().rollback();
 			throw new DatabaseOperationException(EXCEPTION_MSG_GENERIC, e);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			em.getTransaction().rollback();
 			throw e;
 		}
