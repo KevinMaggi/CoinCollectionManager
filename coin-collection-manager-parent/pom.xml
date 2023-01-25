@@ -261,9 +261,15 @@
 										<POSTGRES_DB>${postgres.db}</POSTGRES_DB>
 									</env>
 									<wait>
-										<log>database system is ready to accept connections</log>
+										<!-- Also "[1] LOG:  " is needed because when the container is started and 
+										it have to create the volume, that message is shown twice -->
+										<log>\[1\] LOG:  database system is ready to accept connections</log>
 										<time>20000</time>
 									</wait>
+									<log>
+										<prefix>Postgres</prefix>
+										<color>cyan</color>
+									</log>
 								</run>
 							</image>
 						</images>
