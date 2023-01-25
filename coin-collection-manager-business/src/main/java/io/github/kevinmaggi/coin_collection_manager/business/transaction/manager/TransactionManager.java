@@ -21,8 +21,10 @@ public interface TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
-	<R> R doInTransaction(CoinTransactionCode<R> code) throws DatabaseOperationException;
+	<R> R doInTransaction(CoinTransactionCode<R> code) throws DatabaseOperationException, RuntimeException;
 	
 	/**
 	 * Executes a piece of code that involve the {@code AlbumRepository} class and returns the result.
@@ -31,8 +33,10 @@ public interface TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
-	<R> R doInTransaction(AlbumTransactionCode<R> code) throws DatabaseOperationException;
+	<R> R doInTransaction(AlbumTransactionCode<R> code) throws DatabaseOperationException, RuntimeException;
 	
 	/**
 	 * Executes a piece of code that involve the {@code CoinRepository} and {@code AlbumRepository} classes and returns the result.
@@ -41,6 +45,8 @@ public interface TransactionManager {
 	 * @param code		code to execute
 	 * @return			the result of the execution of {@code code}
 	 * @throws DatabaseOperationException	when the code execution fails because of some problem related to DB operation
+	 * @throws RuntimeException				when the code execution throws exception other than IllegalArgumentException 
+	 * 										and PersistenceException, they will be re-thrown
 	 */
-	<R> R doInTransaction(CoinAlbumTransactionCode<R> code) throws DatabaseOperationException;
+	<R> R doInTransaction(CoinAlbumTransactionCode<R> code) throws DatabaseOperationException, RuntimeException;
 }

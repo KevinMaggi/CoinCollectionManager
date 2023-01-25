@@ -13,6 +13,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<javadoc.version>3.4.1</javadoc.version>
+		
+		<!-- Sonar configuration -->
+		<sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+		<!-- Rule: Define and throw a dedicated exception instead of using a generic one. -->
+		<!-- In that file is only a generic re-throw -->
+		<sonar.issue.ignore.multicriteria.e1.ruleKey>java:S112</sonar.issue.ignore.multicriteria.e1.ruleKey>
+		<sonar.issue.ignore.multicriteria.e1.resourceKey>**/*TransactionManager.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
 	</properties>
 
 	<modules>

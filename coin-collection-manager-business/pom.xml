@@ -20,6 +20,13 @@
 			**/business/transaction/function/*.*,
 			**/business/service/exception/*.*,
 		</sonar.coverage.exclusions>
+		
+		<!-- duplicated code exclusion -->
+		<sonar.cpd.exclusions>
+			<!-- This file contains only one method overloaded 3 times for different types (without anchestor in common). 
+			It is obvious that has 3 replications. -->
+			**/business/transaction/manager/postgresql/PostgresTransactionManager.java
+		</sonar.cpd.exclusions>
 	</properties>
 
 	<dependencies>
