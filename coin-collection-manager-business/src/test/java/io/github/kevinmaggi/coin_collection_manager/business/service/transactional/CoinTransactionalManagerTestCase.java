@@ -51,7 +51,7 @@ class CoinTransactionalManagerTestCase {
 	
 	private UUID UUID_COIN = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 	private UUID UUID_ALBUM = UUID.fromString("123e4567-e89b-12d3-a456-426614174001");
-	private UUID UUID_NEW_ALBUM = UUID.fromString("123e4567-e89b-12d3-a456-426614174001");
+	private UUID UUID_NEW_ALBUM = UUID.fromString("123e4567-e89b-12d3-a456-426614174002");
 	
 	private int NUMBER_OF_SLOTS = 50;
 	private int OCCUPIED_SLOT = 10;
@@ -350,7 +350,8 @@ class CoinTransactionalManagerTestCase {
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
-				inOrder.verify(albumRepo, times(2)).findById(UUID_ALBUM);
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				inOrder.verify(albumRepo).findById(UUID_NEW_ALBUM);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 				verifyNoMoreInteractions(coinRepo);
@@ -373,7 +374,8 @@ class CoinTransactionalManagerTestCase {
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
-				inOrder.verify(albumRepo, times(2)).findById(UUID_ALBUM);
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				inOrder.verify(albumRepo).findById(UUID_NEW_ALBUM);
 				verify(SPIED_ALBUM_FULL).setOccupiedSlots(NUMBER_OF_SLOTS - 1);
 				verify(SPIED_ALBUM_NOT_FULL).setOccupiedSlots(OCCUPIED_SLOT + 1);
 				inOrder.verify(albumRepo).save(SPIED_ALBUM_FULL);
@@ -397,12 +399,11 @@ class CoinTransactionalManagerTestCase {
 				
 				InOrder inOrder = inOrder(tm, coinRepo, albumRepo, SPIED_COIN);
 				
-				assertThat(coinManager.moveCoin(SPIED_COIN, UUID_NEW_ALBUM)).isEqualTo(SPIED_COIN);
+				assertThat(coinManager.moveCoin(SPIED_COIN, UUID_ALBUM)).isEqualTo(SPIED_COIN);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
 				inOrder.verify(albumRepo, times(2)).findById(UUID_ALBUM);
-				inOrder.verify(SPIED_COIN).setAlbum(UUID_NEW_ALBUM);
 				inOrder.verify(coinRepo).save(SPIED_COIN);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
