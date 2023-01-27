@@ -109,33 +109,6 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 	}
 
 	/**
-	 * Updates an {@code Album} in the DB.
-	 * 
-	 * @param album		The album to update
-	 * @return			The updated album
-	 * @throws DatabaseException		if an error occurs during database querying
-	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
-	 */
-	@Override
-	public Album updateAlbum(Album album) throws DatabaseException, AlbumNotFoundException {
-		try {
-			return tm.doInTransaction(
-					(AlbumRepository albumRepo) -> {
-						if (album.getId() == null)
-							throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
-						Album dbAlbum = albumRepo.findById(album.getId());
-						if (dbAlbum != null)
-							return albumRepo.save(album);
-						else
-							throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
-					}
-					);
-		} catch (DatabaseOperationException e) {
-			throw new DatabaseException(DB_EXCEPTION_MSG, e);
-		}
-	}
-
-	/**
 	 * Removes an {@code Album} from the DB.
 	 * 
 	 * @param album		The album to remove
@@ -161,6 +134,35 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 						throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
 				}
 				);
+		} catch (DatabaseOperationException e) {
+			throw new DatabaseException(DB_EXCEPTION_MSG, e);
+		}
+	}
+	
+	/**
+	 * Updates an {@code Album} in the DB changing the location
+	 * 
+	 * @param album			The album to update
+	 * @param newLocation	The new location to set
+	 * @return				The updated album
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
+	 */
+	public Album moveAlbum(Album album, String newLocation) throws DatabaseException, AlbumNotFoundException {
+		try {
+			return tm.doInTransaction(
+					(AlbumRepository albumRepo) -> {
+						if (album.getId() == null)
+							throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
+						Album dbAlbum = albumRepo.findById(album.getId());
+						if (dbAlbum != null) {
+							album.setLocation(newLocation);
+							return albumRepo.save(album);
+						}
+						else
+							throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
+					}
+					);
 		} catch (DatabaseOperationException e) {
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}

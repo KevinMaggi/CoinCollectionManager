@@ -139,52 +139,6 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 	}
 
 	/**
-	 * Updates a {@code Coin} in the DB.
-	 * 
-	 * @param coin	The coin to update
-	 * @return		The updated coin
-	 * @throws DatabaseException		if an error occurs during database querying
-	 * @throws FullAlbumException		if try to add a coin to a full album
-	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
-	 */
-	@Override
-	public Coin updateCoin(Coin coin) throws DatabaseException, FullAlbumException, CoinNotFoundException {
-		try {
-			return tm.doInTransaction(
-					(CoinRepository coinRepo, AlbumRepository albumRepo) -> {
-						if (coin.getId() == null)
-							throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);
-						Coin dbCoin = coinRepo.findById(coin.getId());
-						if (dbCoin != null) {
-							// retrieve coin's old album from coin's record on the db
-							Album oldAlbum = albumRepo.findById(dbCoin.getAlbum());
-							// retrieve coin's new album directly from coin
-							Album newAlbum = albumRepo.findById(coin.getAlbum());
-							if (newAlbum.equals(oldAlbum)) {
-								return coinRepo.save(coin);
-							}
-							else {
-								if (newAlbum.getOccupiedSlots() < newAlbum.getNumberOfSlots()) {
-									oldAlbum.setOccupiedSlots(oldAlbum.getOccupiedSlots() - 1);
-									albumRepo.save(oldAlbum);
-									newAlbum.setOccupiedSlots(newAlbum.getOccupiedSlots() + 1);
-									albumRepo.save(newAlbum);
-									return coinRepo.save(coin);
-								}
-								else
-									throw new FullAlbumException(FULL_ALBUM_MSG);
-							}
-						}
-						else
-							throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);
-					}
-					);
-		} catch (DatabaseOperationException e) {
-			throw new DatabaseException(DB_EXCEPTION_MSG, e);
-		}
-	}
-
-	/**
 	 * Removes a {@code Coin} from the DB.
 	 * 
 	 * @param coin	The coin to remove
@@ -205,6 +159,54 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 							albumRepo.save(album);
 							coinRepo.delete(coin);
 							return null;
+						}
+						else
+							throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);
+					}
+					);
+		} catch (DatabaseOperationException e) {
+			throw new DatabaseException(DB_EXCEPTION_MSG, e);
+		}
+	}
+	
+	/**
+	 * Updates a {@code Coin} in the DB changing the album where it is located.
+	 * 
+	 * @param coin			The coin to update
+	 * @param newAlbumId	The album where to move it
+	 * @return				The updated coin
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws FullAlbumException		if try to add a coin to a full album
+	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
+	 */
+	public Coin moveCoin(Coin coin, UUID newAlbumId) throws DatabaseException, FullAlbumException, CoinNotFoundException {
+		try {
+			return tm.doInTransaction(
+					(CoinRepository coinRepo, AlbumRepository albumRepo) -> {
+						if (coin.getId() == null)
+							throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);
+						Coin dbCoin = coinRepo.findById(coin.getId());
+						if (dbCoin != null) {
+							// retrieve coin's old album from coin's record on the db
+							Album oldAlbum = albumRepo.findById(newAlbumId);
+							// retrieve coin's new album directly from coin
+							Album newAlbum = albumRepo.findById(coin.getAlbum());
+							if (newAlbum.equals(oldAlbum)) {
+								coin.setAlbum(newAlbumId);
+								return coinRepo.save(coin);
+							}
+							else {
+								if (newAlbum.getOccupiedSlots() < newAlbum.getNumberOfSlots()) {
+									oldAlbum.setOccupiedSlots(oldAlbum.getOccupiedSlots() - 1);
+									albumRepo.save(oldAlbum);
+									newAlbum.setOccupiedSlots(newAlbum.getOccupiedSlots() + 1);
+									albumRepo.save(newAlbum);
+									coin.setAlbum(newAlbumId);
+									return coinRepo.save(coin);
+								}
+								else
+									throw new FullAlbumException(FULL_ALBUM_MSG);
+							}
 						}
 						else
 							throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);

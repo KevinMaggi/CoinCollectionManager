@@ -52,6 +52,7 @@ class AlbumTransactionalManagerTestCase {
 	
 	private int NUMBER_OF_SLOTS = 50;
 	private int OCCUPIED_SLOT = 10;
+	private final String NEW_LOCATION = "new location";
 	private String NAME = "2€ commemorative";
 	private Album ALBUM_1 = new Album(NAME, 1, "Armadio", NUMBER_OF_SLOTS, NUMBER_OF_SLOTS);
 	private Album ALBUM_2 = new Album(NAME, 2, "Armadio", NUMBER_OF_SLOTS, OCCUPIED_SLOT);
@@ -180,60 +181,6 @@ class AlbumTransactionalManagerTestCase {
 		}
 		
 		@Nested
-		@DisplayName("Tests for method AlbumTransactionalManager::updateAlbum when the code is executed")
-		class updateAlbum {
-			@Test
-			@DisplayName("Test that code is executed and an exception is thrown if the album is not yet in db")
-			void testUpdateAlbumWhenItIsNotYetPersistedShouldThrowException() {
-				when(albumRepo.findById(any())).thenThrow(IllegalArgumentException.class);
-				
-				assertThatThrownBy(() -> albumManager.updateAlbum(ALBUM_1))
-					.isInstanceOf(AlbumNotFoundException.class)
-					.hasMessage(ALBUM_NOT_FOUND_MSG);
-				
-				verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-			}
-			
-			@Test
-			@DisplayName("Test that code is executed and an exception is thrown if the album is not in db anymore")
-			void testUpdateAlbumWhenItIsNotAnymorePersistedShouldThrowException() {
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
-				when(albumRepo.findById(any())).thenReturn(null);
-				
-				InOrder inOrder = inOrder(tm, albumRepo);
-				
-				assertThatThrownBy(() -> albumManager.updateAlbum(SPIED_ALBUM))
-					.isInstanceOf(AlbumNotFoundException.class)
-					.hasMessage(ALBUM_NOT_FOUND_MSG);
-				
-				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-				inOrder.verify(albumRepo).findById(UUID_ALBUM);
-				verifyNoMoreInteractions(tm);
-				verifyNoMoreInteractions(albumRepo);
-			}
-			
-			@Test
-			@DisplayName("Test that code is executed without exception")
-			void testUpdateAlbumWhenNoExceptionIsThrown() {
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
-				when(albumRepo.save(SPIED_ALBUM)).thenReturn(SPIED_ALBUM);
-				
-				InOrder inOrder = inOrder(tm, albumRepo);
-				
-				assertThat(albumManager.updateAlbum(SPIED_ALBUM)).isEqualTo(SPIED_ALBUM);
-				
-				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-				inOrder.verify(albumRepo).findById(UUID_ALBUM);
-				inOrder.verify(albumRepo).save(SPIED_ALBUM);
-				verifyNoMoreInteractions(tm);
-				verifyNoMoreInteractions(albumRepo);
-			}
-		}
-		
-		@Nested
 		@DisplayName("Tests for method AlbumTransactionalManager::deleteAlbum when the code is executed")
 		class deleteAlbum {
 			@Test
@@ -287,6 +234,61 @@ class AlbumTransactionalManagerTestCase {
 				inOrder.verify(coinRepo).delete(COIN_1);
 				inOrder.verify(coinRepo).delete(COIN_2);
 				inOrder.verify(albumRepo).delete(SPIED_ALBUM);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
+		}
+		
+		@Nested
+		@DisplayName("Tests for method AlbumTransactionalManager::moveAlbum when the code is executed")
+		class moveAlbum {
+			@Test
+			@DisplayName("Test that code is executed and an exception is thrown if the album is not yet in db")
+			void testMoveAlbumWhenItIsNotYetPersistedShouldThrowException() {
+				when(albumRepo.findById(any())).thenThrow(IllegalArgumentException.class);
+				
+				assertThatThrownBy(() -> albumManager.moveAlbum(ALBUM_1, NEW_LOCATION))
+					.isInstanceOf(AlbumNotFoundException.class)
+					.hasMessage(ALBUM_NOT_FOUND_MSG);
+				
+				verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+			}
+			
+			@Test
+			@DisplayName("Test that code is executed and an exception is thrown if the album is not in db anymore")
+			void testMoveAlbumWhenItIsNotAnymorePersistedShouldThrowException() {
+				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
+				when(albumRepo.findById(any())).thenReturn(null);
+				
+				InOrder inOrder = inOrder(tm, albumRepo);
+				
+				assertThatThrownBy(() -> albumManager.moveAlbum(SPIED_ALBUM, NEW_LOCATION))
+					.isInstanceOf(AlbumNotFoundException.class)
+					.hasMessage(ALBUM_NOT_FOUND_MSG);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
+			
+			@Test
+			@DisplayName("Test that code is executed without exception")
+			void testMoveAlbumWhenNoExceptionIsThrown() {
+				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
+				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
+				when(albumRepo.save(SPIED_ALBUM)).thenReturn(SPIED_ALBUM);
+				
+				InOrder inOrder = inOrder(tm, albumRepo, SPIED_ALBUM);
+				
+				assertThat(albumManager.moveAlbum(SPIED_ALBUM, NEW_LOCATION).getLocation()).isEqualTo(NEW_LOCATION);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				inOrder.verify(SPIED_ALBUM).setLocation(NEW_LOCATION);
+				inOrder.verify(albumRepo).save(SPIED_ALBUM);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 			}
@@ -353,17 +355,6 @@ class AlbumTransactionalManagerTestCase {
 		}
 		
 		@Test
-		@DisplayName("Test AlbumTransactionalManager::updateAlbum when exception is thrown")
-		void testUpdateAlbumThrownException() {
-			assertThatThrownBy(() -> albumManager.updateAlbum(ALBUM_1))
-				.isInstanceOf(DatabaseException.class)
-				.hasMessage(DB_EXCEPTION_MSG)
-				.hasCauseInstanceOf(DatabaseOperationException.class);
-			
-			verify(tm, times(1)).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-		}
-		
-		@Test
 		@DisplayName("Test AlbumTransactionalManager::deleteAlbum when exception is thrown")
 		void testDeleteAlbumThrownException() {
 			assertThatThrownBy(() -> albumManager.deleteAlbum(ALBUM_1))
@@ -372,6 +363,17 @@ class AlbumTransactionalManagerTestCase {
 				.hasCauseInstanceOf(DatabaseOperationException.class);
 			
 			verify(tm, times(1)).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
+		}
+		
+		@Test
+		@DisplayName("Test AlbumTransactionalManager::moveAlbum when exception is thrown")
+		void testUpdateAlbumThrownException() {
+			assertThatThrownBy(() -> albumManager.moveAlbum(ALBUM_1, NEW_LOCATION))
+				.isInstanceOf(DatabaseException.class)
+				.hasMessage(DB_EXCEPTION_MSG)
+				.hasCauseInstanceOf(DatabaseOperationException.class);
+			
+			verify(tm, times(1)).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
 		}
 	}
 	
