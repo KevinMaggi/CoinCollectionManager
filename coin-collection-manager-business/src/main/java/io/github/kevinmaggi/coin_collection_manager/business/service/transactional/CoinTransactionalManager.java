@@ -188,11 +188,10 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 						Coin dbCoin = coinRepo.findById(coin.getId());
 						if (dbCoin != null) {
 							// retrieve coin's old album from coin's record on the db
-							Album oldAlbum = albumRepo.findById(newAlbumId);
+							Album oldAlbum = albumRepo.findById(coin.getAlbum());
 							// retrieve coin's new album directly from coin
-							Album newAlbum = albumRepo.findById(coin.getAlbum());
+							Album newAlbum = albumRepo.findById(newAlbumId);
 							if (newAlbum.equals(oldAlbum)) {
-								coin.setAlbum(newAlbumId);
 								return coinRepo.save(coin);
 							}
 							else {
