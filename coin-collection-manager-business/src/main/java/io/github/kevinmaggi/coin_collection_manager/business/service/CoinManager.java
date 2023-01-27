@@ -60,17 +60,6 @@ public interface CoinManager {
 	public Coin addCoin(Coin coin) throws DatabaseException, FullAlbumException, DuplicateCoinException;
 	
 	/**
-	 * Updates a {@code Coin} in the DB.
-	 * 
-	 * @param coin	The coin to update
-	 * @return		The updated coin
-	 * @throws DatabaseException		if an error occurs during database querying
-	 * @throws FullAlbumException		if try to add a coin to a full album
-	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
-	 */
-	public Coin updateCoin(Coin coin) throws DatabaseException, FullAlbumException, CoinNotFoundException;
-	
-	/**
 	 * Removes a {@code Coin} from the DB.
 	 * 
 	 * @param coin	The coin to remove
@@ -78,4 +67,16 @@ public interface CoinManager {
 	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
 	 */
 	public void deleteCoin(Coin coin) throws DatabaseException, CoinNotFoundException;
+	
+	/**
+	 * Updates a {@code Coin} in the DB changing the album where it is located.
+	 * 
+	 * @param coin			The coin to update
+	 * @param newAlbumId	The album where to move it
+	 * @return				The updated coin
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws FullAlbumException		if try to add a coin to a full album
+	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
+	 */
+	public Coin moveCoin(Coin coin, UUID newAlbumId) throws DatabaseException, FullAlbumException, CoinNotFoundException;
 }

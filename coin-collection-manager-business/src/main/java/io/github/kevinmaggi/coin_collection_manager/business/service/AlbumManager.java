@@ -50,16 +50,6 @@ public interface AlbumManager {
 	public Album addAlbum(Album album) throws DatabaseException, DuplicateAlbumException;
 	
 	/**
-	 * Updates an {@code Album} in the DB.
-	 * 
-	 * @param album		The album to update
-	 * @return			The updated album
-	 * @throws DatabaseException		if an error occurs during database querying
-	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
-	 */
-	public Album updateAlbum(Album album) throws DatabaseException, AlbumNotFoundException;
-	
-	/**
 	 * Removes an {@code Album} from the DB.
 	 * 
 	 * @param album		The album to remove
@@ -67,4 +57,15 @@ public interface AlbumManager {
 	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
 	 */
 	public void deleteAlbum(Album album) throws DatabaseException, AlbumNotFoundException;
+	
+	/**
+	 * Updates an {@code Album} in the DB changing the location
+	 * 
+	 * @param album			The album to update
+	 * @param newLocation	The new location to set
+	 * @return				The updated album
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
+	 */
+	public Album moveAlbum(Album album, String newLocation) throws DatabaseException, AlbumNotFoundException;
 }
