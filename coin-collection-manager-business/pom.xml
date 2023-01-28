@@ -104,6 +104,25 @@
 						</excludes>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<configuration>
+						<timeoutConstant>12000</timeoutConstant>
+						<timeoutFactor>2</timeoutFactor>
+						<targetClasses>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
+						</targetTests>
+						<excludedTestClasses>
+							<param>**.*IT</param>
+						</excludedTestClasses>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		
