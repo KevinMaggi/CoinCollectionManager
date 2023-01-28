@@ -104,26 +104,41 @@
 						</excludes>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<configuration>
+						<timeoutConstant>12000</timeoutConstant>
+						<timeoutFactor>2</timeoutFactor>
+						<targetClasses>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
+						</targetTests>
+						<excludedTestClasses>
+							<param>**.*IT</param>
+						</excludedTestClasses>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
-	
-	<profiles>
-		<profile>
-			<id>skip-testcontainers</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<excludes>
-								<exclude>**/Postgres*.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

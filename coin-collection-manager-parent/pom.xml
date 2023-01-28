@@ -33,11 +33,19 @@
 		<compiler.version>3.10.1</compiler.version>
 		<surefire.version>2.22.2</surefire.version>
 		<site.version>3.12.1</site.version>
+		<build-helper.version>3.3.0</build-helper.version>
+		<failsafe.version>2.22.2</failsafe.version>
 		<jacoco.version>0.8.8</jacoco.version>
 		<pitest.version>1.10.3</pitest.version>
 		<pitest.junit5.version>1.0.0</pitest.junit5.version>
 		<sonar.version>3.9.1.2184</sonar.version>
 		<coveralls.version>4.3.0</coveralls.version>
+		<docker-plugin.version>0.40.3</docker-plugin.version>
+		
+		<!-- Docker postgres configuration -->
+		<postgres.usr>postgres-user</postgres.usr>
+		<postgres.pw>postgres-password</postgres.pw>
+		<postgres.db>collection</postgres.db>
 	</properties>
 	
 	<dependencyManagement>
@@ -112,6 +120,43 @@
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${site.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>${build-helper.version}</version>
+					<executions>
+						<execution>
+							<id>add-test-source</id>
+							<phase>generate-test-sources</phase>
+							<goals>
+								<goal>add-test-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>src/it/java</source>
+								</sources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${failsafe.version}</version>
+					<configuration>
+						<systemPropertyVariables>
+							<postgres.port>${postgres.mapped.port}</postgres.port>
+						</systemPropertyVariables>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
@@ -196,6 +241,55 @@
 							<version>2.3.1</version>
 						</dependency>
 					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker-plugin.version}</version>
+					<configuration>
+						<images>
+							<image>
+								<name>postgres:15.1</name>
+								<alias>postgres</alias>
+								<run>
+									<ports>
+										<port>postgres.mapped.port:5432</port>
+									</ports>
+									<env>
+										<POSTGRES_USER>${postgres.usr}</POSTGRES_USER>
+										<POSTGRES_PASSWORD>${postgres.pw}</POSTGRES_PASSWORD>
+										<POSTGRES_DB>${postgres.db}</POSTGRES_DB>
+									</env>
+									<wait>
+										<!-- Also "[1] LOG:  " is needed because when the container is started and 
+										it have to create the volume, that message is shown twice -->
+										<log>\[1\] LOG:  database system is ready to accept connections</log>
+										<time>20000</time>
+									</wait>
+									<log>
+										<prefix>Postgres</prefix>
+										<color>cyan</color>
+									</log>
+								</run>
+							</image>
+						</images>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker-start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker-stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
