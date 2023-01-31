@@ -289,7 +289,7 @@ public class CoinPresenterTestCase {
 		@Test
 		@DisplayName("Test when manager throws coin not found exception")
 		void testDeleteCoinCallViewErrorIfManagerThrowsCoinNotFoundException() {
-			List<Coin> list = Arrays.asList(COIN_1, COIN_2);
+			List<Coin> list = Arrays.asList(COIN_2);
 			when(manager.findAllCoins()).thenReturn(list);
 			doThrow(CoinNotFoundException.class).when(manager).deleteCoin(COIN_1);
 			
@@ -370,7 +370,7 @@ public class CoinPresenterTestCase {
 		@Test
 		@DisplayName("Test when manager throws coin not found exception")
 		void testDeleteCoinCallViewErrorIfManagerThrowsCoinNotFoundException() {
-			List<Coin> list = Arrays.asList(COIN_1, COIN_2);
+			List<Coin> list = Arrays.asList(COIN_2);
 			when(manager.findAllCoins()).thenReturn(list);
 			Album spiedAlbum = spy(ALBUM_2);
 			when(spiedAlbum.getId()).thenReturn(UUID_ALBUM_2);
