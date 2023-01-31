@@ -27,6 +27,7 @@
 		<module>../coin-collection-manager-parent</module>
 		<module>../coin-collection-manager-core</module>
 		<module>../coin-collection-manager-business</module>
+		<module>../coin-collection-manager-ui</module>
 	</modules>
 	
 	<build>

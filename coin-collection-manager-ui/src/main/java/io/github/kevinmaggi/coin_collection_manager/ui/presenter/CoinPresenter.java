@@ -20,11 +20,20 @@ public class CoinPresenter extends Presenter {
 	
 	private CoinManager manager;
 
+	/**
+	 * Simple constructor.
+	 * 
+	 * @param view		view to update at each action
+	 * @param manager	service layer to use for Coin entities
+	 */
 	public CoinPresenter(View view, CoinManager manager) {
 		super(view);
 		this.manager = manager;
 	}
 
+	/**
+	 * Retrieves all coins from DB and updates the view either with the list of coins or an error.
+	 */
 	public void getAllCoins() {
 		try {
 			view.showAllCoins(manager.findAllCoins());
@@ -33,6 +42,11 @@ public class CoinPresenter extends Presenter {
 		}
 	}
 	
+	/**
+	 * Retrieves all coins from DB that have place in an album and updates the view either with the list of coins or an error.
+	 * 
+	 * @param album		album to show its content
+	 */
 	public void getCoinsByAlbum(Album album) {
 		try {
 			view.showCoinsInAlbum(manager.findCoinsByAlbum(album.getId()), album);
@@ -41,6 +55,11 @@ public class CoinPresenter extends Presenter {
 		}
 	}
 	
+	/**
+	 * Retrieves all coins from DB that have a specific description updates the view either with the list of coins or an error.
+	 * 
+	 * @param description	description to match
+	 */
 	public void searchCoins(String description) {
 		try {
 			view.showSearchedCoins(manager.findCoinsByDescription(description), description);
@@ -49,6 +68,11 @@ public class CoinPresenter extends Presenter {
 		}
 	}
 	
+	/**
+	 * Adds a coin to the DB and updates the view calling appropriate feedback and invoking a success or error alert.
+	 * 
+	 * @param coin		coin to add
+	 */
 	public synchronized void addCoin(Coin coin) {
 		List<Coin> actualCoins = Collections.emptyList();
 		try {
@@ -66,6 +90,11 @@ public class CoinPresenter extends Presenter {
 		}
 	}
 	
+	/**
+	 * Delete a coin from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
+	 * 
+	 * @param coin		coin to delete
+	 */
 	public synchronized void deleteCoin(Coin coin) {
 		List<Coin> actualCoins = Collections.emptyList();
 		try {
@@ -81,6 +110,12 @@ public class CoinPresenter extends Presenter {
 		}
 	}
 	
+	/**
+	 * Move a coin from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
+	 * 
+	 * @param coin			coin to move
+	 * @param newAlbum		new album into which move the coin
+	 */
 	public synchronized void moveCoin(Coin coin, Album newAlbum) {
 		List<Coin> actualCoins = Collections.emptyList();
 		try {
