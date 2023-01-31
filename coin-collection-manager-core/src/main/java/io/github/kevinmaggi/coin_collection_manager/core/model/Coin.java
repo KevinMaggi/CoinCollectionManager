@@ -60,7 +60,7 @@ public class Coin extends BaseEntity {
 	 * Constructs a new {@code Coin} specifying all its characteristics.
 	 * 
 	 * @param grade			{@code Grade} of the coin
-	 * @param country		Country fo the coin
+	 * @param country		Country of the coin
 	 * @param mintingYear	Minting year of the coin
 	 * @param description	Description of the coin
 	 * @param note			Possible notes of the coin
@@ -126,6 +126,11 @@ public class Coin extends BaseEntity {
 
 	public void setAlbum(UUID album) {
 		this.album = album;
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + country + " " + mintingYear + "] {" + grade.toString() + "} " + description + " (" + note + ")";
 	}
 	
 	@Override
