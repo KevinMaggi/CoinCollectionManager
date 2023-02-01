@@ -188,7 +188,8 @@ class TransactionalServiceWithPostgresIT {
 		@Test
 		@DisplayName("Test the retrieval of an album by id in case of unsuccess")
 		void testTheRetrievalOfAnAlbumByIdInCaseOfUnsuccess() {
-			assertThat(albumManager.findAlbumById(INVALID_UUID)).isNull();
+			assertThatThrownBy(() -> albumManager.findAlbumById(INVALID_UUID))
+				.isInstanceOf(AlbumNotFoundException.class);
 		}
 		
 		@Test
@@ -209,7 +210,8 @@ class TransactionalServiceWithPostgresIT {
 			String name = ALBUM_COMM_1.getName();
 			int volume = ALBUM_COMM_1.getVolume();
 			
-			assertThat(albumManager.findAlbumByNameAndVolume(name, volume)).isNull();
+			assertThatThrownBy(() -> albumManager.findAlbumByNameAndVolume(name, volume))
+			.isInstanceOf(AlbumNotFoundException.class);
 		}
 	}
 	
@@ -393,7 +395,8 @@ class TransactionalServiceWithPostgresIT {
 		@Test
 		@DisplayName("Test the retrieval of a coin by id in case of unsuccess")
 		void testTheRetrievalOfACoinByIdInCaseOfUnsuccess() {
-			assertThat(coinManager.findCoinById(INVALID_UUID)).isNull();
+			assertThatThrownBy(() -> coinManager.findCoinById(INVALID_UUID))
+				.isInstanceOf(CoinNotFoundException.class);
 		}
 		
 		@Test
