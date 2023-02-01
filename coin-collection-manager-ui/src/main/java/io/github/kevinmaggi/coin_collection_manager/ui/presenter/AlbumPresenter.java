@@ -47,7 +47,7 @@ public class AlbumPresenter extends Presenter {
 	 * 
 	 * @param id	id of the album to retrieve
 	 */
-	public void getAlbum(UUID id) {
+	public synchronized void getAlbum(UUID id) {
 		List<Album> actualAlbums = Collections.emptyList();
 		try {
 			actualAlbums = manager.findAllAlbums();
@@ -65,7 +65,7 @@ public class AlbumPresenter extends Presenter {
 	 * @param name		name to match
 	 * @param volume	volume to match
 	 */
-	public void searchAlbum(String name, int volume) {
+	public synchronized void searchAlbum(String name, int volume) {
 		List<Album> actualAlbums = Collections.emptyList();
 		try {
 			actualAlbums = manager.findAllAlbums();
