@@ -31,6 +31,9 @@ public abstract class BaseEntity {
 	}
 	
 	@Override
+	public abstract String toString();
+	
+	@Override
 	public abstract int hashCode();
 	
 	@Override
