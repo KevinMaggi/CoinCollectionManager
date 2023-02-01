@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,8 @@ public class AlbumPresenterTestCase {
 	private String ALBUM_MOVED_PREFIX = "Album successfully moved: ";
 	private String DUPLICATED_ALBUM_MSG = "This album already exists";
 	private String ALBUM_NOT_FOUND_MSG = "This album doesn't exist";
+	
+	private UUID UUID_ALBUM_1 = UUID.fromString("123e4567-e89b-12d3-a456-426614174001");
 	
 	private Album ALBUM_1 = new Album("2€ commemorative", 1, "Armadio", 50, 25);
 	private Album ALBUM_2 = new Album("Pre-euro", 1, "Armadio", 50, 25);
@@ -88,6 +91,61 @@ public class AlbumPresenterTestCase {
 	}
 	
 	@Nested
+	@DisplayName("Tests for AlbumPresenter::getAlbum method")
+	class GetAlbum {
+		@Test
+		@DisplayName("Test when manager doesn't throw exception")
+		void testGetAlbumCallViewIfManagerDoesNotThrowException() {
+			when(manager.findAlbumById(UUID_ALBUM_1)).thenReturn(ALBUM_1);
+			
+			InOrder inOrder = inOrder(view, manager);
+			
+			presenter.getAlbum(UUID_ALBUM_1);
+			
+			inOrder.verify(manager).findAllAlbums();
+			inOrder.verify(manager).findAlbumById(UUID_ALBUM_1);
+			inOrder.verify(view).showAlbum(ALBUM_1);
+			verifyNoMoreInteractions(manager);
+			verifyNoMoreInteractions(view);
+		}
+		
+		@Test
+		@DisplayName("Test when manager throws DB exception")
+		void testGetAlbumCallViewErrorIfManagerThrowsDbException() {
+			when(manager.findAlbumById(UUID_ALBUM_1)).thenThrow(DatabaseException.class);
+			
+			InOrder inOrder = inOrder(view, manager);
+			
+			presenter.getAlbum(UUID_ALBUM_1);
+			
+			inOrder.verify(manager).findAllAlbums();
+			inOrder.verify(manager).findAlbumById(UUID_ALBUM_1);
+			inOrder.verify(view).showError(DB_RETRIEVE_ERR_MSG);
+			verifyNoMoreInteractions(manager);
+			verifyNoMoreInteractions(view);
+		}
+		
+		@Test
+		@DisplayName("Test when manager throws Album not found exception")
+		void testGetAlbumCallViewErrorIfManagerThrowsAlbumNotFoundException() {
+			List<Album> list = Arrays.asList(ALBUM_2);
+			when(manager.findAllAlbums()).thenReturn(list);
+			when(manager.findAlbumById(UUID_ALBUM_1)).thenThrow(AlbumNotFoundException.class);
+			
+			InOrder inOrder = inOrder(view, manager);
+			
+			presenter.getAlbum(UUID_ALBUM_1);
+			
+			inOrder.verify(manager).findAllAlbums();
+			inOrder.verify(manager).findAlbumById(UUID_ALBUM_1);
+			inOrder.verify(view).showError(ALBUM_NOT_FOUND_MSG);
+			inOrder.verify(view).showAllAlbums(list);
+			verifyNoMoreInteractions(manager);
+			verifyNoMoreInteractions(view);
+		}
+	}
+	
+	@Nested
 	@DisplayName("Tests for AlbumPresenter::searchAlbum method")
 	class SearchAlbum {
 		String keyName = "2€ commemorative";
@@ -103,6 +161,7 @@ public class AlbumPresenterTestCase {
 			
 			presenter.searchAlbum(keyName, keyVol);
 			
+			inOrder.verify(manager).findAllAlbums();
 			inOrder.verify(manager).findAlbumByNameAndVolume(keyName, keyVol);
 			inOrder.verify(view).showAllAlbums(list);
 			verifyNoMoreInteractions(manager);
@@ -110,16 +169,36 @@ public class AlbumPresenterTestCase {
 		}
 		
 		@Test
-		@DisplayName("Test when manager throws exception")
-		void testSearchAlbumCallViewErrorIfManagerThrowsException() {
+		@DisplayName("Test when manager throws DB exception")
+		void testSearchAlbumCallViewErrorIfManagerThrowsDbException() {
 			when(manager.findAlbumByNameAndVolume(keyName, keyVol)).thenThrow(DatabaseException.class);
 			
 			InOrder inOrder = inOrder(view, manager);
 			
 			presenter.searchAlbum(keyName, keyVol);
 			
+			inOrder.verify(manager).findAllAlbums();
 			inOrder.verify(manager).findAlbumByNameAndVolume(keyName, keyVol);
 			inOrder.verify(view).showError(DB_RETRIEVE_ERR_MSG);
+			verifyNoMoreInteractions(manager);
+			verifyNoMoreInteractions(view);
+		}
+		
+		@Test
+		@DisplayName("Test when manager throws Album not found exception")
+		void testSearchAlbumCallViewErrorIfManagerThrowsAlbumNotFoundException() {
+			List<Album> list = Arrays.asList(ALBUM_2);
+			when(manager.findAllAlbums()).thenReturn(list);
+			when(manager.findAlbumByNameAndVolume(keyName, keyVol)).thenThrow(AlbumNotFoundException.class);
+			
+			InOrder inOrder = inOrder(view, manager);
+			
+			presenter.searchAlbum(keyName, keyVol);
+			
+			inOrder.verify(manager).findAllAlbums();
+			inOrder.verify(manager).findAlbumByNameAndVolume(keyName, keyVol);
+			inOrder.verify(view).showError(ALBUM_NOT_FOUND_MSG);
+			inOrder.verify(view).showAllAlbums(list);
 			verifyNoMoreInteractions(manager);
 			verifyNoMoreInteractions(view);
 		}

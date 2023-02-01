@@ -3,6 +3,7 @@ package io.github.kevinmaggi.coin_collection_manager.ui.presenter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import io.github.kevinmaggi.coin_collection_manager.business.service.AlbumManager;
 import io.github.kevinmaggi.coin_collection_manager.business.service.exception.AlbumNotFoundException;
@@ -42,16 +43,37 @@ public class AlbumPresenter extends Presenter {
 	}
 	
 	/**
+	 * Retrieves a specific album from DB and updates the view either with the album or an error.
+	 * 
+	 * @param id	id of the album to retrieve
+	 */
+	public void getAlbum(UUID id) {
+		List<Album> actualAlbums = Collections.emptyList();
+		try {
+			actualAlbums = manager.findAllAlbums();
+			view.showAlbum(manager.findAlbumById(id));
+		} catch(DatabaseException e) {
+			view.showError(DB_RETRIEVE_ERR_MSG);
+		} catch(AlbumNotFoundException e) {
+			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
+		}
+	}
+	
+	/**
 	 * Retrieves the album from DB that has specific name and volume and updates the view either with the list of albums or an error.
 	 * 
 	 * @param name		name to match
 	 * @param volume	volume to match
 	 */
 	public void searchAlbum(String name, int volume) {
+		List<Album> actualAlbums = Collections.emptyList();
 		try {
+			actualAlbums = manager.findAllAlbums();
 			view.showAllAlbums(Arrays.asList(manager.findAlbumByNameAndVolume(name, volume)));
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
+		} catch(AlbumNotFoundException e) {
+			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
 		}
 	}
 	
@@ -90,8 +112,7 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 		} catch(AlbumNotFoundException e) {
-			view.showError("This album doesn't exist");
-			view.showAllAlbums(actualAlbums);
+			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
 		}
 	}
 	
@@ -111,8 +132,12 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 		} catch(AlbumNotFoundException e) {
-			view.showError("This album doesn't exist");
-			view.showAllAlbums(actualAlbums);
+			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
 		}
+	}
+	
+	private void updateViewAlbumsListAfterAlbumNotFound(List<Album> list) {
+		view.showError("This album doesn't exist");
+		view.showAllAlbums(list);
 	}
 }
