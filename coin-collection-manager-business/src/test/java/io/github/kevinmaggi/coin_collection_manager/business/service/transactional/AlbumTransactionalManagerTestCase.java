@@ -113,34 +113,76 @@ class AlbumTransactionalManagerTestCase {
 			verifyNoMoreInteractions(albumRepo);
 		}
 		
-		@Test
+		@Nested
 		@DisplayName("Test AlbumTransactionalManager::findAlbumById when the code is executed")
-		void testFindAlbumByIdExecutedCode() {
-			when(albumRepo.findById(any())).thenReturn(ALBUM_1);
+		class FindAlbumById {
+			@Test
+			@DisplayName("Test that code is executed and an exception is thrown if the album doesn't exists")
+			void testFindAlbumByNameAndVolumeWhenAlbumDoesNotExistShouldThrowException() {
+				when(albumRepo.findById(any())).thenReturn(null);
+				
+				InOrder inOrder = inOrder(tm, albumRepo);
+				
+				assertThatThrownBy(() -> albumManager.findAlbumById(UUID_ALBUM))
+					.isInstanceOf(AlbumNotFoundException.class)
+					.hasMessage(ALBUM_NOT_FOUND_MSG);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
 			
-			InOrder inOrder = inOrder(tm, albumRepo);
-			
-			assertThat(albumManager.findAlbumById(UUID_ALBUM)).isEqualTo(ALBUM_1);
-			
-			inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-			inOrder.verify(albumRepo).findById(UUID_ALBUM);
-			verifyNoMoreInteractions(tm);
-			verifyNoMoreInteractions(albumRepo);
+			@Test
+			@DisplayName("Test that code is executed without exception")
+			void testFindAlbumByIdExecutedCode() {
+				when(albumRepo.findById(any())).thenReturn(ALBUM_1);
+				
+				InOrder inOrder = inOrder(tm, albumRepo);
+				
+				assertThat(albumManager.findAlbumById(UUID_ALBUM)).isEqualTo(ALBUM_1);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findById(UUID_ALBUM);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
 		}
 		
-		@Test
+		@Nested
 		@DisplayName("Test AlbumTransactionalManager::findAlbumByNameAndVolume when the code is executed")
-		void testFindAlbumByNameAndVolumeExecutedCode() {
-			when(albumRepo.findByNameAndVolume(any(), anyInt())).thenReturn(ALBUM_1);
+		class FindAlbumByNameAndVolume {
+			@Test
+			@DisplayName("Test that code is executed and an exception is thrown if the album doesn't exists")
+			void testFindAlbumByNameAndVolumeWhenAlbumDoesNotExistShouldThrowException() {
+				when(albumRepo.findByNameAndVolume(any(), anyInt())).thenReturn(null);
+				
+				InOrder inOrder = inOrder(tm, albumRepo);
+				
+				assertThatThrownBy(() -> albumManager.findAlbumByNameAndVolume(NAME, 1))
+					.isInstanceOf(AlbumNotFoundException.class)
+					.hasMessage(ALBUM_NOT_FOUND_MSG);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findByNameAndVolume(ALBUM_1.getName(), ALBUM_1.getVolume());
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
 			
-			InOrder inOrder = inOrder(tm, albumRepo);
-			
-			assertThat(albumManager.findAlbumByNameAndVolume(NAME, 1)).isEqualTo(ALBUM_1);
-			
-			inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
-			inOrder.verify(albumRepo).findByNameAndVolume(NAME, 1);
-			verifyNoMoreInteractions(tm);
-			verifyNoMoreInteractions(albumRepo);
+			@Test
+			@DisplayName("Test that code is executed without exception")
+			void testFindAlbumByNameAndVolumeExecutedCode() {
+				when(albumRepo.findByNameAndVolume(any(), anyInt())).thenReturn(ALBUM_1);
+				
+				InOrder inOrder = inOrder(tm, albumRepo);
+				
+				assertThat(albumManager.findAlbumByNameAndVolume(NAME, 1)).isEqualTo(ALBUM_1);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
+				inOrder.verify(albumRepo).findByNameAndVolume(NAME, 1);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(albumRepo);
+			}
 		}
 		
 		@Nested
