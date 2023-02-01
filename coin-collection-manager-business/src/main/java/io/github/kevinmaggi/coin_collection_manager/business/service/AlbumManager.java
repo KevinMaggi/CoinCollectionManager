@@ -25,9 +25,10 @@ public interface AlbumManager {
 	 * 
 	 * @param id	Id of the album
 	 * @return		The album
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if no album correspond to the id
 	 */
-	public Album findAlbumById(UUID id) throws DatabaseException;
+	public Album findAlbumById(UUID id) throws DatabaseException, AlbumNotFoundException;
 	
 	/**
 	 * Finds an {@code Album} with specific name and volume.
@@ -35,9 +36,10 @@ public interface AlbumManager {
 	 * @param name		The name
 	 * @param volume	The volume
 	 * @return			The coin
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if no album correspond to the search key
 	 */
-	public Album findAlbumByNameAndVolume(String name, int volume) throws DatabaseException;
+	public Album findAlbumByNameAndVolume(String name, int volume) throws DatabaseException, AlbumNotFoundException;
 	
 	/**
 	 * Adds an {@code Album} to the DB.

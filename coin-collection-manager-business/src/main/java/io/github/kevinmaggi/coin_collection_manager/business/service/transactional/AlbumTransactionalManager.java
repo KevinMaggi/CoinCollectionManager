@@ -51,14 +51,19 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 	 * 
 	 * @param id	Id of the album
 	 * @return		The album
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if no album correspond to the id
 	 */
 	@Override
-	public Album findAlbumById(UUID id) throws DatabaseException {
+	public Album findAlbumById(UUID id) throws DatabaseException, AlbumNotFoundException {
 		try {
-			return tm.doInTransaction(
-					(AlbumRepository albumRepo) -> albumRepo.findById(id)
-					);
+			Album returned = tm.doInTransaction(
+								(AlbumRepository albumRepo) -> albumRepo.findById(id)
+								);
+			if (returned == null)
+				throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
+			else
+				return returned;
 		} catch (DatabaseOperationException e) {
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}
@@ -70,14 +75,19 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 	 * @param name		The name
 	 * @param volume	The volume
 	 * @return			The coin
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws AlbumNotFoundException	if no album correspond to the search key
 	 */
 	@Override
-	public Album findAlbumByNameAndVolume(String name, int volume) throws DatabaseException {
+	public Album findAlbumByNameAndVolume(String name, int volume) throws DatabaseException, AlbumNotFoundException {
 		try {
-			return tm.doInTransaction(
-					(AlbumRepository albumRepo) -> albumRepo.findByNameAndVolume(name, volume)
-					);
+			Album returned = tm.doInTransaction(
+								(AlbumRepository albumRepo) -> albumRepo.findByNameAndVolume(name, volume)
+								);
+			if (returned == null)
+				throw new AlbumNotFoundException(ALBUM_NOT_FOUND_MSG);
+			else
+				return returned;
 		} catch (DatabaseOperationException e) {
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}

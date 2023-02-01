@@ -26,9 +26,10 @@ public interface CoinManager {
 	 * 
 	 * @param id	Id of the coin
 	 * @return		The coin
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws CoinNotFoundException	if no coin corresponds to the id
 	 */
-	public Coin findCoinById(UUID id) throws DatabaseException;
+	public Coin findCoinById(UUID id) throws DatabaseException, CoinNotFoundException;
 	
 	/**
 	 * Finds {@code Coin}s contained in an {@code Album}.

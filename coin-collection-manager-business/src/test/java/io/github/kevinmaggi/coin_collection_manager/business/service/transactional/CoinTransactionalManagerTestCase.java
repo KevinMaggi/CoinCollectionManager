@@ -117,19 +117,40 @@ class CoinTransactionalManagerTestCase {
 			verifyNoMoreInteractions(coinRepo);
 		}
 		
-		@Test
+		@Nested
 		@DisplayName("Test CoinTransactionalManager::FindCoinById when the code is executed")
-		void testFindCoinByIdExecutedCode() {
-			when(coinRepo.findById(any())).thenReturn(COIN_1);
+		class FindCoinById {
+			@Test
+			@DisplayName("Test that code is executed and exception is thrown if the coin doens't exist")
+			void testFindCoinByIdWhenCoinDoesNotExistShouldThrowException() {
+				when(coinRepo.findById(any())).thenReturn(null);
+				
+				InOrder inOrder = inOrder(tm, coinRepo);
+				
+				assertThatThrownBy(() -> coinManager.findCoinById(UUID_COIN))
+					.isInstanceOf(CoinNotFoundException.class)
+					.hasMessage(COIN_NOT_FOUND_MSG);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinTransactionCode<?>>any());
+				inOrder.verify(coinRepo).findById(UUID_COIN);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(coinRepo);
+			}
 			
-			InOrder inOrder = inOrder(tm, coinRepo);
-			
-			assertThat(coinManager.findCoinById(UUID_COIN)).isEqualTo(COIN_1);
-			
-			inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinTransactionCode<?>>any());
-			inOrder.verify(coinRepo).findById(UUID_COIN);
-			verifyNoMoreInteractions(tm);
-			verifyNoMoreInteractions(coinRepo);
+			@Test
+			@DisplayName("Test that code is executed without exception")
+			void testFindCoinByIdExecutedCode() {
+				when(coinRepo.findById(any())).thenReturn(COIN_1);
+				
+				InOrder inOrder = inOrder(tm, coinRepo);
+				
+				assertThat(coinManager.findCoinById(UUID_COIN)).isEqualTo(COIN_1);
+				
+				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinTransactionCode<?>>any());
+				inOrder.verify(coinRepo).findById(UUID_COIN);
+				verifyNoMoreInteractions(tm);
+				verifyNoMoreInteractions(coinRepo);
+			}
 		}
 		
 		@Test
