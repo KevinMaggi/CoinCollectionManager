@@ -25,6 +25,13 @@ public interface View {
 	void showSearchedAlbums(List<Album> albums, String search);
 	
 	/**
+	 * Shows a selected album in the dedicated element and perform additional operation (e.g. inform the user).
+	 * 
+	 * @param album		album to show
+	 */
+	void showAlbum(Album album);
+	
+	/**
 	 * Feedbacks the user to an added album (e.g. shows a dialog, updates the list of albums).
 	 * 
 	 * @param album		added album
@@ -67,6 +74,14 @@ public interface View {
 	 * @param album		album subject of the filter
 	 */
 	void showCoinsInAlbum(List<Coin> coins, Album album);
+	
+	/**
+	 * Shows a selected coin in the dedicated element and perform additional operation (e.g. inform the user).
+	 * 
+	 * @param coin		coin to show
+	 * @param album		album to which belongs
+	 */
+	void showCoin(Coin coin, Album album);
 	
 	/**
 	 * Feedbacks the user to an added coin (e.g. shows a dialog, updates the list of albums).
