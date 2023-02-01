@@ -101,8 +101,10 @@ public interface View {
 	 * Feedbacks the user to a moved coin (e.g. shows a dialog, updates the location of the album).
 	 * 
 	 * @param coin		moved coin
+	 * @param oldAlbum	old album of the coin
+	 * @param newAlbum	new album of the coin
 	 */
-	void coinMoved(Coin coin);
+	void coinMoved(Coin coin, Album oldAlbum, Album newAlbum);
 	
 	/**
 	 * Shows to the user an error message
