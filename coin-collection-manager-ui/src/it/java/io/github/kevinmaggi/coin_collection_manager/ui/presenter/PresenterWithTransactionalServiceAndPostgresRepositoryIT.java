@@ -320,7 +320,6 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 			ALBUM_PRE.setOccupiedSlots(ALBUM_PRE.getNumberOfSlots());
 			persistAlbums();
 			initCoins();
-			persistCoins();
 			
 			coinPresenter.addCoin(COIN_PRE);
 			
@@ -408,9 +407,9 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 		@DisplayName("Test moveCoin when coin is in DB but new album doesn't exist")
 		void testMoveCoinWhenCoinIsInDBButNewAlbumDoesNotExist() {
 			initAlbums();
+			persistAlbums();
 			em.getTransaction().begin();
-			em.persist(ALBUM_COMM_1);
-			em.persist(ALBUM_PRE);
+			em.remove(ALBUM_COMM_2);
 			em.getTransaction().commit();
 			initCoins();
 			persistCoins();
