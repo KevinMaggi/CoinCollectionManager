@@ -9,10 +9,19 @@
 	<name>Coin Collection Manager [aggregator]</name>
 	<description>Aggregator POM for Coin Collection Manager project</description>
 	
+	<url>${site-url}</url>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
+		<site-url>https://KevinMaggi.github.io/CoinCollectionManager</site-url>
+		
 		<javadoc.version>3.4.1</javadoc.version>
+		<project-info-reports.version>3.4.1</project-info-reports.version>
+		<surefire-report.version>2.22.2</surefire-report.version>
+		<xjr.version>3.3.0</xjr.version>
+		<site.version>3.12.1</site.version>
+		<pitest.version>1.10.3</pitest.version>
 		
 		<!-- Sonar configuration -->
 		<sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
@@ -34,32 +43,88 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<!-- For when it is called directly from command line (e.g. for aggregate-jar goal) -->
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javadoc.version}</version>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<goals>
-								<goal>aggregate-jar</goal>
-							</goals>
-						</execution>
-					</executions>
+				</plugin>
+				<plugin>
+					<!-- For when it is called directly from command line -->
+					<artifactId>maven-surefire-report-plugin</artifactId>
+					<version>${surefire-report.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>${site.version}</version>
+					<configuration>
+						<topSiteURL>https://KevinMaggi.github.io/CoinCollectionManager</topSiteURL>
+					</configuration>
+				</plugin>
+				<plugin>
+					<!-- For when it is called directly from command line -->
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
+	
+	<distributionManagement>
+		<site>
+			<id>${project.name}</id>
+			<url>${site-url}</url>
+		</site>
+	</distributionManagement>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${project-info-reports.version}</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependency-info</report>
+							<report>distribution-management</report>
+							<report>index</report>
+							<report>modules</report>
+							<report>plugin-management</report>
+							<report>plugins</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<!-- For when it is called from site goal -->
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${surefire-report.version}</version>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${xjr.version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${javadoc.version}</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<profiles>
-		<profile>
-			<id>javadoc</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 		<profile>
 			<id>jacoco</id>
 			<modules>
@@ -67,19 +132,45 @@
 			</modules>
 		</profile>
 		<profile>
-		<!-- For coveralls is required jacoco report: in this way coveralls profile is autonomous -->
+			<!-- For coveralls is required jacoco report: in this way coveralls profile is autonomous -->
 			<id>coveralls</id>
 			<modules>
 				<module>../coin-collection-manager-report</module>
 			</modules>
 		</profile>
 		<profile>
-			<!-- Needed because of the need of including the report module conditionally. I can't only invoke goal report-aggregate
-			explicitly: it doesn't work because pitest fail looking for partial report also on aggregator project. -->
-			<id>pitest-report</id>
-			<modules>
-				<module>../coin-collection-manager-report</module>
-			</modules>
+			<id>pitest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<executions>
+							<execution>
+								<id>report-aggregate</id>
+								<goals>
+									<goal>report-aggregate-module</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<reportSets>
+							<reportSet>
+								<reports>
+									<report>report</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
+				</plugins>
+			</reporting>
 		</profile>
 	</profiles>
 </project>

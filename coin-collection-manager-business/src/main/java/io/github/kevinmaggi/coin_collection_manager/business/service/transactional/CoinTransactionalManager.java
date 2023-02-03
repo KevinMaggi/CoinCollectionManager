@@ -53,14 +53,19 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 	 * 
 	 * @param id	Id of the coin
 	 * @return		The coin
-	 * @throws DatabaseException	if an error occurs during database querying
+	 * @throws DatabaseException		if an error occurs during database querying
+	 * @throws CoinNotFoundException	if no coin corresponds to the id
 	 */
 	@Override
-	public Coin findCoinById(UUID id) throws DatabaseException {
+	public Coin findCoinById(UUID id) throws DatabaseException, CoinNotFoundException {
 		try {
-			return tm.doInTransaction(
-					(CoinRepository repo) -> repo.findById(id)
-					);
+			Coin returned = tm.doInTransaction(
+								(CoinRepository repo) -> repo.findById(id)
+								);
+			if (returned == null)
+				throw new CoinNotFoundException(COIN_NOT_FOUND_MSG);
+			else
+				return returned;
 		} catch (DatabaseOperationException e) {
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}
