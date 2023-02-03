@@ -21,6 +21,7 @@
 		<surefire-report.version>2.22.2</surefire-report.version>
 		<xjr.version>3.3.0</xjr.version>
 		<site.version>3.12.1</site.version>
+		<pitest.version>1.10.3</pitest.version>
 		
 		<!-- Sonar configuration -->
 		<sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
@@ -56,6 +57,12 @@
 					<configuration>
 						<topSiteURL>https://KevinMaggi.github.io/CoinCollectionManager</topSiteURL>
 					</configuration>
+				</plugin>
+				<plugin>
+					<!-- For when it is called directly from command line -->
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -131,12 +138,38 @@
 			</modules>
 		</profile>
 		<profile>
-			<!-- Needed because of the need of including the report module conditionally. I can't only invoke goal report-aggregate
-			explicitly: it doesn't work because pitest fail looking for partial report also on aggregator project. -->
-			<id>pitest-report</id>
-			<modules>
-				<module>../coin-collection-manager-report</module>
-			</modules>
+			<id>pitest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<executions>
+							<execution>
+								<id>report-aggregate</id>
+								<goals>
+									<goal>report-aggregate-module</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<reportSets>
+							<reportSet>
+								<reports>
+									<report>report</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
+				</plugins>
+			</reporting>
 		</profile>
 	</profiles>
 </project>

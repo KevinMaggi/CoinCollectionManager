@@ -42,7 +42,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Build with Maven Wrapper
-        run: ../mvnw install site site:stage
+        run: ../mvnw install site site:stage -Ppitest
         working-directory: coin-collection-manager-aggregator
       - name: Setup Pages
         uses: actions/configure-pages@v3
