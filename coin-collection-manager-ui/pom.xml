@@ -68,6 +68,9 @@
 						<targetTests>
 							<param>io.github.kevinmaggi.coin_collection_manager.ui.presenter.*</param>
 						</targetTests>
+						<excludedTestClasses>
+							<param>**.*IT</param>
+						</excludedTestClasses>
 					</configuration>
 				</plugin>
 			</plugins>
