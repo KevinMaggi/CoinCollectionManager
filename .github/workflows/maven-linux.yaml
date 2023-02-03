@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Build with Maven Wrapper
-        run: ../mvnw verify $MAVEN_PROFILES $ADDITIONAL_COVERALLS_ARGS $SONAR
+        run: ../mvnw install $MAVEN_PROFILES $ADDITIONAL_COVERALLS_ARGS $SONAR
         working-directory: coin-collection-manager-aggregator
         env: 
           MAVEN_PROFILES: -Pcoveralls
@@ -37,7 +37,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Generate JUnit Report
         if: ${{ failure() }}
-        run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false -Daggregate=true
+        run: ../mvnw surefire-report:report-only surefire-report:failsafe-report-only site:site -DgenerateReports=false -Daggregate=true
         working-directory: coin-collection-manager-aggregator
       - name: Archive JUnit Report
         uses: actions/upload-artifact@v3
