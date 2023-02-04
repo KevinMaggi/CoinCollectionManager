@@ -29,6 +29,7 @@
 		<assertj.version>3.23.1</assertj.version>
 		<assertj-swing.version>3.17.1</assertj-swing.version>
 		<mockito.version>4.11.0</mockito.version>
+		<awaitility.version>4.2.0</awaitility.version>
 		
 		<!-- Plugin version -->
 		<compiler.version>3.10.1</compiler.version>
@@ -108,6 +109,12 @@
 				<version>${mockito.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
