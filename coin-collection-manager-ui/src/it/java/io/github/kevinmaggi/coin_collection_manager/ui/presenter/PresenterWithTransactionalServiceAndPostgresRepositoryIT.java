@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import java.time.Year;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
@@ -140,8 +141,13 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 			
 			albumPresenter.addAlbum(ALBUM_PRE);
 			
+			em.getTransaction().begin();
+			Album fromDB = em.find(Album.class, ALBUM_PRE.getId());
+			em.getTransaction().commit();
+			
 			verify(view).albumAdded(ALBUM_PRE);
 			verify(view).showSuccess(any());
+			assertThat(fromDB).isEqualTo(ALBUM_PRE);
 		}
 		
 		@Test
@@ -151,13 +157,8 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 			
 			albumPresenter.addAlbum(ALBUM_PRE);
 			
-			em.getTransaction().begin();
-			Album fromDB = em.find(Album.class, ALBUM_PRE.getId());
-			em.getTransaction().commit();
-			
 			verify(view).showError(any());
 			verify(view).showAllAlbums(argThat(l -> l.containsAll(Arrays.asList(ALBUM_PRE, ALBUM_COMM_1, ALBUM_COMM_2))));
-			assertThat(fromDB).isEqualTo(ALBUM_PRE);
 		}
 		
 		@Test
@@ -324,11 +325,11 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 			coinPresenter.addCoin(COIN_PRE);
 			
 			em.getTransaction().begin();
-			Coin fromDB = em.find(Coin.class, COIN_PRE.getId());
+			List<Coin> fromDB = em.createQuery("SELECT c FROM Coin c", Coin.class).getResultList();
 			em.getTransaction().commit();
 			
 			verify(view).showError(any());
-			assertThat(fromDB).isNull();
+			assertThat(fromDB).isEmpty();
 		}
 		
 		@Test
