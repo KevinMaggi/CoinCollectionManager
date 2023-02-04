@@ -6,6 +6,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.time.Year;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,6 +41,9 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 	private static final String NEW_LOCATION = "new location";
 	
 	// Tests
+	private final int NUM_THREADS = 10;
+	private CyclicBarrier barrier;
+	
 	private static EntityManagerFactory emf;
 	private EntityManager em;
 	
@@ -65,6 +69,8 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
 		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
 		em.getTransaction().commit();
+		
+		barrier = new CyclicBarrier(NUM_THREADS);
 	}
 	
 	@Nested
@@ -75,7 +81,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		void testConcurrentCallsToAddAlbumShouldAddOnlyOneInstanceAndDoNotThrowException() {
 			initAlbums();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
@@ -107,7 +113,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 			initAlbums();
 			persistAlbums();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
@@ -119,6 +125,10 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 									localEm.getTransaction().begin();
 									Album toDelete = localEm.find(Album.class, ALBUM_PRE.getId());
 									localEm.getTransaction().commit();
+									// Necessary to prevent that a thread deletes the entity before than the other retrieves it
+									try {
+										barrier.await();
+									} catch (Exception e) { }
 									
 									new AlbumPresenter(view, albumManager).deleteAlbum(toDelete);
 									
@@ -144,7 +154,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 			initAlbums();
 			persistAlbums();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
@@ -181,7 +191,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 			persistAlbums();
 			initCoins();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
@@ -213,7 +223,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		void testConcurrentCallsToDeleteCoinShouldDeleteTheInstanceAndDoNotThrowException() {
 			populateDB();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
@@ -226,6 +236,10 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 									localEm.getTransaction().begin();
 									Coin toDelete = localEm.find(Coin.class, COIN_PRE.getId());
 									localEm.getTransaction().commit();
+									// Necessary to prevent that a thread deletes the entity before than the other retrieves it
+									try {
+										barrier.await();
+									} catch (Exception e) { }
 									
 									new CoinPresenter(view, coinManager, albumManager).deleteCoin(toDelete);
 									
@@ -250,7 +264,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		void testConcurrentCallsToMoveCoinShouldMoveTheInstanceAndDoNotThrowException() {
 			populateDB();
 			
-			List<Thread> threads = IntStream.range(0, 10)
+			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
