@@ -58,6 +58,12 @@ class TransactionalServiceWithPostgresIT {
 		
 		albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
 		coinManager = new CoinTransactionalManager(factory.getTransactionManager());
+		
+		// Ensure to start every test with an empty database
+		em.getTransaction().begin();
+		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
+		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
+		em.getTransaction().commit();
 	}
 	
 	@Nested
@@ -444,12 +450,6 @@ class TransactionalServiceWithPostgresIT {
 	
 	@AfterEach
 	void cleanTest() throws Exception {
-		// Ensure to start the next test with an empty database
-		em.getTransaction().begin();
-		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
-		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
-		em.getTransaction().commit();
-		
 		em.clear();
 		em.close();
 	}

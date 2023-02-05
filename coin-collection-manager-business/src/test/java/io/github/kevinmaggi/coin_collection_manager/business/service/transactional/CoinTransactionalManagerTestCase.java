@@ -236,12 +236,12 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed if the coin is not yet in the db and the album is not full")
 			void testAddCoinWhenItIsNotYetPersistedAndAlbumIsNotFullShouldExecuteCode() {
-				Album SPIED_ALBUM = spy(ALBUM_NOT_FULL);		// need to see if updated slots
+				Album spiedAlbum = spy(ALBUM_NOT_FULL);		// need to see if updated slots
 				
 				when(coinRepo.findByGradeCountryYearDescriptionAndNote(any(), any(), any(), any(), any()))
 					.thenReturn(null);
 				when(coinRepo.save(any())).thenReturn(COIN_1);
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
+				when(albumRepo.findById(any())).thenReturn(spiedAlbum);
 				
 				InOrder inOrder = inOrder(tm, coinRepo, albumRepo);
 				
@@ -252,8 +252,8 @@ class CoinTransactionalManagerTestCase {
 						COIN_1.getGrade(), COIN_1.getCountry(), COIN_1.getMintingYear(), COIN_1.getDescription(), COIN_1.getNote()
 						);
 				inOrder.verify(albumRepo).findById(COIN_1.getAlbum());
-				inOrder.verify(albumRepo).save(SPIED_ALBUM);
-				verify(SPIED_ALBUM).setOccupiedSlots(OCCUPIED_SLOT+1);
+				inOrder.verify(albumRepo).save(spiedAlbum);
+				verify(spiedAlbum).setOccupiedSlots(OCCUPIED_SLOT+1);
 				inOrder.verify(coinRepo).save(COIN_1);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
@@ -279,13 +279,13 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not in db anymore")
 			void testUpdateCoinWhenItIsNotPersistedAnymoreShouldThrowException() {
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
 				when(coinRepo.findById(any())).thenReturn(null);
 				
 				InOrder inOrder = inOrder(tm, coinRepo);
 				
-				assertThatThrownBy(() -> coinManager.deleteCoin(SPIED_COIN))
+				assertThatThrownBy(() -> coinManager.deleteCoin(spiedCoin))
 					.isInstanceOf(CoinNotFoundException.class)
 					.hasMessage(COIN_NOT_FOUND_MSG);
 				
@@ -298,23 +298,23 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed if the coin is in the db")
 			void testAddCoinWhenItIsNotYetPersistedAndAlbumIsNotFullShouldExecuteCode() {
-				Album SPIED_ALBUM = spy(ALBUM_NOT_FULL);		// need to see if updated slots
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
+				Album spiedAlbum = spy(ALBUM_NOT_FULL);		// need to see if updated slots
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
 				
-				when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
+				when(coinRepo.findById(any())).thenReturn(spiedCoin);
+				when(albumRepo.findById(any())).thenReturn(spiedAlbum);
 				
 				InOrder inOrder = inOrder(tm, coinRepo, albumRepo);
 				
-				coinManager.deleteCoin(SPIED_COIN);
+				coinManager.deleteCoin(spiedCoin);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
 				inOrder.verify(albumRepo).findById(UUID_ALBUM);
-				inOrder.verify(albumRepo).save(SPIED_ALBUM);
-				verify(SPIED_ALBUM).setOccupiedSlots(OCCUPIED_SLOT-1);
-				inOrder.verify(coinRepo).delete(SPIED_COIN);
+				inOrder.verify(albumRepo).save(spiedAlbum);
+				verify(spiedAlbum).setOccupiedSlots(OCCUPIED_SLOT-1);
+				inOrder.verify(coinRepo).delete(spiedCoin);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 				verifyNoMoreInteractions(coinRepo);
@@ -339,13 +339,13 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the coin is not in db anymore")
 			void testMoveCoinWhenItIsNotPersistedAnymoreShouldThrowException() {
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
 				when(coinRepo.findById(any())).thenReturn(null);
 				
 				InOrder inOrder = inOrder(tm, coinRepo);
 				
-				assertThatThrownBy(() -> coinManager.moveCoin(SPIED_COIN, UUID_NEW_ALBUM))
+				assertThatThrownBy(() -> coinManager.moveCoin(spiedCoin, UUID_NEW_ALBUM))
 					.isInstanceOf(CoinNotFoundException.class)
 					.hasMessage(COIN_NOT_FOUND_MSG);
 				
@@ -358,14 +358,14 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and exception is thrown if the coin is in the db but the new album is full")
 			void testMoveCoinWhenItIsNotYetPersistedAndAlbumIsFullShouldExecuteCodeAndThrowException() {
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
-				when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
+				when(coinRepo.findById(any())).thenReturn(spiedCoin);
 				when(albumRepo.findById(any())).thenReturn(ALBUM_NOT_FULL).thenReturn(ALBUM_FULL);
 				
 				InOrder inOrder = inOrder(tm, coinRepo, albumRepo);
 				
-				assertThatThrownBy(() -> coinManager.moveCoin(SPIED_COIN, UUID_NEW_ALBUM))
+				assertThatThrownBy(() -> coinManager.moveCoin(spiedCoin, UUID_NEW_ALBUM))
 					.isInstanceOf(FullAlbumException.class)
 					.hasMessage(FULL_ALBUM_MSG);
 				
@@ -381,28 +381,28 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed if the coin is in the db and the new album is not full")
 			void testMoveCoinWhenItIsNotYetPersistedAndAlbumIsNotFullShouldExecuteCode() {
-				Album SPIED_ALBUM_NOT_FULL = spy(ALBUM_NOT_FULL);	// need to see if updated slots
-				Album SPIED_ALBUM_FULL = spy(ALBUM_FULL);	// need to see if updated slots
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
-				when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM_FULL).thenReturn(SPIED_ALBUM_NOT_FULL);
-				when(coinRepo.save(any())).thenReturn(SPIED_COIN);
+				Album spiedAlbumNotFull = spy(ALBUM_NOT_FULL);	// need to see if updated slots
+				Album spiedAlbumFull = spy(ALBUM_FULL);	// need to see if updated slots
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
+				when(coinRepo.findById(any())).thenReturn(spiedCoin);
+				when(albumRepo.findById(any())).thenReturn(spiedAlbumFull).thenReturn(spiedAlbumNotFull);
+				when(coinRepo.save(any())).thenReturn(spiedCoin);
 				
-				InOrder inOrder = inOrder(tm, coinRepo, albumRepo, SPIED_COIN);
+				InOrder inOrder = inOrder(tm, coinRepo, albumRepo, spiedCoin);
 				
-				assertThat(coinManager.moveCoin(SPIED_COIN, UUID_NEW_ALBUM)).isEqualTo(SPIED_COIN);
+				assertThat(coinManager.moveCoin(spiedCoin, UUID_NEW_ALBUM)).isEqualTo(spiedCoin);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
 				inOrder.verify(albumRepo).findById(UUID_ALBUM);
 				inOrder.verify(albumRepo).findById(UUID_NEW_ALBUM);
-				verify(SPIED_ALBUM_FULL).setOccupiedSlots(NUMBER_OF_SLOTS - 1);
-				verify(SPIED_ALBUM_NOT_FULL).setOccupiedSlots(OCCUPIED_SLOT + 1);
-				inOrder.verify(albumRepo).save(SPIED_ALBUM_FULL);
-				inOrder.verify(albumRepo).save(SPIED_ALBUM_NOT_FULL);
-				inOrder.verify(SPIED_COIN).setAlbum(UUID_NEW_ALBUM);
-				inOrder.verify(coinRepo).save(SPIED_COIN);
+				verify(spiedAlbumFull).setOccupiedSlots(NUMBER_OF_SLOTS - 1);
+				verify(spiedAlbumNotFull).setOccupiedSlots(OCCUPIED_SLOT + 1);
+				inOrder.verify(albumRepo).save(spiedAlbumFull);
+				inOrder.verify(albumRepo).save(spiedAlbumNotFull);
+				inOrder.verify(spiedCoin).setAlbum(UUID_NEW_ALBUM);
+				inOrder.verify(coinRepo).save(spiedCoin);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 				verifyNoMoreInteractions(coinRepo);
@@ -411,21 +411,21 @@ class CoinTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed if the coin is in the db and the new album is the same")
 			void testMoveCoinWhenItIsNotYetPersistedAndAlbumIsTheSameShouldExecuteCode() {
-				Album SPIED_ALBUM_NOT_FULL = spy(ALBUM_NOT_FULL);	// need to see if updated slots
-				Coin SPIED_COIN = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
-				doReturn(UUID_COIN).when(SPIED_COIN).getId();
-				when(coinRepo.findById(any())).thenReturn(SPIED_COIN);
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM_NOT_FULL);
-				when(coinRepo.save(any())).thenReturn(SPIED_COIN);
+				Album spiedAlbumNotFull = spy(ALBUM_NOT_FULL);	// need to see if updated slots
+				Coin spiedCoin = spy(COIN_1);	// need to simulate that COIN_1 has an id (generated)
+				doReturn(UUID_COIN).when(spiedCoin).getId();
+				when(coinRepo.findById(any())).thenReturn(spiedCoin);
+				when(albumRepo.findById(any())).thenReturn(spiedAlbumNotFull);
+				when(coinRepo.save(any())).thenReturn(spiedCoin);
 				
-				InOrder inOrder = inOrder(tm, coinRepo, albumRepo, SPIED_COIN);
+				InOrder inOrder = inOrder(tm, coinRepo, albumRepo, spiedCoin);
 				
-				assertThat(coinManager.moveCoin(SPIED_COIN, UUID_ALBUM)).isEqualTo(SPIED_COIN);
+				assertThat(coinManager.moveCoin(spiedCoin, UUID_ALBUM)).isEqualTo(spiedCoin);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(coinRepo).findById(UUID_COIN);
 				inOrder.verify(albumRepo, times(2)).findById(UUID_ALBUM);
-				inOrder.verify(coinRepo).save(SPIED_COIN);
+				inOrder.verify(coinRepo).save(spiedCoin);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 				verifyNoMoreInteractions(coinRepo);

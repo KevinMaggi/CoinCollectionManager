@@ -53,6 +53,11 @@ class PostgresAlbumRepositoryTestCase {
 	public void setUpTest() {
 		em = emf.createEntityManager();
 		repo = new PostgresAlbumRepository(em);
+		
+		// Ensure to start every test with an empty database
+		em.getTransaction().begin();
+		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
+		em.getTransaction().commit();
 	}
 	
 	@Nested
@@ -222,11 +227,6 @@ class PostgresAlbumRepositoryTestCase {
 	
 	@AfterEach
 	public void cleanTest() {
-		// Ensure to start the next test with an empty database
-		em.getTransaction().begin();
-		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
-		em.getTransaction().commit();
-		
 		em.clear();
 		em.close();
 	}

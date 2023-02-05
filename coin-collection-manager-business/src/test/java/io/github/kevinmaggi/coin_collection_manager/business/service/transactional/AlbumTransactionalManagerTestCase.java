@@ -240,13 +240,13 @@ class AlbumTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the album is not in db anymore")
 			void testDeleteAlbumWhenItIsNotAnymorePersistedShouldThrowException() {
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
+				Album spiedAlbum = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(spiedAlbum).getId();
 				when(albumRepo.findById(any())).thenReturn(null);
 				
 				InOrder inOrder = inOrder(tm, albumRepo);
 				
-				assertThatThrownBy(() -> albumManager.deleteAlbum(SPIED_ALBUM))
+				assertThatThrownBy(() -> albumManager.deleteAlbum(spiedAlbum))
 					.isInstanceOf(AlbumNotFoundException.class)
 					.hasMessage(ALBUM_NOT_FOUND_MSG);
 				
@@ -260,22 +260,22 @@ class AlbumTransactionalManagerTestCase {
 			@DisplayName("Test that code is executed without exception")
 			void testUpdateAlbumWhenNoExceptionIsThrown() {
 				List<Coin> fictitiousList = Arrays.asList(COIN_1, COIN_2);
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
-				when(albumRepo.save(SPIED_ALBUM)).thenReturn(SPIED_ALBUM);
+				Album spiedAlbum = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(spiedAlbum).getId();
+				when(albumRepo.findById(any())).thenReturn(spiedAlbum);
+				when(albumRepo.save(spiedAlbum)).thenReturn(spiedAlbum);
 				when(coinRepo.findByAlbum(UUID_ALBUM)).thenReturn(fictitiousList);
 				
 				InOrder inOrder = inOrder(tm, albumRepo, coinRepo);
 				
-				albumManager.deleteAlbum(SPIED_ALBUM);
+				albumManager.deleteAlbum(spiedAlbum);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<CoinAlbumTransactionCode<?>>any());
 				inOrder.verify(albumRepo).findById(UUID_ALBUM);
 				inOrder.verify(coinRepo).findByAlbum(UUID_ALBUM);
 				inOrder.verify(coinRepo).delete(COIN_1);
 				inOrder.verify(coinRepo).delete(COIN_2);
-				inOrder.verify(albumRepo).delete(SPIED_ALBUM);
+				inOrder.verify(albumRepo).delete(spiedAlbum);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 			}
@@ -299,13 +299,13 @@ class AlbumTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed and an exception is thrown if the album is not in db anymore")
 			void testMoveAlbumWhenItIsNotAnymorePersistedShouldThrowException() {
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
+				Album spiedAlbum = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(spiedAlbum).getId();
 				when(albumRepo.findById(any())).thenReturn(null);
 				
 				InOrder inOrder = inOrder(tm, albumRepo);
 				
-				assertThatThrownBy(() -> albumManager.moveAlbum(SPIED_ALBUM, NEW_LOCATION))
+				assertThatThrownBy(() -> albumManager.moveAlbum(spiedAlbum, NEW_LOCATION))
 					.isInstanceOf(AlbumNotFoundException.class)
 					.hasMessage(ALBUM_NOT_FOUND_MSG);
 				
@@ -318,19 +318,19 @@ class AlbumTransactionalManagerTestCase {
 			@Test
 			@DisplayName("Test that code is executed without exception")
 			void testMoveAlbumWhenNoExceptionIsThrown() {
-				Album SPIED_ALBUM = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
-				doReturn(UUID_ALBUM).when(SPIED_ALBUM).getId();
-				when(albumRepo.findById(any())).thenReturn(SPIED_ALBUM);
-				when(albumRepo.save(SPIED_ALBUM)).thenReturn(SPIED_ALBUM);
+				Album spiedAlbum = spy(ALBUM_1);	// need to simulate that ALBUM_1 has an id (generated)
+				doReturn(UUID_ALBUM).when(spiedAlbum).getId();
+				when(albumRepo.findById(any())).thenReturn(spiedAlbum);
+				when(albumRepo.save(spiedAlbum)).thenReturn(spiedAlbum);
 				
-				InOrder inOrder = inOrder(tm, albumRepo, SPIED_ALBUM);
+				InOrder inOrder = inOrder(tm, albumRepo, spiedAlbum);
 				
-				assertThat(albumManager.moveAlbum(SPIED_ALBUM, NEW_LOCATION).getLocation()).isEqualTo(NEW_LOCATION);
+				assertThat(albumManager.moveAlbum(spiedAlbum, NEW_LOCATION).getLocation()).isEqualTo(NEW_LOCATION);
 				
 				inOrder.verify(tm).doInTransaction(ArgumentMatchers.<AlbumTransactionCode<?>>any());
 				inOrder.verify(albumRepo).findById(UUID_ALBUM);
-				inOrder.verify(SPIED_ALBUM).setLocation(NEW_LOCATION);
-				inOrder.verify(albumRepo).save(SPIED_ALBUM);
+				inOrder.verify(spiedAlbum).setLocation(NEW_LOCATION);
+				inOrder.verify(albumRepo).save(spiedAlbum);
 				verifyNoMoreInteractions(tm);
 				verifyNoMoreInteractions(albumRepo);
 			}

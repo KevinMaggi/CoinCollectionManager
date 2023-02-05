@@ -65,6 +65,11 @@ public class PostgresCoinRepositoryTestCase {
 	public void setUpTest() {
 		em = emf.createEntityManager();
 		repo = new PostgresCoinRepository(em);
+		
+		// Ensure to start the next test with an empty database
+		em.getTransaction().begin();
+		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
+		em.getTransaction().commit();
 	}
 	
 	@Nested
@@ -332,11 +337,6 @@ public class PostgresCoinRepositoryTestCase {
 	
 	@AfterEach
 	public void cleanTest() {
-		// Ensure to start the next test with an empty database
-		em.getTransaction().begin();
-		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
-		em.getTransaction().commit();
-		
 		em.clear();
 		em.close();
 	}
