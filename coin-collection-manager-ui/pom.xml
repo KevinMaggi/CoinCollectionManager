@@ -74,9 +74,11 @@
 						<timeoutFactor>2</timeoutFactor>
 						<targetClasses>
 							<param>io.github.kevinmaggi.coin_collection_manager.ui.presenter.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.ui.view.SwingViewUtilities</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.kevinmaggi.coin_collection_manager.ui.presenter.*</param>
+							<param>io.github.kevinmaggi.coin_collection_manager.ui.view.SwingViewUtilitiesTestCase</param>
 						</targetTests>
 						<excludedTestClasses>
 							<param>**.*IT</param>

@@ -1,42 +1,531 @@
 package io.github.kevinmaggi.coin_collection_manager.ui.view.swing;
 
+import static io.github.kevinmaggi.coin_collection_manager.ui.view.swing.SwingViewUtilities.comboBoxToArray;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.time.Year;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionListener;
 
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
+import io.github.kevinmaggi.coin_collection_manager.core.model.Grade;
 import io.github.kevinmaggi.coin_collection_manager.ui.presenter.AlbumPresenter;
 import io.github.kevinmaggi.coin_collection_manager.ui.presenter.CoinPresenter;
 import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
-import java.awt.GridLayout;
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Color;
-import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.Toolkit;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.border.LineBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.JSeparator;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import io.github.kevinmaggi.coin_collection_manager.core.model.Grade;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import javax.swing.ListSelectionModel;
+import java.util.Locale;
 
 public class SwingView extends JFrame implements View {
+	private static final long serialVersionUID = 1L;
+	
+	/////////////// Utilities
+	private static final String ALBUM_STRING = "%s volume %d located in %s with %d/%d slots occupied";
+	private static final String COIN_STRING = "%s of %d from %s located in %s vol.%d (Grade: %s) [note: %s]";
+	private static final String RESULTS = "Results for \"%s\":";
+	private static final String IN_ALBUM = "Coins in %s vol.%d:";
+	
+	/////////////// Presenters
+	private transient AlbumPresenter albumPresenter;
+	private transient CoinPresenter coinPresenter;
+	
+	/////////////// Interactive components
+	private JTextField albumSearchName;
+	private JTextField albumSearchVolume;
+	private JButton albumSearchButton;
+	
+	private DefaultListModel<Album> albumListModel;
+	private JList<Album> albumList;
+	private JLabel albumActualLabel;
+	private JLabel albumSelectionLabel;
+	
+	private JButton albumDeleteButton;
+	private JButton albumMoveButton;
+	
+	private JTextField albumFormName;
+	private JTextField albumFormVolume;
+	private JTextField albumFormLocation;
+	private JTextField albumFormSlots;
+	private JButton albumSaveButton;
+	
+	private JTextField coinFilterDescription;
+	private JButton coinFilterButton;
+
+	private DefaultListModel<Coin> coinListModel;
+	private JList<Coin> coinList;
+	private JLabel coinActualLabel;
+	private JLabel coinSelectionLabel;
+	
+	private JButton coinDeleteButton;
+	private JButton coinMoveButton;
+	
+	private JTextField coinFormDescription;
+	private JTextField coinFormCountry;
+	private JTextField coinFormYear;
+	private JTextField coinFormNote;
+	private JComboBox<Grade> coinFormGrade;
+	private DefaultComboBoxModel<Album> coinFormAlbumModel;
+	private JComboBox<Album> coinFormAlbum;
+	private JButton coinSaveButton;
+	
+	private JLabel statusLabel;
+	
+	/////////////// Listeners and adapters
+	private transient KeyAdapter albumSearchButtonEnabler = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			albumSearchButton.setEnabled(
+				!albumSearchName.getText().trim().isEmpty() &&
+				albumSearchVolume.getText().trim().matches("\\d+")
+			);
+		}
+	};
+	
+	private transient KeyAdapter albumFormButtonEnabler = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			albumSaveButton.setEnabled(
+				!albumFormName.getText().trim().isEmpty() &&
+				albumFormVolume.getText().trim().matches("\\d+") &&
+				!albumFormLocation.getText().trim().isEmpty() &&
+				albumFormSlots.getText().trim().matches("\\d+")
+			);
+		}
+	};
+	
+	private transient KeyAdapter coinFilterButtonEnabler = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			coinFilterButton.setEnabled(!coinFilterDescription.getText().trim().isEmpty());
+		}
+	};
+	
+	private transient KeyAdapter coinFormButtonEnablerTextBox = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			coinSaveButton.setEnabled(
+				!coinFormDescription.getText().trim().isEmpty() &&
+				coinFormGrade.getSelectedIndex() != -1 &&
+				!coinFormCountry.getText().trim().isEmpty() &&
+				coinFormYear.getText().trim().matches("\\d+") &&
+				coinFormAlbum.getSelectedIndex() != -1
+			);
+		}
+	};
+	
+	private transient ItemListener coinFormButtonEnablerComboBox = 
+			e -> {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					coinSaveButton.setEnabled(
+						!coinFormDescription.getText().trim().isEmpty() &&
+						coinFormGrade.getSelectedIndex() != -1 &&
+						!coinFormCountry.getText().trim().isEmpty() &&
+						coinFormYear.getText().trim().matches("\\d+") &&
+						coinFormAlbum.getSelectedIndex() != -1
+					);
+			};
+			
+	private transient ActionListener albumSearchAction = 
+			e -> albumPresenter.searchAlbum(albumSearchName.getText(), Integer.valueOf(albumSearchVolume.getText()));
+			
+	private transient ActionListener albumClearAction = 
+			e -> albumPresenter.getAllAlbums();
+			
+	private transient ListSelectionListener albumListSelection =
+			e -> {
+				if(!e.getValueIsAdjusting()) {
+					if(albumList.getSelectedIndex() != -1) {
+						albumPresenter.getAlbum(albumList.getSelectedValue().getId());
+						albumDeleteButton.setEnabled(true);
+						albumMoveButton.setEnabled(true);
+						coinPresenter.getCoinsByAlbum(albumList.getSelectedValue());
+					} else {
+						albumSelectionLabel.setText(" ");
+						albumDeleteButton.setEnabled(false);
+						albumMoveButton.setEnabled(false);
+					}
+				}
+			};
+		
+	private transient ActionListener albumDeleteAction =
+			e -> {
+				albumPresenter.deleteAlbum(albumList.getSelectedValue());
+				coinPresenter.getAllCoins();
+			};
+			
+	private transient ActionListener albumMoveAction =
+			e -> {
+				String input = JOptionPane.showInputDialog(this, 
+						"New location:", "Move " + albumList.getSelectedValue().toString(), JOptionPane.PLAIN_MESSAGE);
+				if(input != null && !input.isBlank())
+					albumPresenter.moveAlbum(albumList.getSelectedValue(), input);
+			};
+			
+	private transient ActionListener albumSaveAction =
+			e -> albumPresenter.addAlbum(
+					new Album(
+							albumFormName.getText(),
+							Integer.parseInt(albumFormVolume.getText()), 
+							albumFormLocation.getText(), 
+							Integer.parseInt(albumFormSlots.getText()), 
+							0)
+			);
+			
+	private transient ActionListener coinFilterAction =
+			e -> coinPresenter.searchCoins(coinFilterDescription.getText());
+			
+	private transient ActionListener coinClearAction = 
+			e -> coinPresenter.getAllCoins();
+			
+	private transient ListSelectionListener coinListSelection = 
+			e -> {
+				if(!e.getValueIsAdjusting()) {
+					if(coinList.getSelectedIndex() != -1) {
+						coinPresenter.getCoin(coinList.getSelectedValue().getId());
+						coinDeleteButton.setEnabled(true);
+						coinMoveButton.setEnabled(true);
+					} else {
+						coinSelectionLabel.setText(" ");
+						coinDeleteButton.setEnabled(false);
+						coinMoveButton.setEnabled(false);
+					}
+				}
+			};
+			
+	private transient ActionListener coinDeleteAction =
+			e -> coinPresenter.deleteCoin(coinList.getSelectedValue());
+			
+	private transient ActionListener coinMoveAction =
+			e -> {
+				Object input = JOptionPane.showInputDialog(this, 
+						"New album:", "Move " + coinList.getSelectedValue().toString(), JOptionPane.PLAIN_MESSAGE, 
+						null, comboBoxToArray(coinFormAlbum), null);
+				if(input != null)
+					coinPresenter.moveCoin(coinList.getSelectedValue(), (Album)input);
+			};
+			
+	private transient ActionListener coinSaveAction =
+			e -> coinPresenter.addCoin(
+					new Coin(
+							(Grade)coinFormGrade.getSelectedItem(),
+							coinFormCountry.getText(),
+							Year.parse(coinFormYear.getText()),
+							coinFormDescription.getText(),
+							coinFormNote.getText(),
+							((Album)coinFormAlbum.getSelectedItem()).getId())
+			);
+	
+	/////////////// Methods
+	DefaultListModel<Album> getAlbumListModel() {
+		return albumListModel;
+	}
+
+	DefaultListModel<Coin> getCoinListModel() {
+		return coinListModel;
+	}
+	
+	DefaultComboBoxModel<Album> getCoinFormAlbumModel() {
+		return coinFormAlbumModel;
+	}
+
+	/////////////// View Interface methods
+	/**
+	 * Sets the presenters.
+	 * 
+	 * @param coinPresenter		presenter for coin entities
+	 * @param albumPresenter	presenter for album entities
+	 */
+	public void setPresenters(CoinPresenter coinPresenter, AlbumPresenter albumPresenter) {
+		this.coinPresenter = coinPresenter;
+		this.albumPresenter = albumPresenter;
+		
+		coinPresenter.getAllCoins();
+		albumPresenter.getAllAlbums();
+	}
+	
+	/**
+	 * Shows all albums in the dedicated element.
+	 * 
+	 * @param albums	albums to show
+	 */
+	@Override
+	public void showAllAlbums(List<Album> albums) {
+		albumList.clearSelection();
+		albumListModel.removeAllElements();
+		albums.stream().forEach(albumListModel::addElement);
+		albumActualLabel.setText("All albums:");
+		
+		albumSearchName.setText("");
+		albumSearchVolume.setText("");
+		albumSearchButton.setEnabled(false);
+		
+		coinFormAlbumModel.removeAllElements();
+		albums.stream().forEach(coinFormAlbumModel::addElement);
+	}
+
+	/**
+	 * Shows the albums result of search in the dedicated element.
+	 * 
+	 * @param album		album to show
+	 * @param search	searching key as string
+	 */
+	@Override
+	public void showSearchedAlbum(Album album, String search) {
+		albumListModel.removeAllElements();
+		albumListModel.addElement(album);
+		albumActualLabel.setText(String.format(RESULTS, search));
+	}
+
+	/**
+	 * Shows a selected album in the dedicated element.
+	 * 
+	 * @param album		album to show
+	 */
+	@Override
+	public void showAlbum(Album album) {
+		albumSelectionLabel.setText(
+				String.format(ALBUM_STRING, 
+						album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
+	}
+
+	/**
+	 * Feedbacks the user to an added album: updates lists and selection label.
+	 * 
+	 * @param album		added album
+	 */
+	@Override
+	public void albumAdded(Album album) {
+		int index = coinFormAlbum.getSelectedIndex();
+		
+		albumListModel.addElement(album);
+		coinFormAlbumModel.addElement(album);
+		
+		if (index == -1)
+			coinFormAlbum.setSelectedIndex(-1);
+		
+		albumFormName.setText("");
+		albumFormVolume.setText("");
+		albumFormLocation.setText("");
+		albumFormSlots.setText("");
+		
+		albumSaveButton.setEnabled(false);
+		
+		repaintLists();
+	}
+
+	/**
+	 * Feedbacks the user to a deleted album: update lists.
+	 * 
+	 * @param album		deleted album
+	 */
+	@Override
+	public void albumDeleted(Album album) {
+		albumListModel.removeElement(album);
+		coinFormAlbumModel.removeElement(album);
+		
+		repaintLists();
+	}
+
+	/**
+	 * Feedbacks the user to a moved album: updates lists and selection label.
+	 * 
+	 * @param album		moved album
+	 */
+	@Override
+	public void albumMoved(Album album) {
+		int index = albumListModel.indexOf(album);
+		albumListModel.removeElement(album);
+		albumListModel.add(index, album);
+		albumList.setSelectedValue(album, true);
+		
+		albumSelectionLabel.setText(
+				String.format(ALBUM_STRING, 
+						album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
+		
+		repaintLists();
+	}
+
+	/**
+	 * Shows all coins in the dedicated element.
+	 * 
+	 * @param coins		coins to show
+	 */
+	@Override
+	public void showAllCoins(List<Coin> coins) {
+		coinList.clearSelection();
+		coinListModel.removeAllElements();
+		coins.stream().forEach(coinListModel::addElement);
+		coinActualLabel.setText("All coins:");
+		
+		coinFilterDescription.setText("");
+		albumSearchButton.setEnabled(false);
+		
+		albumList.clearSelection();
+	}
+
+	/**
+	 * Shows the coins result of search in the dedicated element.
+	 * 
+	 * @param coins		coins to show
+	 * @param search	searching key as string
+	 */
+	@Override
+	public void showSearchedCoins(List<Coin> coins, String search) {
+		coinListModel.removeAllElements();
+		coins.stream().forEach(coinListModel::addElement);
+		coinActualLabel.setText(String.format(RESULTS, search));
+		
+		albumList.clearSelection();
+	}
+
+	/**
+	 * Shows the coins contained in an album in the dedicated element.
+	 * 
+	 * @param coins		coins to show
+	 * @param album		album subject of the filter
+	 */
+	@Override
+	public void showCoinsInAlbum(List<Coin> coins, Album album) {
+		coinListModel.removeAllElements();
+		coins.stream().forEach(coinListModel::addElement);
+		coinActualLabel.setText(String.format(IN_ALBUM, album.getName(), album.getVolume()));
+	}
+
+	/**
+	 * Shows a selected coin in the dedicated element.
+	 * 
+	 * @param coin		coin to show
+	 * @param album		album to which belongs
+	 */
+	@Override
+	public void showCoin(Coin coin, Album album) {
+		coinSelectionLabel.setText(
+				String.format(COIN_STRING, 
+						coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), album.getName(), 
+						album.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
+	}
+
+	/**
+	 * Feedbacks the user to an added coin: updates list and clears form.
+	 * 
+	 * @param coin		added coin
+	 */
+	@Override
+	public void coinAdded(Coin coin) {
+		coinListModel.addElement(coin);
+		
+		coinFormDescription.setText("");
+		coinFormGrade.setSelectedIndex(-1);
+		coinFormCountry.setText("");
+		coinFormYear.setText("");
+		coinFormAlbum.setSelectedIndex(-1);
+		coinFormNote.setText("");
+		
+		coinSaveButton.setEnabled(false);
+		
+		repaintLists();
+	}
+
+	/**
+	 * Feedbacks the user to a deleted coin: updates list.
+	 * 
+	 * @param coin		deleted coin
+	 */
+	@Override
+	public void coinDeleted(Coin coin) {
+		coinListModel.removeElement(coin);
+		
+		repaintLists();
+	}
+
+	/**
+	 * Feedbacks the user to a moved coin: updates lists and selection label.
+	 * 
+	 * @param coin		moved coin
+	 * @param oldAlbum	old album of the coin
+	 * @param newAlbum	new album of the coin
+	 */
+	@Override
+	public void coinMoved(Coin coin, Album oldAlbum, Album newAlbum) {
+		int index = coinListModel.indexOf(coin);
+		coinListModel.removeElement(coin);
+		coinListModel.add(index, coin);
+		coinList.setSelectedValue(coin, true);
+		
+		coinSelectionLabel.setText(
+				String.format(COIN_STRING, 
+						coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), newAlbum.getName(), 
+						newAlbum.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
+		
+		repaintLists();
+	}
+
+	/**
+	 * Shows to the user an error message
+	 * 
+	 * @param msg		message to show
+	 */
+	@Override
+	public void showError(String msg) {
+		statusLabel.setForeground(Color.RED);
+		statusLabel.setText(msg);
+	}
+
+	/**
+	 * Shows to the user a success message
+	 * 
+	 * @param msg		message to show
+	 */
+	@Override
+	public void showSuccess(String msg) {
+		statusLabel.setForeground(Color.GREEN);
+		statusLabel.setText(msg);
+	}
+
+	/////////////// Private utility methods
+	/**
+	 * Force the repainting of the list without delay.
+	 */
+	private void repaintLists() {
+		coinList.repaint();
+		albumList.repaint();
+		coinFormAlbum.repaint();
+	}
+	
+	/////////////// GUI construction
+	/**
+	 * Constructor of the GUI
+	 */
 	public SwingView() {
+		setLocale(Locale.ENGLISH);
 		setMinimumSize(new Dimension(960, 640));
 		setFont(new Font("Tahoma", Font.PLAIN, 12));
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SwingView.class.getResource("/icon/icon.png")));
@@ -66,7 +555,7 @@ public class SwingView extends JFrame implements View {
 		albumPanel.setBorder(new CompoundBorder(new LineBorder(new Color(240, 240, 240), 4), new LineBorder(new Color(0, 0, 255), 2)));
 		mainPanel.add(albumPanel);
 		GridBagLayout gbl_albumPanel = new GridBagLayout();
-		gbl_albumPanel.columnWidths = new int[]{0, 0};
+		gbl_albumPanel.columnWidths = new int[]{484, 0};
 		gbl_albumPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gbl_albumPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_albumPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
@@ -92,9 +581,9 @@ public class SwingView extends JFrame implements View {
 		gbc_albumSearchPanel.gridy = 1;
 		albumPanel.add(albumSearchPanel, gbc_albumSearchPanel);
 		GridBagLayout gbl_albumSearchPanel = new GridBagLayout();
-		gbl_albumSearchPanel.columnWidths = new int[]{0, 136, 94, 110, 90, 0};
+		gbl_albumSearchPanel.columnWidths = new int[]{0, 136, 94, 25, 90, 65, 0};
 		gbl_albumSearchPanel.rowHeights = new int[]{0, 0};
-		gbl_albumSearchPanel.columnWeights = new double[]{0.0, 3.0, 0.0, 0.0, 2.0, Double.MIN_VALUE};
+		gbl_albumSearchPanel.columnWeights = new double[]{0.0, 3.0, 0.0, 0.0, 2.0, 0.0, Double.MIN_VALUE};
 		gbl_albumSearchPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		albumSearchPanel.setLayout(gbl_albumSearchPanel);
 		
@@ -102,16 +591,17 @@ public class SwingView extends JFrame implements View {
 		albumSearchNameLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		albumSearchNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		GridBagConstraints gbc_albumSearchNameLabel = new GridBagConstraints();
+		gbc_albumSearchNameLabel.ipadx = 5;
 		gbc_albumSearchNameLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_albumSearchNameLabel.ipady = 10;
-		gbc_albumSearchNameLabel.ipadx = 10;
 		gbc_albumSearchNameLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_albumSearchNameLabel.gridx = 0;
 		gbc_albumSearchNameLabel.gridy = 0;
 		albumSearchPanel.add(albumSearchNameLabel, gbc_albumSearchNameLabel);
 		
 		albumSearchName = new JTextField();
-		albumSearchName.setName("albumSearchNameValue");
+		albumSearchName.setName("albumSearchName");
+		albumSearchName.addKeyListener(albumSearchButtonEnabler);
 		albumSearchName.setToolTipText("Album's name to search");
 		albumSearchName.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		albumSearchNameLabel.setLabelFor(albumSearchName);
@@ -128,14 +618,15 @@ public class SwingView extends JFrame implements View {
 		albumSearchVolumeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		GridBagConstraints gbc_albumSearchVolumeLabel = new GridBagConstraints();
 		gbc_albumSearchVolumeLabel.ipady = 10;
-		gbc_albumSearchVolumeLabel.ipadx = 10;
+		gbc_albumSearchVolumeLabel.ipadx = 5;
 		gbc_albumSearchVolumeLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_albumSearchVolumeLabel.gridx = 2;
 		gbc_albumSearchVolumeLabel.gridy = 0;
 		albumSearchPanel.add(albumSearchVolumeLabel, gbc_albumSearchVolumeLabel);
 		
 		albumSearchVolume = new JTextField();
-		albumSearchVolume.setName("albumSearchVolumeValue");
+		albumSearchVolume.setName("albumSearchVolume");
+		albumSearchVolume.addKeyListener(albumSearchButtonEnabler);
 		albumSearchVolume.setToolTipText("Album's volume to search");
 		albumSearchVolume.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		albumSearchVolumeLabel.setLabelFor(albumSearchVolume);
@@ -147,13 +638,26 @@ public class SwingView extends JFrame implements View {
 		albumSearchPanel.add(albumSearchVolume, gbc_albumSearchVolume);
 		albumSearchVolume.setColumns(10);
 		
-		JButton albumSearchButton = new JButton("Search");
+		albumSearchButton = new JButton("Search");
+		albumSearchButton.addActionListener(albumSearchAction);
+		albumSearchButton.setEnabled(false);
 		albumSearchButton.setToolTipText("Search the album");
 		albumSearchButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		GridBagConstraints gbc_albumSearchButton = new GridBagConstraints();
+		gbc_albumSearchButton.insets = new Insets(0, 0, 0, 5);
 		gbc_albumSearchButton.gridx = 4;
 		gbc_albumSearchButton.gridy = 0;
 		albumSearchPanel.add(albumSearchButton, gbc_albumSearchButton);
+		
+		JButton albumClearButton = new JButton("All albums");
+		albumClearButton.setToolTipText("Reload all albums");
+		albumClearButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		albumClearButton.setEnabled(true);
+		albumClearButton.addActionListener(albumClearAction);
+		GridBagConstraints gbc_albumClearButton = new GridBagConstraints();
+		gbc_albumClearButton.gridx = 5;
+		gbc_albumClearButton.gridy = 0;
+		albumSearchPanel.add(albumClearButton, gbc_albumClearButton);
 		
 		JPanel albumMainPanel = new JPanel();
 		GridBagConstraints gbc_albumMainPanel = new GridBagConstraints();
@@ -164,34 +668,47 @@ public class SwingView extends JFrame implements View {
 		albumPanel.add(albumMainPanel, gbc_albumMainPanel);
 		GridBagLayout gbl_albumMainPanel = new GridBagLayout();
 		gbl_albumMainPanel.columnWidths = new int[]{226, 0};
-		gbl_albumMainPanel.rowHeights = new int[]{15, 0, 0};
+		gbl_albumMainPanel.rowHeights = new int[]{15, 0, 0, 0};
 		gbl_albumMainPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_albumMainPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_albumMainPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		albumMainPanel.setLayout(gbl_albumMainPanel);
 		
-		albumMainActualLabel = new JLabel(" ");
-		albumMainActualLabel.setName("albumMainActualValue");
-		albumMainActualLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		albumMainActualLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
-		GridBagConstraints gbc_albumMainActualLabel = new GridBagConstraints();
-		gbc_albumMainActualLabel.ipady = 10;
-		gbc_albumMainActualLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_albumMainActualLabel.gridx = 0;
-		gbc_albumMainActualLabel.gridy = 0;
-		albumMainPanel.add(albumMainActualLabel, gbc_albumMainActualLabel);
+		albumActualLabel = new JLabel(" ");
+		albumActualLabel.setName("albumActual");
+		albumActualLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		albumActualLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
+		GridBagConstraints gbc_albumActualLabel = new GridBagConstraints();
+		gbc_albumActualLabel.ipady = 10;
+		gbc_albumActualLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_albumActualLabel.gridx = 0;
+		gbc_albumActualLabel.gridy = 0;
+		albumMainPanel.add(albumActualLabel, gbc_albumActualLabel);
 		
-		JScrollPane albumMainScroll = new JScrollPane();
-		GridBagConstraints gbc_albumMainScroll = new GridBagConstraints();
-		gbc_albumMainScroll.fill = GridBagConstraints.BOTH;
-		gbc_albumMainScroll.gridx = 0;
-		gbc_albumMainScroll.gridy = 1;
-		albumMainPanel.add(albumMainScroll, gbc_albumMainScroll);
+		JScrollPane albumScroll = new JScrollPane();
+		GridBagConstraints gbc_albumScroll = new GridBagConstraints();
+		gbc_albumScroll.insets = new Insets(0, 0, 5, 0);
+		gbc_albumScroll.fill = GridBagConstraints.BOTH;
+		gbc_albumScroll.gridx = 0;
+		gbc_albumScroll.gridy = 1;
+		albumMainPanel.add(albumScroll, gbc_albumScroll);
 		
-		albumMainList = new JList<>();
-		albumMainList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		albumMainList.setName("albumMainList");
-		albumMainList.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		albumMainScroll.setViewportView(albumMainList);
+		albumListModel = new DefaultListModel<>();
+		albumList = new JList<>(albumListModel);
+		albumList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		albumList.addListSelectionListener(albumListSelection);
+		albumList.setName("albumList");
+		albumList.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		albumScroll.setViewportView(albumList);
+		
+		albumSelectionLabel = new JLabel(" ");
+		albumSelectionLabel.setName("albumSelection");
+		albumSelectionLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 12));
+		GridBagConstraints gbc_albumSelectionLabel = new GridBagConstraints();
+		gbc_albumSelectionLabel.ipady = 10;
+		gbc_albumSelectionLabel.ipadx = 10;
+		gbc_albumSelectionLabel.gridx = 0;
+		gbc_albumSelectionLabel.gridy = 2;
+		albumMainPanel.add(albumSelectionLabel, gbc_albumSelectionLabel);
 		
 		JPanel albumControlPanel = new JPanel();
 		GridBagConstraints gbc_albumControlPanel = new GridBagConstraints();
@@ -201,40 +718,34 @@ public class SwingView extends JFrame implements View {
 		albumPanel.add(albumControlPanel, gbc_albumControlPanel);
 		GridBagLayout gbl_albumControlPanel = new GridBagLayout();
 		gbl_albumControlPanel.columnWidths = new int[]{65, 51, 0};
-		gbl_albumControlPanel.rowHeights = new int[]{23, 0, 0, 0};
+		gbl_albumControlPanel.rowHeights = new int[]{23, 37, 0, 0};
 		gbl_albumControlPanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		gbl_albumControlPanel.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		albumControlPanel.setLayout(gbl_albumControlPanel);
 		
-		JButton albumControlDeleteButton = new JButton("Delete album");
-		albumControlDeleteButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		albumControlDeleteButton.setToolTipText("Delete this album");
-		albumControlDeleteButton.setEnabled(false);
-		albumControlDeleteButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		GridBagConstraints gbc_albumControlDeleteButton = new GridBagConstraints();
-		gbc_albumControlDeleteButton.anchor = GridBagConstraints.EAST;
-		gbc_albumControlDeleteButton.insets = new Insets(0, 0, 5, 5);
-		gbc_albumControlDeleteButton.gridx = 0;
-		gbc_albumControlDeleteButton.gridy = 0;
-		albumControlPanel.add(albumControlDeleteButton, gbc_albumControlDeleteButton);
+		albumDeleteButton = new JButton("Delete album");
+		albumDeleteButton.addActionListener(albumDeleteAction);
+		albumDeleteButton.setToolTipText("Delete this album");
+		albumDeleteButton.setEnabled(false);
+		albumDeleteButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		GridBagConstraints gbc_albumDeleteButton = new GridBagConstraints();
+		gbc_albumDeleteButton.anchor = GridBagConstraints.EAST;
+		gbc_albumDeleteButton.insets = new Insets(0, 0, 5, 5);
+		gbc_albumDeleteButton.gridx = 0;
+		gbc_albumDeleteButton.gridy = 0;
+		albumControlPanel.add(albumDeleteButton, gbc_albumDeleteButton);
 		
-		JButton albumControlMoveButton = new JButton("Move album");
-		albumControlMoveButton.setToolTipText("Change the location of this album");
-		albumControlMoveButton.setEnabled(false);
-		albumControlMoveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		albumControlMoveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		GridBagConstraints gbc_albumControlMoveButton = new GridBagConstraints();
-		gbc_albumControlMoveButton.anchor = GridBagConstraints.WEST;
-		gbc_albumControlMoveButton.insets = new Insets(0, 0, 5, 0);
-		gbc_albumControlMoveButton.gridx = 1;
-		gbc_albumControlMoveButton.gridy = 0;
-		albumControlPanel.add(albumControlMoveButton, gbc_albumControlMoveButton);
+		albumMoveButton = new JButton("Move album");
+		albumMoveButton.setToolTipText("Change the location of this album");
+		albumMoveButton.setEnabled(false);
+		albumMoveButton.addActionListener(albumMoveAction);
+		albumMoveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		GridBagConstraints gbc_albumMoveButton = new GridBagConstraints();
+		gbc_albumMoveButton.anchor = GridBagConstraints.WEST;
+		gbc_albumMoveButton.insets = new Insets(0, 0, 5, 0);
+		gbc_albumMoveButton.gridx = 1;
+		gbc_albumMoveButton.gridy = 0;
+		albumControlPanel.add(albumMoveButton, gbc_albumMoveButton);
 		
 		JSeparator separator = new JSeparator();
 		GridBagConstraints gbc_separator = new GridBagConstraints();
@@ -273,7 +784,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormNameLabel, gbc_albumFormNameLabel);
 		
 		albumFormName = new JTextField();
-		albumFormName.setName("albumFormNameValue");
+		albumFormName.addKeyListener(albumFormButtonEnabler);
+		albumFormName.setName("albumFormName");
 		albumFormName.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		albumFormNameLabel.setLabelFor(albumFormName);
 		GridBagConstraints gbc_albumFormName = new GridBagConstraints();
@@ -297,7 +809,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormVolumeLabel, gbc_albumFormVolumeLabel);
 		
 		albumFormVolume = new JTextField();
-		albumFormVolume.setName("albumFormVolumeValue");
+		albumFormVolume.addKeyListener(albumFormButtonEnabler);
+		albumFormVolume.setName("albumFormVolume");
 		albumFormVolume.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		GridBagConstraints gbc_albumFormVolume = new GridBagConstraints();
 		gbc_albumFormVolume.anchor = GridBagConstraints.WEST;
@@ -320,7 +833,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormLocationLabel, gbc_albumFormLocationLabel);
 		
 		albumFormLocation = new JTextField();
-		albumFormLocation.setName("albumFormLocationValue");
+		albumFormLocation.addKeyListener(albumFormButtonEnabler);
+		albumFormLocation.setName("albumFormLocation");
 		albumFormLocation.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		albumFormLocationLabel.setLabelFor(albumFormLocation);
 		GridBagConstraints gbc_albumFormLocation = new GridBagConstraints();
@@ -344,7 +858,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormSlotsLabel, gbc_albumFormSlotsLabel);
 		
 		albumFormSlots = new JTextField();
-		albumFormSlots.setName("albumFormSlotsValue");
+		albumFormSlots.addKeyListener(albumFormButtonEnabler);
+		albumFormSlots.setName("albumFormSlots");
 		albumFormSlots.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		albumFormSlotsLabel.setLabelFor(albumFormSlots);
 		GridBagConstraints gbc_albumFormSlots = new GridBagConstraints();
@@ -355,15 +870,16 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormSlots, gbc_albumFormSlots);
 		albumFormSlots.setColumns(10);
 		
-		JButton albumFormSaveButton = new JButton("Save album");
-		albumFormSaveButton.setToolTipText("Save album");
-		albumFormSaveButton.setEnabled(false);
-		albumFormSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		GridBagConstraints gbc_albumFormSaveButton = new GridBagConstraints();
-		gbc_albumFormSaveButton.gridwidth = 4;
-		gbc_albumFormSaveButton.gridx = 0;
-		gbc_albumFormSaveButton.gridy = 2;
-		albumFormPanel.add(albumFormSaveButton, gbc_albumFormSaveButton);
+		albumSaveButton = new JButton("Save album");
+		albumSaveButton.setToolTipText("Save album");
+		albumSaveButton.setEnabled(false);
+		albumSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		albumSaveButton.addActionListener(albumSaveAction);
+		GridBagConstraints gbc_albumSaveButton = new GridBagConstraints();
+		gbc_albumSaveButton.gridwidth = 4;
+		gbc_albumSaveButton.gridx = 0;
+		gbc_albumSaveButton.gridy = 2;
+		albumFormPanel.add(albumSaveButton, gbc_albumSaveButton);
 		
 		JPanel coinPanel = new JPanel();
 		coinPanel.setBorder(new CompoundBorder(new LineBorder(new Color(240, 240, 240), 4), new LineBorder(new Color(255, 255, 0), 2)));
@@ -395,9 +911,9 @@ public class SwingView extends JFrame implements View {
 		gbc_coinFilterPanel.gridy = 1;
 		coinPanel.add(coinFilterPanel, gbc_coinFilterPanel);
 		GridBagLayout gbl_coinFilterPanel = new GridBagLayout();
-		gbl_coinFilterPanel.columnWidths = new int[]{56, 96, 85, 0};
+		gbl_coinFilterPanel.columnWidths = new int[]{56, 96, 85, 65, 0};
 		gbl_coinFilterPanel.rowHeights = new int[]{21, 0};
-		gbl_coinFilterPanel.columnWeights = new double[]{0.0, 3.0, 2.0, Double.MIN_VALUE};
+		gbl_coinFilterPanel.columnWeights = new double[]{0.0, 3.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_coinFilterPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		coinFilterPanel.setLayout(gbl_coinFilterPanel);
 		
@@ -414,7 +930,8 @@ public class SwingView extends JFrame implements View {
 		coinFilterPanel.add(coinFilterDescriptionLabel, gbc_coinFilterDescriptionLabel);
 		
 		coinFilterDescription = new JTextField();
-		coinFilterDescription.setName("coinFilterDescriptionValue");
+		coinFilterDescription.setName("coinFilterDescription");
+		coinFilterDescription.addKeyListener(coinFilterButtonEnabler);
 		coinFilterDescription.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFilterDescriptionLabel.setLabelFor(coinFilterDescription);
 		coinFilterDescription.setToolTipText("Coins' description to search");
@@ -426,18 +943,27 @@ public class SwingView extends JFrame implements View {
 		coinFilterPanel.add(coinFilterDescription, gbc_coinFilterDescription);
 		coinFilterDescription.setColumns(10);
 		
-		JButton btnNewButton = new JButton("Filter");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnNewButton.setToolTipText("Filter coins");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.anchor = GridBagConstraints.NORTH;
-		gbc_btnNewButton.gridx = 2;
-		gbc_btnNewButton.gridy = 0;
-		coinFilterPanel.add(btnNewButton, gbc_btnNewButton);
+		coinFilterButton = new JButton("Filter");
+		coinFilterButton.setEnabled(false);
+		coinFilterButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinFilterButton.setToolTipText("Filter coins");
+		coinFilterButton.addActionListener(coinFilterAction);
+		GridBagConstraints gbc_coinFilterButton = new GridBagConstraints();
+		gbc_coinFilterButton.insets = new Insets(0, 0, 0, 5);
+		gbc_coinFilterButton.anchor = GridBagConstraints.NORTH;
+		gbc_coinFilterButton.gridx = 2;
+		gbc_coinFilterButton.gridy = 0;
+		coinFilterPanel.add(coinFilterButton, gbc_coinFilterButton);
+		
+		JButton coinClearButton = new JButton("All coins");
+		coinClearButton.setToolTipText("Reload all coins");
+		coinClearButton.addActionListener(coinClearAction);
+		coinClearButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinClearButton.setEnabled(true);
+		GridBagConstraints gbc_coinClearButton = new GridBagConstraints();
+		gbc_coinClearButton.gridx = 3;
+		gbc_coinClearButton.gridy = 0;
+		coinFilterPanel.add(coinClearButton, gbc_coinClearButton);
 		
 		JPanel coinMainPanel = new JPanel();
 		GridBagConstraints gbc_coinMainPanel = new GridBagConstraints();
@@ -448,34 +974,47 @@ public class SwingView extends JFrame implements View {
 		coinPanel.add(coinMainPanel, gbc_coinMainPanel);
 		GridBagLayout gbl_coinMainPanel = new GridBagLayout();
 		gbl_coinMainPanel.columnWidths = new int[]{45, 0};
-		gbl_coinMainPanel.rowHeights = new int[]{13, 0, 0};
+		gbl_coinMainPanel.rowHeights = new int[]{13, 0, 0, 0};
 		gbl_coinMainPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_coinMainPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_coinMainPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		coinMainPanel.setLayout(gbl_coinMainPanel);
 		
-		coinMainActualLabel = new JLabel(" ");
-		coinMainActualLabel.setName("coinMainActualValue");
-		coinMainActualLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
-		GridBagConstraints gbc_coinMainActualLabel = new GridBagConstraints();
-		gbc_coinMainActualLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_coinMainActualLabel.ipady = 10;
-		gbc_coinMainActualLabel.anchor = GridBagConstraints.NORTHWEST;
-		gbc_coinMainActualLabel.gridx = 0;
-		gbc_coinMainActualLabel.gridy = 0;
-		coinMainPanel.add(coinMainActualLabel, gbc_coinMainActualLabel);
+		coinActualLabel = new JLabel(" ");
+		coinActualLabel.setName("coinActual");
+		coinActualLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
+		GridBagConstraints gbc_coinActualLabel = new GridBagConstraints();
+		gbc_coinActualLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_coinActualLabel.ipady = 10;
+		gbc_coinActualLabel.anchor = GridBagConstraints.NORTH;
+		gbc_coinActualLabel.gridx = 0;
+		gbc_coinActualLabel.gridy = 0;
+		coinMainPanel.add(coinActualLabel, gbc_coinActualLabel);
 		
-		JScrollPane coinMainScroll = new JScrollPane();
-		GridBagConstraints gbc_coinMainScroll = new GridBagConstraints();
-		gbc_coinMainScroll.fill = GridBagConstraints.BOTH;
-		gbc_coinMainScroll.gridx = 0;
-		gbc_coinMainScroll.gridy = 1;
-		coinMainPanel.add(coinMainScroll, gbc_coinMainScroll);
+		JScrollPane coinScroll = new JScrollPane();
+		GridBagConstraints gbc_coinScroll = new GridBagConstraints();
+		gbc_coinScroll.insets = new Insets(0, 0, 5, 0);
+		gbc_coinScroll.fill = GridBagConstraints.BOTH;
+		gbc_coinScroll.gridx = 0;
+		gbc_coinScroll.gridy = 1;
+		coinMainPanel.add(coinScroll, gbc_coinScroll);
 		
-		coinMainList = new JList<>();
-		coinMainList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		coinMainList.setName("coinMainList");
-		coinMainScroll.setViewportView(coinMainList);
-		coinMainList.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinListModel = new DefaultListModel<>();
+		coinList = new JList<>(coinListModel);
+		coinList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		coinList.setName("coinList");
+		coinScroll.setViewportView(coinList);
+		coinList.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinList.addListSelectionListener(coinListSelection);
+		
+		coinSelectionLabel = new JLabel(" ");
+		coinSelectionLabel.setName("coinSelection");
+		coinSelectionLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 12));
+		GridBagConstraints gbc_coinSelectionLabel = new GridBagConstraints();
+		gbc_coinSelectionLabel.ipady = 10;
+		gbc_coinSelectionLabel.ipadx = 10;
+		gbc_coinSelectionLabel.gridx = 0;
+		gbc_coinSelectionLabel.gridy = 2;
+		coinMainPanel.add(coinSelectionLabel, gbc_coinSelectionLabel);
 		
 		JPanel coinControlPanel = new JPanel();
 		GridBagConstraints gbc_coinControlPanel = new GridBagConstraints();
@@ -490,31 +1029,29 @@ public class SwingView extends JFrame implements View {
 		gbl_coinControlPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		coinControlPanel.setLayout(gbl_coinControlPanel);
 		
-		JButton coinControlDeleteButton = new JButton("Delete coin");
-		coinControlDeleteButton.setToolTipText("Delete this coin");
-		coinControlDeleteButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		coinControlDeleteButton.setEnabled(false);
-		GridBagConstraints gbc_coinControlDeleteButton = new GridBagConstraints();
-		gbc_coinControlDeleteButton.anchor = GridBagConstraints.EAST;
-		gbc_coinControlDeleteButton.insets = new Insets(0, 0, 5, 5);
-		gbc_coinControlDeleteButton.gridx = 0;
-		gbc_coinControlDeleteButton.gridy = 0;
-		coinControlPanel.add(coinControlDeleteButton, gbc_coinControlDeleteButton);
+		coinDeleteButton = new JButton("Delete coin");
+		coinDeleteButton.setToolTipText("Delete this coin");
+		coinDeleteButton.addActionListener(coinDeleteAction);
+		coinDeleteButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinDeleteButton.setEnabled(false);
+		GridBagConstraints gbc_coinDeleteButton = new GridBagConstraints();
+		gbc_coinDeleteButton.anchor = GridBagConstraints.EAST;
+		gbc_coinDeleteButton.insets = new Insets(0, 0, 5, 5);
+		gbc_coinDeleteButton.gridx = 0;
+		gbc_coinDeleteButton.gridy = 0;
+		coinControlPanel.add(coinDeleteButton, gbc_coinDeleteButton);
 		
-		JButton coinControlMoveButton = new JButton("Move coin");
-		coinControlMoveButton.setToolTipText("Change the album of this coin");
-		coinControlMoveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		coinControlMoveButton.setEnabled(false);
-		coinControlMoveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		GridBagConstraints gbc_coinControlMoveButton = new GridBagConstraints();
-		gbc_coinControlMoveButton.anchor = GridBagConstraints.WEST;
-		gbc_coinControlMoveButton.insets = new Insets(0, 0, 5, 0);
-		gbc_coinControlMoveButton.gridx = 1;
-		gbc_coinControlMoveButton.gridy = 0;
-		coinControlPanel.add(coinControlMoveButton, gbc_coinControlMoveButton);
+		coinMoveButton = new JButton("Move coin");
+		coinMoveButton.setToolTipText("Change the album of this coin");
+		coinMoveButton.addActionListener(coinMoveAction);
+		coinMoveButton.setEnabled(false);
+		coinMoveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		GridBagConstraints gbc_coinMoveButton = new GridBagConstraints();
+		gbc_coinMoveButton.anchor = GridBagConstraints.WEST;
+		gbc_coinMoveButton.insets = new Insets(0, 0, 5, 0);
+		gbc_coinMoveButton.gridx = 1;
+		gbc_coinMoveButton.gridy = 0;
+		coinControlPanel.add(coinMoveButton, gbc_coinMoveButton);
 		
 		JSeparator separator_1 = new JSeparator();
 		GridBagConstraints gbc_separator_1 = new GridBagConstraints();
@@ -553,7 +1090,8 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormDescriptionLabel, gbc_coinFormDescriptionLabel);
 		
 		coinFormDescription = new JTextField();
-		coinFormDescription.setName("coinFormDescriptionValue");
+		coinFormDescription.setName("coinFormDescription");
+		coinFormDescription.addKeyListener(coinFormButtonEnablerTextBox);
 		coinFormDescription.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormDescriptionLabel.setLabelFor(coinFormDescription);
 		GridBagConstraints gbc_coinFormDescription = new GridBagConstraints();
@@ -576,11 +1114,12 @@ public class SwingView extends JFrame implements View {
 		gbc_coinFormGradeLabel.gridy = 0;
 		coinFormPanel.add(coinFormGradeLabel, gbc_coinFormGradeLabel);
 		
-		JComboBox<Grade> coinFormGrade = new JComboBox<>();
+		coinFormGrade = new JComboBox<>();
 		coinFormGrade.setPreferredSize(new Dimension(105, 21));
-		coinFormGrade.setName("coinFormGradeValue");
+		coinFormGrade.setName("coinFormGrade");
 		coinFormGrade.setModel(new DefaultComboBoxModel<>(Grade.values()));
 		coinFormGrade.setSelectedIndex(-1);
+		coinFormGrade.addItemListener(coinFormButtonEnablerComboBox);
 		coinFormGrade.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormGradeLabel.setLabelFor(coinFormGrade);
 		GridBagConstraints gbc_coinFormGrade = new GridBagConstraints();
@@ -603,7 +1142,8 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormCountryLabel, gbc_coinFormCountryLabel);
 		
 		coinFormCountry = new JTextField();
-		coinFormCountry.setName("coinFormCountryValue");
+		coinFormCountry.setName("coinFormCountry");
+		coinFormCountry.addKeyListener(coinFormButtonEnablerTextBox);
 		coinFormCountry.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormCountryLabel.setLabelFor(coinFormCountry);
 		GridBagConstraints gbc_coinFormCountry = new GridBagConstraints();
@@ -627,7 +1167,8 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormYearLabel, gbc_coinFormYearLabel);
 		
 		coinFormYear = new JTextField();
-		coinFormYear.setName("coinFormYearValue");
+		coinFormYear.setName("coinFormYear");
+		coinFormYear.addKeyListener(coinFormButtonEnablerTextBox);
 		coinFormYear.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormYearLabel.setLabelFor(coinFormYear);
 		GridBagConstraints gbc_coinFormYear = new GridBagConstraints();
@@ -650,8 +1191,11 @@ public class SwingView extends JFrame implements View {
 		gbc_coinFormAlbumLabel.gridy = 2;
 		coinFormPanel.add(coinFormAlbumLabel, gbc_coinFormAlbumLabel);
 		
-		JComboBox<Album> coinFormAlbum = new JComboBox<>();
-		coinFormAlbum.setName("coinFormAlbumValue");
+		coinFormAlbumModel = new DefaultComboBoxModel<>();
+		coinFormAlbum = new JComboBox<>(coinFormAlbumModel);
+		coinFormAlbum.setName("coinFormAlbum");
+		coinFormAlbum.addItemListener(coinFormButtonEnablerComboBox);
+		coinFormAlbum.setSelectedIndex(-1);
 		coinFormAlbum.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormAlbumLabel.setLabelFor(coinFormAlbum);
 		GridBagConstraints gbc_coinFormAlbum = new GridBagConstraints();
@@ -674,7 +1218,7 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormNoteLabel, gbc_coinFormNoteLabel);
 		
 		coinFormNote = new JTextField();
-		coinFormNote.setName("coinFormNoteValue");
+		coinFormNote.setName("coinFormNote");
 		coinFormNote.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormNoteLabel.setLabelFor(coinFormNote);
 		GridBagConstraints gbc_coinFormNote = new GridBagConstraints();
@@ -685,15 +1229,16 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormNote, gbc_coinFormNote);
 		coinFormNote.setColumns(10);
 		
-		JButton coinFormSaveButton = new JButton("Save coin");
-		coinFormSaveButton.setEnabled(false);
-		coinFormSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		coinFormSaveButton.setToolTipText("Save coin");
-		GridBagConstraints gbc_coinFormSaveButton = new GridBagConstraints();
-		gbc_coinFormSaveButton.gridwidth = 4;
-		gbc_coinFormSaveButton.gridx = 0;
-		gbc_coinFormSaveButton.gridy = 3;
-		coinFormPanel.add(coinFormSaveButton, gbc_coinFormSaveButton);
+		coinSaveButton = new JButton("Save coin");
+		coinSaveButton.setEnabled(false);
+		coinSaveButton.addActionListener(coinSaveAction);
+		coinSaveButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		coinSaveButton.setToolTipText("Save coin");
+		GridBagConstraints gbc_coinSaveButton = new GridBagConstraints();
+		gbc_coinSaveButton.gridwidth = 4;
+		gbc_coinSaveButton.gridx = 0;
+		gbc_coinSaveButton.gridy = 3;
+		coinFormPanel.add(coinSaveButton, gbc_coinSaveButton);
 		
 		JPanel statusPanel = new JPanel();
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
@@ -703,143 +1248,8 @@ public class SwingView extends JFrame implements View {
 		panel.add(statusPanel, gbc_statusPanel);
 		
 		statusLabel = new JLabel(" ");
-		statusLabel.setName("statusValue");
+		statusLabel.setName("status");
 		statusLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		statusPanel.add(statusLabel);
 	}
-	private static final long serialVersionUID = 1L;
-	
-	private AlbumPresenter albumPresenter;
-	private CoinPresenter coinPresenter;
-	
-	private JTextField albumSearchName;
-	private JTextField albumSearchVolume;
-	private JTextField coinFilterDescription;
-	private JList<Album> albumMainList;
-	private JLabel albumMainActualLabel;
-	private JLabel coinMainActualLabel;
-	private JList<Coin> coinMainList;
-	private JLabel statusLabel;
-	private JTextField albumFormName;
-	private JTextField albumFormVolume;
-	private JTextField albumFormLocation;
-	private JTextField albumFormSlots;
-	private JTextField coinFormDescription;
-	private JTextField coinFormCountry;
-	private JTextField coinFormYear;
-	private JTextField coinFormNote;
-	
-	// TODO remove
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					SwingView frame = new SwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	public void setPresenters(CoinPresenter coinPresenter, AlbumPresenter albumPresenter) {
-		this.coinPresenter = coinPresenter;
-		this.albumPresenter = albumPresenter;
-		
-		coinPresenter.getAllCoins();
-		albumPresenter.getAllAlbums();
-	}
-
-	@Override
-	public void showAllAlbums(List<Album> albums) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showSearchedAlbums(List<Album> albums, String search) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showAlbum(Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void albumAdded(Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void albumDeleted(Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void albumMoved(Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showAllCoins(List<Coin> coins) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showSearchedCoins(List<Coin> coins, String search) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showCoinsInAlbum(List<Coin> coins, Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showCoin(Coin coin, Album album) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void coinAdded(Coin coin) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void coinDeleted(Coin coin) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void coinMoved(Coin coin, Album oldAlbum, Album newAlbum) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showError(String msg) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showSuccess(String msg) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

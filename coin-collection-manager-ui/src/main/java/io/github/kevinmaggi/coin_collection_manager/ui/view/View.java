@@ -4,11 +4,21 @@ import java.util.List;
 
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
+import io.github.kevinmaggi.coin_collection_manager.ui.presenter.AlbumPresenter;
+import io.github.kevinmaggi.coin_collection_manager.ui.presenter.CoinPresenter;
 
 /**
  * This interface defines the methods for the view component of a MVP pattern.
  */
 public interface View {
+	/**
+	 * Sets the presenters.
+	 * 
+	 * @param coinPresenter		presenter for coin entities
+	 * @param albumPresenter	presenter for album entities
+	 */
+	void setPresenters(CoinPresenter coinPresenter, AlbumPresenter albumPresenter);
+	
 	/**
 	 * Shows all albums in the dedicated element and perform additional operation (e.g. inform the user).
 	 * 
@@ -19,10 +29,10 @@ public interface View {
 	/**
 	 * Shows the albums result of search in the dedicated element and perform additional operation (e.g. inform the user).
 	 * 
-	 * @param albums	albums to show
+	 * @param album		album to show
 	 * @param search	searching key as string
 	 */
-	void showSearchedAlbums(List<Album> albums, String search);
+	void showSearchedAlbum(Album album, String search);
 	
 	/**
 	 * Shows a selected album in the dedicated element and perform additional operation (e.g. inform the user).
