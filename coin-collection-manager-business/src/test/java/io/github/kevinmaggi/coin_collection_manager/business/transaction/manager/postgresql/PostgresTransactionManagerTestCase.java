@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -49,7 +48,6 @@ public class PostgresTransactionManagerTestCase {
 	
 	PostgresTransactionManager tm;
 	
-	private AutoCloseable closeable;
 	@Mock
 	PostgresCoinRepository coinRepo;
 	@Mock
@@ -64,8 +62,6 @@ public class PostgresTransactionManagerTestCase {
 	@BeforeEach
 	public void setUpTest() {
 		em = emf.createEntityManager();
-
-		closeable = MockitoAnnotations.openMocks(this);
 		
 		tm = new PostgresTransactionManager(em, coinRepo, albumRepo);
 	}
@@ -271,8 +267,6 @@ public class PostgresTransactionManagerTestCase {
 	public void cleanTest() throws Exception {
 		em.clear();
 		em.close();
-		
-		closeable.close();
 	}
 	
 	@AfterAll
