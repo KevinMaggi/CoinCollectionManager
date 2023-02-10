@@ -20,6 +20,7 @@ import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
  */
 public class AlbumPresenter extends Presenter {
 	private static final String DB_RETRIEVE_ERR_MSG = "Impossible to retrieve the albums from the database due to an error";
+	private static final String DB_ERROR_LOG_FORMAT = "Error during DB operations: %s";
 	
 	private static final Logger LOGGER = LogManager.getLogger(AlbumPresenter.class);
 	
@@ -46,7 +47,7 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error("An error occurred while retrieving all albums from DB.");
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
 	
@@ -64,7 +65,7 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while retrieving album %s from DB.", id.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch(AlbumNotFoundException e) {
 			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
 			LOGGER.warn(() -> String.format("Album %s is not present in DB.", id.toString()));
@@ -86,7 +87,7 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while retrieving album \"%s vol.%d\" from DB.", name, volume));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch(AlbumNotFoundException e) {
 			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
 			LOGGER.warn(() -> String.format("Album \"%s vol.%d\" is not present in DB.", name, volume));
@@ -109,7 +110,7 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while adding album %s from DB.", album.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch(DuplicateAlbumException e) {
 			view.showError("This album already exists");
 			view.showAllAlbums(actualAlbums);
@@ -133,10 +134,10 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while deleting album %s from DB.", album.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch(AlbumNotFoundException e) {
 			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
-			LOGGER.warn(() -> String.format("Album %s is not present in DB.", album.toString()));
+			LOGGER.warn(() -> String.format("Album %s to delete is not present in DB.", album.toString()));
 		}
 	}
 	
@@ -157,10 +158,10 @@ public class AlbumPresenter extends Presenter {
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while moving album %s.", album.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch(AlbumNotFoundException e) {
 			updateViewAlbumsListAfterAlbumNotFound(actualAlbums);
-			LOGGER.warn(() -> String.format("Album %s is not present in DB.", album.toString()));
+			LOGGER.warn(() -> String.format("Album %s to move is not present in DB.", album.toString()));
 		}
 	}
 	

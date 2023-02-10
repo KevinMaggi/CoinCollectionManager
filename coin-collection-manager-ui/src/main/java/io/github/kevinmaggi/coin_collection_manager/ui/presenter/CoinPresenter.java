@@ -24,6 +24,7 @@ import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
  */
 public class CoinPresenter extends Presenter {
 	private static final String DB_RETRIEVE_ERR_MSG = "Impossible to retrieve the coins from the database due to an error";
+	private static final String DB_ERROR_LOG_FORMAT = "Error during DB operations: %s";
 	
 	private static final Logger LOGGER = LogManager.getLogger(CoinPresenter.class);
 	
@@ -52,7 +53,7 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error("An error occurred while retrieving all coins from DB.");
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
 	
@@ -70,7 +71,7 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while retrieving coins from album %s from DB.", album.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (AlbumNotFoundException e) {
 			view.showError("Impossible to complete the operation because this album doesn't exist");
 			view.showAllAlbums(albumManager.findAllAlbums());
@@ -94,7 +95,7 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while retrieving coin %s from DB.", id.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (CoinNotFoundException e) {
 			updateViewCoinsListAfterCoinNotFound(actualCoins);
 			LOGGER.warn(() -> String.format("Coin %s is not present in DB.", id.toString()));
@@ -113,7 +114,7 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while retrieving coins for \"%s\" from DB.", description));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
 	
@@ -133,7 +134,7 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while adding coin %s from DB.", coin.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (FullAlbumException e) {
 			view.showError("Impossible to add the coin to this album because it is full");
 			LOGGER.warn(() -> String.format("Album where to insert %s is full.", coin.toString()));
@@ -160,10 +161,10 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while deleting coin %s from DB.", coin.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (CoinNotFoundException e) {
 			updateViewCoinsListAfterCoinNotFound(actualCoins);
-			LOGGER.warn(() -> String.format("Coin %s is not present in DB.", coin.toString()));
+			LOGGER.warn(() -> String.format("Coin %s to delete is not present in DB.", coin.toString()));
 		}
 	}
 	
@@ -187,13 +188,13 @@ public class CoinPresenter extends Presenter {
 		} catch (DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 			LOGGER.error(() -> String.format("An error occurred while moving coin %s.", coin.toString()));
-			LOGGER.debug(() -> String.format("Error during DB operations: %s", ExceptionUtils.getRootCauseMessage(e)));
+			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (FullAlbumException e) {
 			view.showError("Impossible to move the coin to this album because it is full");
 			LOGGER.warn(() -> String.format("Album where to move %s is full.", coin.toString()));
 		} catch (CoinNotFoundException e) {
 			updateViewCoinsListAfterCoinNotFound(actualCoins);
-			LOGGER.warn(() -> String.format("Coin %s is not present in DB.", coin.toString()));
+			LOGGER.warn(() -> String.format("Coin %s to move is not present in DB.", coin.toString()));
 		} catch (AlbumNotFoundException e) {
 			view.showError("Impossible to complete the operation because this album doesn't exist");
 			view.showAllAlbums(albumManager.findAllAlbums());
