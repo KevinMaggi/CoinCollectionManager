@@ -33,6 +33,8 @@
 		<assertj-swing.version>3.17.1</assertj-swing.version>
 		<mockito.version>4.11.0</mockito.version>
 		<awaitility.version>4.2.0</awaitility.version>
+		<log4j.version>2.19.0</log4j.version>
+		<commons-lang.version>3.12.0</commons-lang.version>
 		
 		<!-- Plugin version -->
 		<compiler.version>3.10.1</compiler.version>
@@ -118,6 +120,18 @@
 				<artifactId>awaitility</artifactId>
 				<version>${awaitility.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${log4j.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
