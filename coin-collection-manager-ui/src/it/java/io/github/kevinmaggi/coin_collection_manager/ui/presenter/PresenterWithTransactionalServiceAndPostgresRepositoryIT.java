@@ -126,7 +126,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 			
 			albumPresenter.searchAlbum(ALBUM_PRE.getName(), ALBUM_PRE.getVolume());
 			
-			verify(view).showAllAlbums(Arrays.asList(ALBUM_PRE));
+			verify(view).showSearchedAlbum(ALBUM_PRE, ALBUM_PRE.getName() + " vol." + ALBUM_PRE.getVolume());
 		}
 		
 		@Test
