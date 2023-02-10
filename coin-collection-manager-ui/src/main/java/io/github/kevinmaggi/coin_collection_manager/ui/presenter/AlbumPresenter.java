@@ -1,6 +1,5 @@
 package io.github.kevinmaggi.coin_collection_manager.ui.presenter;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
