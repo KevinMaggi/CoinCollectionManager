@@ -154,7 +154,6 @@ public class AlbumPresenterTestCase {
 		@Test
 		@DisplayName("Test when manager doesn't throw exception")
 		void testSearchAlbumCallViewIfManagerDoesNotThrowException() {
-			List<Album> list = Arrays.asList(ALBUM_1);
 			when(manager.findAlbumByNameAndVolume(keyName, keyVol)).thenReturn(ALBUM_1);
 			
 			InOrder inOrder = inOrder(view, manager);
@@ -163,7 +162,7 @@ public class AlbumPresenterTestCase {
 			
 			inOrder.verify(manager).findAllAlbums();
 			inOrder.verify(manager).findAlbumByNameAndVolume(keyName, keyVol);
-			inOrder.verify(view).showAllAlbums(list);
+			inOrder.verify(view).showSearchedAlbum(ALBUM_1, ALBUM_1.getName() + " vol." + ALBUM_1.getVolume());
 			verifyNoMoreInteractions(manager);
 			verifyNoMoreInteractions(view);
 		}

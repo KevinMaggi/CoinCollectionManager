@@ -69,7 +69,7 @@ public class AlbumPresenter extends Presenter {
 		List<Album> actualAlbums = Collections.emptyList();
 		try {
 			actualAlbums = manager.findAllAlbums();
-			view.showAllAlbums(Arrays.asList(manager.findAlbumByNameAndVolume(name, volume)));
+			view.showSearchedAlbum(manager.findAlbumByNameAndVolume(name, volume), name + " vol." + volume);
 		} catch(DatabaseException e) {
 			view.showError(DB_RETRIEVE_ERR_MSG);
 		} catch(AlbumNotFoundException e) {
