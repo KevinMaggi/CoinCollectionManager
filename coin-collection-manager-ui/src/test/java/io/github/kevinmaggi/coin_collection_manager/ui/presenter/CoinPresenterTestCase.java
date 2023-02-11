@@ -122,6 +122,7 @@ public class CoinPresenterTestCase {
 			
 			presenter.getCoinsByAlbum(spiedAlbum);
 			
+			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(spiedAlbum).getId();
 			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).findCoinsByAlbum(UUID_ALBUM_1);
@@ -144,6 +145,7 @@ public class CoinPresenterTestCase {
 			
 			presenter.getCoinsByAlbum(spiedAlbum);
 			
+			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(spiedAlbum).getId();
 			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).findCoinsByAlbum(UUID_ALBUM_1);
@@ -166,10 +168,10 @@ public class CoinPresenterTestCase {
 			
 			presenter.getCoinsByAlbum(spiedAlbum);
 			
+			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(spiedAlbum).getId();
 			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(view).showError(ALBUM_NOT_FOUND_MSG);
-			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(view).showAllAlbums(list);
 			verifyNoMoreInteractions(spiedAlbum);
 			verifyNoMoreInteractions(albumManager);
@@ -282,11 +284,13 @@ public class CoinPresenterTestCase {
 		void testAddCoinCallViewIfManagerDoesNotThrowExceptions() {
 			when(coinManager.addCoin(COIN_1)).thenReturn(COIN_1);
 			
-			InOrder inOrder = inOrder(view, coinManager);
+			InOrder inOrder = inOrder(view, coinManager, albumManager);
 			
 			presenter.addCoin(COIN_1);
 			
 			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
+			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).addCoin(COIN_1);
 			inOrder.verify(view).coinAdded(COIN_1);
 			inOrder.verify(view).showSuccess(COIN_ADDED_PREFIX + COIN_1.toString());
@@ -299,11 +303,13 @@ public class CoinPresenterTestCase {
 		void testAddCoinCallViewErrorIfManagerThrowsDBException() {
 			when(coinManager.addCoin(COIN_1)).thenThrow(DatabaseException.class);
 			
-			InOrder inOrder = inOrder(view, coinManager);
+			InOrder inOrder = inOrder(view, coinManager, albumManager);
 			
 			presenter.addCoin(COIN_1);
 			
 			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
+			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).addCoin(COIN_1);
 			inOrder.verify(view).showError(DB_RETRIEVE_ERR_MSG);
 			verifyNoMoreInteractions(coinManager);
@@ -315,11 +321,13 @@ public class CoinPresenterTestCase {
 		void testAddCoinCallViewErrorIfManagerThrowsFullAlbumException() {
 			when(coinManager.addCoin(COIN_1)).thenThrow(FullAlbumException.class);
 			
-			InOrder inOrder = inOrder(view, coinManager);
+			InOrder inOrder = inOrder(view, coinManager, albumManager);
 			
 			presenter.addCoin(COIN_1);
 			
 			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
+			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).addCoin(COIN_1);
 			inOrder.verify(view).showError(FULL_ALBUM_MSG);
 			verifyNoMoreInteractions(coinManager);
@@ -333,14 +341,36 @@ public class CoinPresenterTestCase {
 			when(coinManager.findAllCoins()).thenReturn(list);
 			when(coinManager.addCoin(COIN_1)).thenThrow(DuplicateCoinException.class);
 			
-			InOrder inOrder = inOrder(view, coinManager);
+			InOrder inOrder = inOrder(view, coinManager, albumManager);
 			
 			presenter.addCoin(COIN_1);
 			
 			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
+			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(coinManager).addCoin(COIN_1);
 			inOrder.verify(view).showError(DUPLICATED_COIN_MSG);
 			inOrder.verify(view).showAllCoins(list);
+			verifyNoMoreInteractions(coinManager);
+			verifyNoMoreInteractions(view);
+		}
+		
+		@Test
+		@DisplayName("Test when manager throws album not found exception")
+		void testAddCoinCallViewErrorIfManagerThrowsAlbumNotFoundException() {
+			List<Album> list = Arrays.asList(ALBUM_2);
+			when(albumManager.findAllAlbums()).thenReturn(list);
+			when(albumManager.findAlbumById(COIN_1.getAlbum())).thenThrow(AlbumNotFoundException.class);
+			
+			InOrder inOrder = inOrder(view, coinManager, albumManager);
+			
+			presenter.addCoin(COIN_1);
+			
+			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
+			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
+			inOrder.verify(view).showError(ALBUM_NOT_FOUND_MSG);
+			inOrder.verify(view).showAllAlbums(list);
 			verifyNoMoreInteractions(coinManager);
 			verifyNoMoreInteractions(view);
 		}
@@ -514,11 +544,11 @@ public class CoinPresenterTestCase {
 			presenter.moveCoin(COIN_1, spiedAlbum);
 			
 			inOrder.verify(coinManager).findAllCoins();
+			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(spiedAlbum).getId();
 			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_1);
 			inOrder.verify(albumManager).findAlbumById(UUID_ALBUM_2);
 			inOrder.verify(view).showError(ALBUM_NOT_FOUND_MSG);
-			inOrder.verify(albumManager).findAllAlbums();
 			inOrder.verify(view).showAllAlbums(list);
 			verifyNoMoreInteractions(coinManager);
 			verifyNoMoreInteractions(albumManager);

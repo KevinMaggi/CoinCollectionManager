@@ -63,7 +63,9 @@ public class CoinPresenter extends Presenter {
 	 * @param album		album to show its content
 	 */
 	public synchronized void getCoinsByAlbum(Album album) {
+		List<Album> actualAlbums = Collections.emptyList();
 		try {
+			actualAlbums = albumManager.findAllAlbums();
 			UUID id = album.getId();
 			Album retrieved = albumManager.findAlbumById(id);
 			view.showCoinsInAlbum(coinManager.findCoinsByAlbum(id), retrieved);
@@ -74,7 +76,7 @@ public class CoinPresenter extends Presenter {
 			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (AlbumNotFoundException e) {
 			view.showError("Impossible to complete the operation because this album doesn't exist");
-			view.showAllAlbums(albumManager.findAllAlbums());
+			view.showAllAlbums(actualAlbums);
 			LOGGER.warn(() -> String.format("Album %s is not present in DB.", album.toString()));
 		}
 	}
@@ -125,8 +127,11 @@ public class CoinPresenter extends Presenter {
 	 */
 	public synchronized void addCoin(Coin coin) {
 		List<Coin> actualCoins = Collections.emptyList();
+		List<Album> actualAlbums = Collections.emptyList();
 		try {
 			actualCoins = coinManager.findAllCoins();
+			actualAlbums = albumManager.findAllAlbums();
+			albumManager.findAlbumById(coin.getAlbum());
 			Coin added = coinManager.addCoin(coin);
 			view.coinAdded(added);
 			view.showSuccess("Coin successfully added: " + added.toString());
@@ -142,6 +147,10 @@ public class CoinPresenter extends Presenter {
 			view.showError("This coin already exists");
 			view.showAllCoins(actualCoins);
 			LOGGER.warn(() -> String.format("Coin %s is already present in DB.", coin.toString()));
+		} catch (AlbumNotFoundException e) {
+			view.showError("Impossible to complete the operation because this album doesn't exist");
+			view.showAllAlbums(actualAlbums);
+			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
 	}
 	
@@ -176,8 +185,10 @@ public class CoinPresenter extends Presenter {
 	 */
 	public synchronized void moveCoin(Coin coin, Album newAlbum) {
 		List<Coin> actualCoins = Collections.emptyList();
+		List<Album> actualAlbums = Collections.emptyList();
 		try {
 			actualCoins = coinManager.findAllCoins();
+			actualAlbums = albumManager.findAllAlbums();
 			UUID newId = newAlbum.getId();
 			Album oldRetrieved = albumManager.findAlbumById(coin.getAlbum());
 			Album newRetrieved = albumManager.findAlbumById(newId);
@@ -197,7 +208,7 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Coin %s to move is not present in DB.", coin.toString()));
 		} catch (AlbumNotFoundException e) {
 			view.showError("Impossible to complete the operation because this album doesn't exist");
-			view.showAllAlbums(albumManager.findAllAlbums());
+			view.showAllAlbums(actualAlbums);
 			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
 	}
