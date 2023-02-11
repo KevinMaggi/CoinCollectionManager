@@ -199,6 +199,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.label(JLabelMatcher.withName("albumSelection").andText(ALBUM_PRE.getName() + " volume " + ALBUM_PRE.getVolume() + 
 				" located in " + ALBUM_PRE.getLocation() + " with " + ALBUM_PRE.getOccupiedSlots() + "/" + ALBUM_PRE.getNumberOfSlots() + 
 				" slots occupied"));
+		window.button(JButtonMatcher.withText("Delete album")).requireEnabled();
+		window.button(JButtonMatcher.withText("Move album")).requireEnabled();
 	}
 	
 	@Test @GUITest
@@ -315,12 +317,14 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testShowCoinShouldShowTheAlbumDetails() {
+	public void testShowCoinShouldShowTheAlbumDetailsAndEnableButtons() {
 		GuiActionRunner.execute(() -> view.showCoin(COIN_PRE, ALBUM_PRE));
 		
 		window.label(JLabelMatcher.withName("coinSelection").andText(COIN_PRE.getDescription() + " of " + COIN_PRE.getMintingYear() + 
 				" from " + COIN_PRE.getCountry() + " located in " + ALBUM_PRE.getName() + " vol." + ALBUM_PRE.getVolume() + 
 				" (Grade: " + COIN_PRE.getGrade().getMeaning() + ") [note: " + COIN_PRE.getNote() + "]"));
+		window.button(JButtonMatcher.withText("Delete coin")).requireEnabled();
+		window.button(JButtonMatcher.withText("Move coin")).requireEnabled();
 	}
 	
 	@Test @GUITest
@@ -523,7 +527,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testSelectAlbumShouldCallPresentersAndEnableButtons() {
+	public void testSelectAlbumShouldCallPresenters() {
 		Album spiedAlbum = spy(ALBUM_PRE);
 		when(spiedAlbum.getId()).thenReturn(UUID_ALBUM_PRE);
 		
@@ -535,8 +539,6 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		
 		verify(albumPresenter).getAlbum(UUID_ALBUM_PRE);
 		verify(coinPresenter).getCoinsByAlbum(spiedAlbum);
-		window.button(JButtonMatcher.withText("Delete album")).requireEnabled();
-		window.button(JButtonMatcher.withText("Move album")).requireEnabled();
 	}
 	
 	@Test @GUITest
@@ -557,6 +559,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testDeleteAlbumButtonShouldCallPresenters() {
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
+			view.getAlbumDeleteButton().setEnabled(true);
 		});
 		
 		window.list("albumList").item(ALBUM_PRE.toString()).select();
@@ -572,6 +575,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		String NEW_LOCATION = "Some location";
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
+			view.getAlbumMoveButton().setEnabled(true);
 		});
 		
 		window.list("albumList").item(ALBUM_PRE.toString()).select();
@@ -588,6 +592,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testMoveAlbumButtonShouldShowDialogAndNotCallPresenterIfBlank() {
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
+			view.getAlbumMoveButton().setEnabled(true);
 		});
 		
 		window.list("albumList").item(ALBUM_PRE.toString()).select();
@@ -603,6 +608,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testMoveAlbumButtonShouldShowDialogAndNotCallPresenterIfCancel() {
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
+			view.getAlbumMoveButton().setEnabled(true);
 		});
 		
 		window.list("albumList").item(ALBUM_PRE.toString()).select();
@@ -767,7 +773,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testSelectCoinShouldCallPresenterAndEnableButtons() {
+	public void testSelectCoinShouldCallPresenter() {
 		Coin spiedCoin = spy(COIN_PRE);
 		when(spiedCoin.getId()).thenReturn(UUID_COIN_PRE);
 		
@@ -778,8 +784,6 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.list("coinList").selectItem(0);
 		
 		verify(coinPresenter).getCoin(UUID_COIN_PRE);
-		window.button(JButtonMatcher.withText("Delete coin")).requireEnabled();
-		window.button(JButtonMatcher.withText("Move coin")).requireEnabled();
 	}
 	
 	@Test @GUITest
@@ -800,6 +804,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testDeleteCoinButtonShouldCallPresenter() {
 		GuiActionRunner.execute(() -> {
 			view.getCoinListModel().addElement(COIN_PRE);
+			view.getCoinDeleteButton().setEnabled(true);
 		});
 		
 		window.list("coinList").item(COIN_PRE.toString()).select();
@@ -814,6 +819,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 			view.getCoinListModel().addElement(COIN_COMM_1);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_2);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_1);
+			view.getCoinMoveButton().setEnabled(true);
 		});
 		
 		window.list("coinList").item(COIN_COMM_1.toString()).select();
@@ -833,6 +839,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 			view.getCoinListModel().addElement(COIN_COMM_1);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_2);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_1);
+			view.getCoinMoveButton().setEnabled(true);
 		});
 		
 		window.list("coinList").item(COIN_COMM_1.toString()).select();
@@ -851,6 +858,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 			view.getCoinListModel().addElement(COIN_COMM_1);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_2);
 			view.getCoinFormAlbumModel().addElement(ALBUM_COMM_1);
+			view.getCoinMoveButton().setEnabled(true);
 		});
 		
 		window.list("coinList").item(COIN_COMM_1.toString()).select();

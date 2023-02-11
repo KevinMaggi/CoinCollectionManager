@@ -164,8 +164,6 @@ public class SwingView extends JFrame implements View {
 				if(!e.getValueIsAdjusting()) {
 					if(albumList.getSelectedIndex() != -1) {
 						albumPresenter.getAlbum(albumList.getSelectedValue().getId());
-						albumDeleteButton.setEnabled(true);
-						albumMoveButton.setEnabled(true);
 						coinPresenter.getCoinsByAlbum(albumList.getSelectedValue());
 					} else {
 						albumSelectionLabel.setText(" ");
@@ -210,8 +208,6 @@ public class SwingView extends JFrame implements View {
 				if(!e.getValueIsAdjusting()) {
 					if(coinList.getSelectedIndex() != -1) {
 						coinPresenter.getCoin(coinList.getSelectedValue().getId());
-						coinDeleteButton.setEnabled(true);
-						coinMoveButton.setEnabled(true);
 					} else {
 						coinSelectionLabel.setText(" ");
 						coinDeleteButton.setEnabled(false);
@@ -254,6 +250,22 @@ public class SwingView extends JFrame implements View {
 	
 	DefaultComboBoxModel<Album> getCoinFormAlbumModel() {
 		return coinFormAlbumModel;
+	}
+	
+	JButton getAlbumDeleteButton() {
+		return albumDeleteButton;
+	}
+
+	JButton getAlbumMoveButton() {
+		return albumMoveButton;
+	}
+
+	JButton getCoinDeleteButton() {
+		return coinDeleteButton;
+	}
+
+	JButton getCoinMoveButton() {
+		return coinMoveButton;
 	}
 
 	/////////////// View Interface methods
@@ -314,6 +326,8 @@ public class SwingView extends JFrame implements View {
 		albumSelectionLabel.setText(
 				String.format(ALBUM_STRING, 
 						album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
+		albumDeleteButton.setEnabled(true);
+		albumMoveButton.setEnabled(true);
 	}
 
 	/**
@@ -431,6 +445,8 @@ public class SwingView extends JFrame implements View {
 				String.format(COIN_STRING, 
 						coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), album.getName(), 
 						album.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
+		coinDeleteButton.setEnabled(true);
+		coinMoveButton.setEnabled(true);
 	}
 
 	/**
