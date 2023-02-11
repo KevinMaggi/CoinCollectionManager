@@ -339,6 +339,26 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryIT {
 		}
 		
 		@Test
+		@DisplayName("Test addCoin when the album doesn't exist")
+		void testAddCoinWhenTheAlbumDoesNotExist() {
+			initAlbums();
+			persistAlbums();
+			em.getTransaction().begin();
+			em.remove(ALBUM_COMM_1);
+			em.getTransaction().commit();
+			initCoins();
+			
+			coinPresenter.addCoin(COIN_COMM_1);
+			
+			em.getTransaction().begin();
+			List<Coin> fromDB = em.createQuery("SELECT c FROM Coin c", Coin.class).getResultList();
+			em.getTransaction().commit();
+			
+			verify(view).showError(any());
+			assertThat(fromDB).isEmpty();
+		}
+		
+		@Test
 		@DisplayName("Test deleteCoin when the coin is in the DB")
 		void testDeleteCoinWhenCoinIsInDB() {
 			populateDB();
