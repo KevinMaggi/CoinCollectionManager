@@ -23,6 +23,7 @@ import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
  * Presenter implementation for Coins.
  */
 public class CoinPresenter extends Presenter {
+	private static final String ALBUM_NOT_FOUND_MSG = "Impossible to complete the operation because this album doesn't exist";
 	private static final String DB_RETRIEVE_ERR_MSG = "Impossible to retrieve the coins from the database due to an error";
 	private static final String DB_ERROR_LOG_FORMAT = "Error during DB operations: %s";
 	
@@ -75,7 +76,7 @@ public class CoinPresenter extends Presenter {
 			LOGGER.error(() -> String.format("An error occurred while retrieving coins from album %s from DB.", album.toString()));
 			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		} catch (AlbumNotFoundException e) {
-			view.showError("Impossible to complete the operation because this album doesn't exist");
+			view.showError(ALBUM_NOT_FOUND_MSG);
 			view.showAllAlbums(actualAlbums);
 			LOGGER.warn(() -> String.format("Album %s is not present in DB.", album.toString()));
 		}
@@ -148,7 +149,7 @@ public class CoinPresenter extends Presenter {
 			view.showAllCoins(actualCoins);
 			LOGGER.warn(() -> String.format("Coin %s is already present in DB.", coin.toString()));
 		} catch (AlbumNotFoundException e) {
-			view.showError("Impossible to complete the operation because this album doesn't exist");
+			view.showError(ALBUM_NOT_FOUND_MSG);
 			view.showAllAlbums(actualAlbums);
 			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
@@ -207,7 +208,7 @@ public class CoinPresenter extends Presenter {
 			updateViewCoinsListAfterCoinNotFound(actualCoins);
 			LOGGER.warn(() -> String.format("Coin %s to move is not present in DB.", coin.toString()));
 		} catch (AlbumNotFoundException e) {
-			view.showError("Impossible to complete the operation because this album doesn't exist");
+			view.showError(ALBUM_NOT_FOUND_MSG);
 			view.showAllAlbums(actualAlbums);
 			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
