@@ -31,6 +31,9 @@ OLD_DISPLAY=${DISPLAY}
 vncserver ":${NEW_DISPLAY}" -localhost -geometry 1920x1080 -depth 16
 export DISPLAY=:${NEW_DISPLAY}
 
+# Start WM
+blackbox &
+
 # Exec command
 "$@"
 EXIT_CODE=$?

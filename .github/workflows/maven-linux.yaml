@@ -26,8 +26,8 @@ jobs:
             ~/.sonar/cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
           restore-keys: ${{ runner.os }}-maven-
-      - name: Install tightvncserver
-        run: sudo apt-get install -y tightvncserver
+      - name: Install tightvncserver and blackbox
+        run: sudo apt-get install -y tightvncserver blackbox
       - name: Build with Maven Wrapper
         run: ../execute-on-vnc.sh ../mvnw install $MAVEN_PROFILES $ADDITIONAL_COVERALLS_ARGS $SONAR
         working-directory: coin-collection-manager-aggregator
