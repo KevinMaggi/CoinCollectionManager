@@ -1,6 +1,12 @@
 # Recommended by: https://joel-costigliola.github.io/assertj/assertj-swing-running.html
 # Source: https://joel-costigliola.github.io/assertj/assertj-swing-running.html
 
+# Configure VNC password otherwise doesn't access correctly the graphical environment
+umask 0077
+mkdir -p "$HOME/.vnc"
+chmod go-rwx "$HOME/.vnc"
+vncpasswd -f <<<"just-a-pw" >"$HOME/.vnc/passwd"
+
 # Search an available display
 NEW_DISPLAY=42
 DONE="no"
