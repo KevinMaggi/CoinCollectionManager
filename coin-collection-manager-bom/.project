@@ -36,6 +36,11 @@
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/README.md</location>
 		</link>
 		<link>
+			<name>execute-on-vnc.sh</name>
+			<type>1</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/execute-on-vnc.sh</location>
+		</link>
+		<link>
 			<name>mvnw</name>
 			<type>1</type>
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/mvnw</location>
