@@ -42,7 +42,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Install tightvncserver
-        run: sudo apt-get install -y tightnvcserver
+        run: sudo apt-get install -y tightvncserver
       - name: Build with Maven Wrapper
         run: ../execute-on-vnc.sh ../mvnw install site site:stage -Ppitest
         working-directory: coin-collection-manager-aggregator
