@@ -32,6 +32,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionListener;
@@ -154,13 +155,17 @@ public class SwingView extends JFrame implements View {
 			};
 			
 	private transient ActionListener albumSearchAction = 
-			e -> albumPresenter.searchAlbum(albumSearchName.getText(), Integer.valueOf(albumSearchVolume.getText()));
+			e -> new Thread(() -> 
+				albumPresenter.searchAlbum(albumSearchName.getText(), Integer.valueOf(albumSearchVolume.getText()))
+			).start();
 			
 	private transient ActionListener albumClearAction = 
-			e -> albumPresenter.getAllAlbums();
+			e -> new Thread(() ->
+				albumPresenter.getAllAlbums()
+			).start();
 			
 	private transient ListSelectionListener albumListSelection =
-			e -> {
+			e -> new Thread(() -> {
 				if(!e.getValueIsAdjusting()) {
 					if(albumList.getSelectedIndex() != -1) {
 						albumPresenter.getAlbum(albumList.getSelectedValue().getId());
@@ -171,40 +176,48 @@ public class SwingView extends JFrame implements View {
 						albumMoveButton.setEnabled(false);
 					}
 				}
-			};
+			}).start();
 		
 	private transient ActionListener albumDeleteAction =
-			e -> {
+			e -> new Thread(() -> {
 				albumPresenter.deleteAlbum(albumList.getSelectedValue());
 				coinPresenter.getAllCoins();
-			};
+			}).start();
 			
 	private transient ActionListener albumMoveAction =
 			e -> {
 				String input = JOptionPane.showInputDialog(this, 
 						"New location:", "Move " + albumList.getSelectedValue().toString(), JOptionPane.PLAIN_MESSAGE);
-				if(input != null && !input.isBlank())
-					albumPresenter.moveAlbum(albumList.getSelectedValue(), input);
+				new Thread(() -> {
+					if(input != null && !input.isBlank())
+						albumPresenter.moveAlbum(albumList.getSelectedValue(), input);
+				}).start();
 			};
 			
 	private transient ActionListener albumSaveAction =
-			e -> albumPresenter.addAlbum(
-					new Album(
-							albumFormName.getText(),
-							Integer.parseInt(albumFormVolume.getText()), 
-							albumFormLocation.getText(), 
-							Integer.parseInt(albumFormSlots.getText()), 
-							0)
-			);
+			e -> new Thread(() -> 
+				albumPresenter.addAlbum(
+						new Album(
+								albumFormName.getText(),
+								Integer.parseInt(albumFormVolume.getText()), 
+								albumFormLocation.getText(), 
+								Integer.parseInt(albumFormSlots.getText()), 
+								0)
+				)
+			).start();
 			
 	private transient ActionListener coinFilterAction =
-			e -> coinPresenter.searchCoins(coinFilterDescription.getText());
+			e -> new Thread(() -> 
+				coinPresenter.searchCoins(coinFilterDescription.getText())
+			).start();
 			
 	private transient ActionListener coinClearAction = 
-			e -> coinPresenter.getAllCoins();
+			e -> new Thread(() -> 
+				coinPresenter.getAllCoins()
+			).start();
 			
 	private transient ListSelectionListener coinListSelection = 
-			e -> {
+			e -> new Thread(() -> {
 				if(!e.getValueIsAdjusting()) {
 					if(coinList.getSelectedIndex() != -1) {
 						coinPresenter.getCoin(coinList.getSelectedValue().getId());
@@ -214,30 +227,36 @@ public class SwingView extends JFrame implements View {
 						coinMoveButton.setEnabled(false);
 					}
 				}
-			};
+			}).start();
 			
 	private transient ActionListener coinDeleteAction =
-			e -> coinPresenter.deleteCoin(coinList.getSelectedValue());
+			e -> new Thread(() -> 
+				coinPresenter.deleteCoin(coinList.getSelectedValue())
+			).start();
 			
 	private transient ActionListener coinMoveAction =
 			e -> {
 				Object input = JOptionPane.showInputDialog(this, 
 						"New album:", "Move " + coinList.getSelectedValue().toString(), JOptionPane.PLAIN_MESSAGE, 
 						null, comboBoxToArray(coinFormAlbum), null);
-				if(input != null)
-					coinPresenter.moveCoin(coinList.getSelectedValue(), (Album)input);
+				new Thread(() -> {
+					if(input != null)
+						coinPresenter.moveCoin(coinList.getSelectedValue(), (Album)input);
+				}).start();
 			};
 			
 	private transient ActionListener coinSaveAction =
-			e -> coinPresenter.addCoin(
-					new Coin(
-							(Grade)coinFormGrade.getSelectedItem(),
-							coinFormCountry.getText(),
-							Year.parse(coinFormYear.getText()),
-							coinFormDescription.getText(),
-							coinFormNote.getText(),
-							((Album)coinFormAlbum.getSelectedItem()).getId())
-			);
+			e -> new Thread(() -> 
+				coinPresenter.addCoin(
+						new Coin(
+								(Grade)coinFormGrade.getSelectedItem(),
+								coinFormCountry.getText(),
+								Year.parse(coinFormYear.getText()),
+								coinFormDescription.getText(),
+								coinFormNote.getText(),
+								((Album)coinFormAlbum.getSelectedItem()).getId())
+				)
+			).start();
 	
 	/////////////// Methods
 	DefaultListModel<Album> getAlbumListModel() {
@@ -290,17 +309,19 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showAllAlbums(List<Album> albums) {
-		albumList.clearSelection();
-		albumListModel.removeAllElements();
-		albums.stream().forEach(albumListModel::addElement);
-		albumActualLabel.setText("All albums:");
-		
-		albumSearchName.setText("");
-		albumSearchVolume.setText("");
-		albumSearchButton.setEnabled(false);
-		
-		coinFormAlbumModel.removeAllElements();
-		albums.stream().forEach(coinFormAlbumModel::addElement);
+		SwingUtilities.invokeLater(() -> {
+			albumList.clearSelection();
+			albumListModel.removeAllElements();
+			albums.stream().forEach(albumListModel::addElement);
+			albumActualLabel.setText("All albums:");
+			
+			albumSearchName.setText("");
+			albumSearchVolume.setText("");
+			albumSearchButton.setEnabled(false);
+			
+			coinFormAlbumModel.removeAllElements();
+			albums.stream().forEach(coinFormAlbumModel::addElement);
+		});
 	}
 
 	/**
@@ -311,9 +332,11 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showSearchedAlbum(Album album, String search) {
-		albumListModel.removeAllElements();
-		albumListModel.addElement(album);
-		albumActualLabel.setText(String.format(RESULTS, search));
+		SwingUtilities.invokeLater(() -> {
+			albumListModel.removeAllElements();
+			albumListModel.addElement(album);
+			albumActualLabel.setText(String.format(RESULTS, search));
+		});
 	}
 
 	/**
@@ -323,11 +346,13 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showAlbum(Album album) {
-		albumSelectionLabel.setText(
-				String.format(ALBUM_STRING, 
-						album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
-		albumDeleteButton.setEnabled(true);
-		albumMoveButton.setEnabled(true);
+		SwingUtilities.invokeLater(() -> {
+			albumSelectionLabel.setText(
+					String.format(ALBUM_STRING, 
+							album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
+			albumDeleteButton.setEnabled(true);
+			albumMoveButton.setEnabled(true);
+		});
 	}
 
 	/**
@@ -337,22 +362,24 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void albumAdded(Album album) {
-		int index = coinFormAlbum.getSelectedIndex();
-		
-		albumListModel.addElement(album);
-		coinFormAlbumModel.addElement(album);
-		
-		if (index == -1)
-			coinFormAlbum.setSelectedIndex(-1);
-		
-		albumFormName.setText("");
-		albumFormVolume.setText("");
-		albumFormLocation.setText("");
-		albumFormSlots.setText("");
-		
-		albumSaveButton.setEnabled(false);
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			int index = coinFormAlbum.getSelectedIndex();
+			
+			albumListModel.addElement(album);
+			coinFormAlbumModel.addElement(album);
+			
+			if (index == -1)
+				coinFormAlbum.setSelectedIndex(-1);
+			
+			albumFormName.setText("");
+			albumFormVolume.setText("");
+			albumFormLocation.setText("");
+			albumFormSlots.setText("");
+			
+			albumSaveButton.setEnabled(false);
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -362,10 +389,12 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void albumDeleted(Album album) {
-		albumListModel.removeElement(album);
-		coinFormAlbumModel.removeElement(album);
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			albumListModel.removeElement(album);
+			coinFormAlbumModel.removeElement(album);
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -375,16 +404,18 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void albumMoved(Album album) {
-		int index = albumListModel.indexOf(album);
-		albumListModel.removeElement(album);
-		albumListModel.add(index, album);
-		albumList.setSelectedValue(album, true);
-		
-		albumSelectionLabel.setText(
-				String.format(ALBUM_STRING, 
-						album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			int index = albumListModel.indexOf(album);
+			albumListModel.removeElement(album);
+			albumListModel.add(index, album);
+			albumList.setSelectedValue(album, true);
+			
+			albumSelectionLabel.setText(
+					String.format(ALBUM_STRING, 
+							album.getName(), album.getVolume(), album.getLocation(), album.getOccupiedSlots(), album.getNumberOfSlots()));
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -394,15 +425,17 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showAllCoins(List<Coin> coins) {
-		coinList.clearSelection();
-		coinListModel.removeAllElements();
-		coins.stream().forEach(coinListModel::addElement);
-		coinActualLabel.setText("All coins:");
-		
-		coinFilterDescription.setText("");
-		albumSearchButton.setEnabled(false);
-		
-		albumList.clearSelection();
+		SwingUtilities.invokeLater(() -> {
+			coinList.clearSelection();
+			coinListModel.removeAllElements();
+			coins.stream().forEach(coinListModel::addElement);
+			coinActualLabel.setText("All coins:");
+			
+			coinFilterDescription.setText("");
+			albumSearchButton.setEnabled(false);
+			
+			albumList.clearSelection();
+		});
 	}
 
 	/**
@@ -413,11 +446,13 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showSearchedCoins(List<Coin> coins, String search) {
-		coinListModel.removeAllElements();
-		coins.stream().forEach(coinListModel::addElement);
-		coinActualLabel.setText(String.format(RESULTS, search));
-		
-		albumList.clearSelection();
+		SwingUtilities.invokeLater(() -> {
+			coinListModel.removeAllElements();
+			coins.stream().forEach(coinListModel::addElement);
+			coinActualLabel.setText(String.format(RESULTS, search));
+			
+			albumList.clearSelection();
+		});
 	}
 
 	/**
@@ -428,9 +463,11 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showCoinsInAlbum(List<Coin> coins, Album album) {
-		coinListModel.removeAllElements();
-		coins.stream().forEach(coinListModel::addElement);
-		coinActualLabel.setText(String.format(IN_ALBUM, album.getName(), album.getVolume()));
+		SwingUtilities.invokeLater(() -> {
+			coinListModel.removeAllElements();
+			coins.stream().forEach(coinListModel::addElement);
+			coinActualLabel.setText(String.format(IN_ALBUM, album.getName(), album.getVolume()));
+		});
 	}
 
 	/**
@@ -441,12 +478,14 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showCoin(Coin coin, Album album) {
-		coinSelectionLabel.setText(
-				String.format(COIN_STRING, 
-						coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), album.getName(), 
-						album.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
-		coinDeleteButton.setEnabled(true);
-		coinMoveButton.setEnabled(true);
+		SwingUtilities.invokeLater(() -> {
+			coinSelectionLabel.setText(
+					String.format(COIN_STRING, 
+							coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), album.getName(), 
+							album.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
+			coinDeleteButton.setEnabled(true);
+			coinMoveButton.setEnabled(true);
+		});
 	}
 
 	/**
@@ -456,18 +495,20 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void coinAdded(Coin coin) {
-		coinListModel.addElement(coin);
-		
-		coinFormDescription.setText("");
-		coinFormGrade.setSelectedIndex(-1);
-		coinFormCountry.setText("");
-		coinFormYear.setText("");
-		coinFormAlbum.setSelectedIndex(-1);
-		coinFormNote.setText("");
-		
-		coinSaveButton.setEnabled(false);
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			coinListModel.addElement(coin);
+			
+			coinFormDescription.setText("");
+			coinFormGrade.setSelectedIndex(-1);
+			coinFormCountry.setText("");
+			coinFormYear.setText("");
+			coinFormAlbum.setSelectedIndex(-1);
+			coinFormNote.setText("");
+			
+			coinSaveButton.setEnabled(false);
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -477,9 +518,11 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void coinDeleted(Coin coin) {
-		coinListModel.removeElement(coin);
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			coinListModel.removeElement(coin);
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -491,17 +534,19 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void coinMoved(Coin coin, Album oldAlbum, Album newAlbum) {
-		int index = coinListModel.indexOf(coin);
-		coinListModel.removeElement(coin);
-		coinListModel.add(index, coin);
-		coinList.setSelectedValue(coin, true);
-		
-		coinSelectionLabel.setText(
-				String.format(COIN_STRING, 
-						coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), newAlbum.getName(), 
-						newAlbum.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
-		
-		repaintLists();
+		SwingUtilities.invokeLater(() -> {
+			int index = coinListModel.indexOf(coin);
+			coinListModel.removeElement(coin);
+			coinListModel.add(index, coin);
+			coinList.setSelectedValue(coin, true);
+			
+			coinSelectionLabel.setText(
+					String.format(COIN_STRING, 
+							coin.getDescription(), coin.getMintingYear().getValue(), coin.getCountry(), newAlbum.getName(), 
+							newAlbum.getVolume(), coin.getGrade().getMeaning(), coin.getNote()));
+			
+			repaintLists();
+		});
 	}
 
 	/**
@@ -511,8 +556,10 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showError(String msg) {
-		statusLabel.setForeground(Color.RED);
-		statusLabel.setText(msg);
+		SwingUtilities.invokeLater(() -> {
+			statusLabel.setForeground(Color.RED);
+			statusLabel.setText(msg);
+		});
 	}
 
 	/**
@@ -522,8 +569,10 @@ public class SwingView extends JFrame implements View {
 	 */
 	@Override
 	public void showSuccess(String msg) {
-		statusLabel.setForeground(Color.GREEN);
-		statusLabel.setText(msg);
+		SwingUtilities.invokeLater(() -> {
+			statusLabel.setForeground(Color.GREEN);
+			statusLabel.setText(msg);
+		});
 	}
 
 	/////////////// Private utility methods
