@@ -108,6 +108,11 @@ public class Album extends BaseEntity {
 	}
 	
 	@Override
+	public String toString() {
+		return name + " vol." + volume + " [" + occupiedSlots + "/" + numberOfSlots + "] (" + location + ")";
+	}
+	
+	@Override
 	public int hashCode() {
 		return Objects.hash(this.name, this.volume);
 	}

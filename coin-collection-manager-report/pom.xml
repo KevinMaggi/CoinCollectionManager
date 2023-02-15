@@ -18,10 +18,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>coin-collection-manager-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>coin-collection-manager-business</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coin-collection-manager-ui</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -98,6 +105,7 @@
 							<sourceDirectories>
 								<sourceDirectory>../coin-collection-manager-core/</sourceDirectory>
 								<sourceDirectory>../coin-collection-manager-business/</sourceDirectory>
+								<sourceDirectory>../coin-collection-manager-ui/</sourceDirectory>
 							</sourceDirectories>
 						</configuration>
 					</plugin>

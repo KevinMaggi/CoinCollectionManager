@@ -20,6 +20,9 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		
+		<user.language>en</user.language>
+		<argLine>-Duser.language=${user.language}</argLine>
+		
 		<!-- Dependencies version -->
 		<hibernate.version>6.1.6.Final</hibernate.version>
 		<postgresql.version>42.5.1</postgresql.version>
@@ -27,7 +30,11 @@
 		<slf4j.version>1.7.36</slf4j.version> <!-- Version 1.7.36 (for TC.v 1.17.6). See in the dependency more details -->
 		<junit.version>5.9.1</junit.version>
 		<assertj.version>3.23.1</assertj.version>
+		<assertj-swing.version>3.17.1</assertj-swing.version>
 		<mockito.version>4.11.0</mockito.version>
+		<awaitility.version>4.2.0</awaitility.version>
+		<log4j.version>2.19.0</log4j.version>
+		<commons-lang.version>3.12.0</commons-lang.version>
 		
 		<!-- Plugin version -->
 		<compiler.version>3.10.1</compiler.version>
@@ -96,11 +103,35 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-swing-junit</artifactId>
+ 				<version>${assertj-swing.version}</version>
+ 				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-bom</artifactId>
 				<version>${mockito.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-bom</artifactId>
+				<version>${log4j.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
