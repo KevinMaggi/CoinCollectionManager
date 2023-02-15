@@ -45,6 +45,9 @@ import io.github.kevinmaggi.coin_collection_manager.ui.presenter.CoinPresenter;
 import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
 import java.util.Locale;
 
+/**
+ * This class offer an implementation of View component of MVP pattern using Swing.
+ */
 public class SwingView extends JFrame implements View {
 	private static final long serialVersionUID = 1L;
 	
