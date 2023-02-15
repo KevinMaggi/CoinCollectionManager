@@ -35,8 +35,9 @@ public class CoinPresenter extends Presenter {
 	/**
 	 * Simple constructor.
 	 * 
-	 * @param view		view to update at each action
-	 * @param manager	service layer to use for Coin entities
+	 * @param view			view to update at each action
+	 * @param coinManager	service layer to use for Coin entities
+	 * @param albumManager	service layer to use for Album entities
 	 */
 	public CoinPresenter(View view, CoinManager coinManager, AlbumManager albumManager) {
 		super(view);
