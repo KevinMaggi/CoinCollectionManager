@@ -594,8 +594,9 @@ public class SwingView extends JFrame implements View {
 	 * Constructor of the GUI
 	 */
 	public SwingView() {
+		setPreferredSize(new Dimension(1024, 640));
 		setLocale(Locale.ENGLISH);
-		setMinimumSize(new Dimension(960, 640));
+		setMinimumSize(new Dimension(1024, 640));
 		setFont(new Font("Tahoma", Font.PLAIN, 12));
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SwingView.class.getResource("/icon/icon.png")));
 		setTitle("Coin Collection Manager");
@@ -878,6 +879,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormVolumeLabel, gbc_albumFormVolumeLabel);
 		
 		albumFormVolume = new JTextField();
+		albumFormVolume.setPreferredSize(new Dimension(105, 21));
+		albumFormVolume.setMinimumSize(new Dimension(105, 21));
 		albumFormVolume.addKeyListener(albumFormButtonEnabler);
 		albumFormVolume.setName("albumFormVolume");
 		albumFormVolume.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -927,6 +930,8 @@ public class SwingView extends JFrame implements View {
 		albumFormPanel.add(albumFormSlotsLabel, gbc_albumFormSlotsLabel);
 		
 		albumFormSlots = new JTextField();
+		albumFormSlots.setPreferredSize(new Dimension(105, 21));
+		albumFormSlots.setMinimumSize(new Dimension(105, 21));
 		albumFormSlots.addKeyListener(albumFormButtonEnabler);
 		albumFormSlots.setName("albumFormSlots");
 		albumFormSlots.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -1184,6 +1189,7 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormGradeLabel, gbc_coinFormGradeLabel);
 		
 		coinFormGrade = new JComboBox<>();
+		coinFormGrade.setMinimumSize(new Dimension(105, 21));
 		coinFormGrade.setPreferredSize(new Dimension(105, 21));
 		coinFormGrade.setName("coinFormGrade");
 		coinFormGrade.setModel(new DefaultComboBoxModel<>(Grade.values()));
@@ -1236,6 +1242,8 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormYearLabel, gbc_coinFormYearLabel);
 		
 		coinFormYear = new JTextField();
+		coinFormYear.setMinimumSize(new Dimension(105, 21));
+		coinFormYear.setPreferredSize(new Dimension(105, 21));
 		coinFormYear.setName("coinFormYear");
 		coinFormYear.addKeyListener(coinFormButtonEnablerTextBox);
 		coinFormYear.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -1287,6 +1295,8 @@ public class SwingView extends JFrame implements View {
 		coinFormPanel.add(coinFormNoteLabel, gbc_coinFormNoteLabel);
 		
 		coinFormNote = new JTextField();
+		coinFormNote.setPreferredSize(new Dimension(105, 21));
+		coinFormNote.setMinimumSize(new Dimension(105, 21));
 		coinFormNote.setName("coinFormNote");
 		coinFormNote.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		coinFormNoteLabel.setLabelFor(coinFormNote);
