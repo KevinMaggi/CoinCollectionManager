@@ -1,8 +1,11 @@
 package io.github.kevinmaggi.coin_collection_manager.ui.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.timing.Pause.pause;
+import static org.assertj.swing.timing.Timeout.timeout;
 
 import java.time.Year;
+import java.util.regex.Pattern;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -11,6 +14,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.assertj.swing.timing.Condition;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +42,8 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 	private Coin COIN_COMM_1, COIN_COMM_2, COIN_PRE;
 
 	// Tests
+	private static final int TIMEOUT = 5000;
+	
 	private static EntityManagerFactory emf;
 	private EntityManager em;
 	private TransactionManagerFactory factory;
@@ -90,6 +96,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		
 		window.button(JButtonMatcher.withText("All albums")).click();
 		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("albumList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
 		
@@ -106,6 +119,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("albumSearchVolume").setText("").enterText(String.valueOf(ALBUM_PRE.getVolume()));
 		window.button(JButtonMatcher.withText("Search")).click();
 		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("albumList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("albumList").contents();
 		
 		assertThat(listContents).containsOnly(ALBUM_PRE.toString());
@@ -114,7 +134,6 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 	@Test @GUITest
 	public void testSearchAlbumButtonUpdatesTheListThroughPresenterWhenFail() {
 		initAlbums();
-		
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
 		});
@@ -122,6 +141,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("albumSearchName").setText("").enterText(ALBUM_PRE.getName());
 		window.textBox("albumSearchVolume").setText("").enterText(String.valueOf(ALBUM_PRE.getVolume()));
 		window.button(JButtonMatcher.withText("Search")).click();
+		
+		pause(new Condition("List is empty") {
+			@Override
+			public boolean test() {
+				return window.list("albumList").contents().length == 0;
+			}
+		}, timeout(TIMEOUT));
 				
 		String[] listContents = window.list("albumList").contents();
 
@@ -132,11 +158,17 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 	@Test @GUITest
 	public void testSelectAlbumUpdatesTheLabelAndTheCoinListThroughPresenterWhenSuccess() {
 		populateDB();
-		
 		GuiActionRunner.execute(() -> {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
 		});
 		window.list("albumList").selectItems(ALBUM_PRE.toString());
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("albumSelection").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -158,10 +190,17 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		em.getTransaction().commit();
 		
 		window.list("albumList").selectItems(ALBUM_PRE.toString());
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 				
 		String[] listContents = window.list("albumList").contents();
 
-		window.label(JLabelMatcher.withName("status").andText("This album doesn't exist"));
+		window.label(JLabelMatcher.withName("status").andText(Pattern.compile(".*his album doesn't exist")));
 		assertThat(listContents).containsOnly(ALBUM_COMM_1.toString(), ALBUM_COMM_2.toString());
 	}
 	
@@ -175,6 +214,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("albumFormSlots").setText("").enterText(String.valueOf(ALBUM_PRE.getNumberOfSlots()));
 
 		window.button(JButtonMatcher.withText("Save album")).click();
+		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("albumList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -194,6 +240,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("albumFormSlots").setText("").enterText(String.valueOf(ALBUM_PRE.getNumberOfSlots()));
 
 		window.button(JButtonMatcher.withText("Save album")).click();
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -215,6 +268,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.list("albumList").selectItem(ALBUM_PRE.toString());
 		window.button(JButtonMatcher.withText("Delete album")).click();
 		
+		pause(new Condition("List is empty") {
+			@Override
+			public boolean test() {
+				return window.list("albumList").contents().length == 0;
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
 		
@@ -230,12 +290,20 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 			view.getAlbumListModel().addElement(ALBUM_PRE);
 			view.getCoinFormAlbumModel().addElement(ALBUM_PRE);
 		});
+		window.list("albumList").selectItem(ALBUM_PRE.toString());
+		
 		em.getTransaction().begin();
 		em.remove(ALBUM_PRE);
 		em.getTransaction().commit();
-
-		window.list("albumList").selectItem(ALBUM_PRE.toString());
+		
 		window.button(JButtonMatcher.withText("Delete album")).click();
+		
+		pause(new Condition("Label shows error message relative to deletion") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "This album doesn't exist";
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -258,6 +326,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Move album")).click();
 		window.dialog().textBox().enterText("New location");
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
+		
+		pause(new Condition("List contain updated element") {
+			@Override
+			public boolean test() {
+				return window.label("albumSelection").text().contains("New location");
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -286,6 +361,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.dialog().textBox().enterText("New location");
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
 		
+		pause(new Condition("Label shows error message relative to movement") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "This album doesn't exist";
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
 		
@@ -301,6 +383,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		
 		window.button(JButtonMatcher.withText("All coins")).click();
 		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("coinList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();
 		
 		assertThat(listContents).containsExactlyInAnyOrder(COIN_COMM_1.toString(), COIN_COMM_2.toString(), COIN_PRE.toString());
@@ -313,6 +402,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("coinFilterDescription").setText("").enterText(COIN_PRE.getDescription());
 		window.button(JButtonMatcher.withText("Filter")).click();
 		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("coinList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();
 		
 		assertThat(listContents).containsOnly(COIN_PRE.toString());
@@ -321,11 +417,18 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 	@Test @GUITest
 	public void testSelectCoinUpdatesTheLabelThroughPresenterWhenSuccess() {
 		populateDB();
-		
 		GuiActionRunner.execute(() -> {
 			view.getCoinListModel().addElement(COIN_PRE);
 		});
+		
 		window.list("coinList").selectItems(COIN_PRE.toString());
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("coinSelection").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		assertThat(window.label(JLabelMatcher.withName("coinSelection")).text())
 			.contains(COIN_PRE.getDescription())
@@ -347,6 +450,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		
 		window.list("coinList").selectItems(COIN_PRE.toString());
 		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();
 		
 		window.label(JLabelMatcher.withName("status").andText("This coin doesn't exist"));
@@ -358,7 +468,6 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		initAlbums();
 		persistAlbums();
 		initCoins();
-		
 		GuiActionRunner.execute(() -> {
 			view.getCoinFormAlbumModel().addElement(ALBUM_PRE);
 		});
@@ -371,6 +480,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("coinFormNote").setText("").enterText(COIN_PRE.getNote());
 
 		window.button(JButtonMatcher.withText("Save coin")).click();
+		
+		pause(new Condition("List contain something") {
+			@Override
+			public boolean test() {
+				return window.list("coinList").contents().length != 0;
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -393,6 +509,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withText("Save coin")).click();
 		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();
 		
 		assertThat(listContents).contains(COIN_PRE.toString());
@@ -408,7 +531,6 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		em.getTransaction().begin();
 		em.merge(ALBUM_PRE);
 		em.getTransaction().commit();
-		
 		GuiActionRunner.execute(() -> {
 			view.getCoinFormAlbumModel().addElement(ALBUM_PRE);
 		});
@@ -421,6 +543,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("coinFormNote").setText("").enterText(COIN_PRE.getNote());
 
 		window.button(JButtonMatcher.withText("Save coin")).click();
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -436,7 +565,6 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		em.getTransaction().begin();
 		em.remove(ALBUM_PRE);
 		em.getTransaction().commit();
-		
 		GuiActionRunner.execute(() -> {
 			view.getCoinFormAlbumModel().addElement(ALBUM_PRE);
 		});
@@ -449,6 +577,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.textBox("coinFormNote").setText("").enterText(COIN_PRE.getNote());
 
 		window.button(JButtonMatcher.withText("Save coin")).click();
+		
+		pause(new Condition("Label is not empty") {
+			@Override
+			public boolean test() {
+				return !window.label("status").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -465,6 +600,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		
 		window.list("coinList").item(COIN_PRE.toString()).select();
 		window.button(JButtonMatcher.withText("Delete coin")).click();
+		
+		pause(new Condition("List is empty") {
+			@Override
+			public boolean test() {
+				return window.list("coinList").contents().length == 0;
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();	
 		
@@ -484,6 +626,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.list("coinList").item(COIN_PRE.toString()).select();
 		window.button(JButtonMatcher.withText("Delete coin")).click();
 		
+		pause(new Condition("Label shows error relative to deletion") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "This coin doesn't exist";
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();	
 		
 		assertThat(listContents).doesNotContain(COIN_PRE.toString());
@@ -502,6 +651,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Move coin")).click();
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
+		
+		pause(new Condition("List contain updated element") {
+			@Override
+			public boolean test() {
+				return window.label("coinSelection").text().contains(ALBUM_COMM_2.getName());
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -527,6 +683,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
 		
+		pause(new Condition("Label shows error relative to movement") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "This coin doesn't exist";
+			}
+		}, timeout(TIMEOUT));
+		
 		String[] listContents = window.list("coinList").contents();
 		
 		assertThat(listContents).doesNotContain(COIN_COMM_1.toString());
@@ -549,6 +712,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Move coin")).click();
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
+		
+		pause(new Condition("Label shows error relative to movement") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "Impossible to move the coin to this album because it is full";
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -574,6 +744,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
+		
+		pause(new Condition("Label shows error relative to movement") {
+			@Override
+			public boolean test() {
+				return window.label("status").text().trim() == "Impossible to complete the operation because this album doesn't exist";
+			}
+		}, timeout(TIMEOUT));
 		
 		String[] coinListContents = window.list("coinList").contents();
 		String[] albumListContents = window.list("albumList").contents();

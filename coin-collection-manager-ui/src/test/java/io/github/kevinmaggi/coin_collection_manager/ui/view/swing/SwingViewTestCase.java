@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +24,7 @@ import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
@@ -48,6 +48,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	private Coin COIN_PRE = new Coin(Grade.AG, "IT", Year.of(1995), "500 Lire", "", UUID_ALBUM_PRE);
 	
 	// Tests
+	private static final int TIMEOUT = 5000;
+	
 	private FrameFixture window;
 	
 	private AutoCloseable closeable;
@@ -146,7 +148,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testShowErrorShouldShowMessage() {
 		String MSG = "Some error message";
 		
-		GuiActionRunner.execute(() -> view.showError(MSG));
+		view.showError(MSG);
 		
 		window.label(JLabelMatcher.withName("status").andText(MSG));
 	}
@@ -155,7 +157,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testShowSuccessShouldShowMessage() {
 		String MSG = "Some success message";
 		
-		GuiActionRunner.execute(() -> view.showSuccess(MSG));
+		view.showSuccess(MSG);
 		
 		window.label(JLabelMatcher.withName("status").andText(MSG));
 	}
@@ -165,7 +167,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testShowAllAlbumShouldUpdateListLabelSearchingAndDropdown() {
 		List<Album> list = Arrays.asList(ALBUM_COMM_1, ALBUM_COMM_2, ALBUM_PRE);
 		
-		GuiActionRunner.execute(() -> view.showAllAlbums(list));
+		view.showAllAlbums(list);
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -183,7 +185,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testShowSearchedAlbumShouldShowItInListAndModifyTheLabel() {
 		String SEARCHING_KEY = "Pre-euro vol.1";
 		
-		GuiActionRunner.execute(() -> view.showSearchedAlbum(ALBUM_PRE, SEARCHING_KEY));
+		view.showSearchedAlbum(ALBUM_PRE, SEARCHING_KEY);
 		
 		String[] listContents = window.list("albumList").contents();
 		
@@ -194,7 +196,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	
 	@Test @GUITest
 	public void testShowAlbumShouldShowTheAlbumDetails() {
-		GuiActionRunner.execute(() -> view.showAlbum(ALBUM_PRE));
+		view.showAlbum(ALBUM_PRE);
 		
 		window.label(JLabelMatcher.withName("albumSelection").andText(ALBUM_PRE.getName() + " volume " + ALBUM_PRE.getVolume() + 
 				" located in " + ALBUM_PRE.getLocation() + " with " + ALBUM_PRE.getOccupiedSlots() + "/" + ALBUM_PRE.getNumberOfSlots() + 
@@ -205,7 +207,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	
 	@Test @GUITest
 	public void testAlbumAddedShouldAddItToTheListClearTheFormAndDoNotSelectItemInComboBoxIfUnselected() {
-		GuiActionRunner.execute(() -> view.albumAdded(ALBUM_PRE));
+		view.albumAdded(ALBUM_PRE);
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -225,16 +227,16 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() ->  view.getCoinFormAlbumModel().addElement(ALBUM_COMM_1));
 		window.comboBox("coinFormAlbum").selectItem(ALBUM_COMM_1.toString());
 		
-		GuiActionRunner.execute(() -> view.albumAdded(ALBUM_PRE));
+		view.albumAdded(ALBUM_PRE);
 		
 		assertThat(window.comboBox("coinFormAlbum").selectedItem()).isEqualTo(ALBUM_COMM_1.toString());
 	}
 	
 	@Test @GUITest
-	public void testAlbumDeletedShouldRemoveFromListAndCallCoinPresenter() {
+	public void testAlbumDeletedShouldRemoveFromLists() {
 		GuiActionRunner.execute(() -> view.getAlbumListModel().addElement(ALBUM_PRE));
 		
-		GuiActionRunner.execute(() -> view.albumDeleted(ALBUM_PRE));
+		view.albumDeleted(ALBUM_PRE);
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -250,9 +252,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 			view.getCoinFormAlbumModel().addElement(ALBUM_PRE);
 		});
 		
-		GuiActionRunner.execute(() -> {
-			view.albumMoved(ALBUM_PRE);
-		});
+		view.albumMoved(ALBUM_PRE);
 		
 		String[] listContents = window.list("albumList").contents();
 		String[] comboboxContents = window.comboBox("coinFormAlbum").contents();
@@ -272,7 +272,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.list("albumList").selectItem(ALBUM_PRE.toString());
 		
 		List<Coin> list = Arrays.asList(COIN_COMM_1, COIN_COMM_2, COIN_PRE);
-		GuiActionRunner.execute(() -> view.showAllCoins(list));
+		
+		view.showAllCoins(list);
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -294,7 +295,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		String SEARCHING_KEY = "2€";
 		
 		List<Coin> coins = Arrays.asList(COIN_COMM_1, COIN_COMM_2);
-		GuiActionRunner.execute(() -> view.showSearchedCoins(coins, SEARCHING_KEY));
+		
+		view.showSearchedCoins(coins, SEARCHING_KEY);
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -307,7 +309,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	@Test @GUITest
 	public void testShowCoinInAlbumShouldShowThemInListAndModifyTheLabel() {
 		List<Coin> coins = Arrays.asList(COIN_COMM_1, COIN_COMM_2);
-		GuiActionRunner.execute(() -> view.showCoinsInAlbum(coins, ALBUM_COMM_1));
+		
+		view.showCoinsInAlbum(coins, ALBUM_COMM_1);
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -318,7 +321,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	
 	@Test @GUITest
 	public void testShowCoinShouldShowTheAlbumDetailsAndEnableButtons() {
-		GuiActionRunner.execute(() -> view.showCoin(COIN_PRE, ALBUM_PRE));
+		view.showCoin(COIN_PRE, ALBUM_PRE);
 		
 		window.label(JLabelMatcher.withName("coinSelection").andText(COIN_PRE.getDescription() + " of " + COIN_PRE.getMintingYear() + 
 				" from " + COIN_PRE.getCountry() + " located in " + ALBUM_PRE.getName() + " vol." + ALBUM_PRE.getVolume() + 
@@ -329,7 +332,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	
 	@Test @GUITest
 	public void testCoinAddedShouldAddItToTheListAndClearTheForm() {
-		GuiActionRunner.execute(() -> view.coinAdded(COIN_PRE));
+		view.coinAdded(COIN_PRE);
 		
 		String[] listContents = window.list("coinList").contents();
 		
@@ -347,7 +350,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testCoinDeletedShouldRemoveFromList() {
 		GuiActionRunner.execute(() -> view.getCoinListModel().addElement(COIN_PRE));
 		
-		GuiActionRunner.execute(() -> view.coinDeleted(COIN_PRE));
+		view.coinDeleted(COIN_PRE);
 		
 		String[] listContents = window.list("coinList").contents();	
 		
@@ -358,12 +361,10 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 	public void testMovedCoinShouldUpdateListLabel() {
 		GuiActionRunner.execute(() -> view.getCoinListModel().addElement(COIN_COMM_1));
 		
-		GuiActionRunner.execute(() -> {
-			view.coinMoved(COIN_COMM_1, ALBUM_COMM_1, ALBUM_COMM_2);
-		});
-		
+		view.coinMoved(COIN_COMM_1, ALBUM_COMM_1, ALBUM_COMM_2);
+
 		String[] listContents = window.list("coinList").contents();
-		
+
 		assertThat(listContents).contains(COIN_COMM_1.toString());
 		window.label(JLabelMatcher.withName("coinSelection").andText(COIN_COMM_1.getDescription() + " of " + 
 				COIN_COMM_1.getMintingYear() + " from " + COIN_COMM_1.getCountry() + " located in " + ALBUM_COMM_2.getName() + " vol." + 
@@ -464,7 +465,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withText("Save album")).click();
 		
-		verify(albumPresenter).addAlbum(new Album("Pre-euro", 1, "armadio", 50, 0));
+		verify(albumPresenter, Mockito.timeout(TIMEOUT)).addAlbum(new Album("Pre-euro", 1, "armadio", 50, 0));
 	}
 	
 	@Test @GUITest
@@ -515,7 +516,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		
 		window.button(JButtonMatcher.withText("Search")).click();
 		
-		verify(albumPresenter).searchAlbum(NAME, Integer.valueOf(VOLUME));
+		verify(albumPresenter, Mockito.timeout(TIMEOUT)).searchAlbum(NAME, Integer.valueOf(VOLUME));
 	}
 
 	@Test @GUITest
@@ -523,7 +524,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("All albums")).click();
 		
 		// first call in phase of configuration
-		verify(albumPresenter, times(2)).getAllAlbums();
+		verify(albumPresenter, Mockito.timeout(TIMEOUT).times(2)).getAllAlbums();
 	}
 	
 	@Test @GUITest
@@ -537,8 +538,8 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		
 		window.list("albumList").selectItem(0);
 		
-		verify(albumPresenter).getAlbum(UUID_ALBUM_PRE);
-		verify(coinPresenter).getCoinsByAlbum(spiedAlbum);
+		verify(albumPresenter, Mockito.timeout(TIMEOUT)).getAlbum(UUID_ALBUM_PRE);
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).getCoinsByAlbum(spiedAlbum);
 	}
 	
 	@Test @GUITest
@@ -565,9 +566,9 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.list("albumList").item(ALBUM_PRE.toString()).select();
 		window.button(JButtonMatcher.withText("Delete album")).click();
 		
-		verify(albumPresenter).deleteAlbum(ALBUM_PRE);
+		verify(albumPresenter, Mockito.timeout(TIMEOUT)).deleteAlbum(ALBUM_PRE);
 		// first call in phase of configuration
-		verify(coinPresenter, times(2)).getAllCoins();
+		verify(coinPresenter, Mockito.timeout(TIMEOUT).times(2)).getAllCoins();
 	}
 	
 	@Test @GUITest
@@ -585,7 +586,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.dialog().textBox().setText(NEW_LOCATION);
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
 		
-		verify(albumPresenter).moveAlbum(ALBUM_PRE, NEW_LOCATION);
+		verify(albumPresenter, Mockito.timeout(TIMEOUT)).moveAlbum(ALBUM_PRE, NEW_LOCATION);
 	}
 	
 	@Test @GUITest
@@ -726,7 +727,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withText("Save coin")).click();
 		
-		verify(coinPresenter).addCoin(new Coin(Grade.AG, "IT", Year.of(2004), "2€", "Note", UUID_ALBUM_COMM_1));
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).addCoin(new Coin(Grade.AG, "IT", Year.of(2004), "2€", "Note", UUID_ALBUM_COMM_1));
 	}
 	
 	@Test @GUITest
@@ -761,7 +762,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		
 		window.button(JButtonMatcher.withText("Filter")).click();
 		
-		verify(coinPresenter).searchCoins(DESCRIPTION);
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).searchCoins(DESCRIPTION);
 	}
 	
 	@Test @GUITest
@@ -769,7 +770,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("All coins")).click();
 		
 		// first call in phase of configuration
-		verify(coinPresenter, times(2)).getAllCoins();
+		verify(coinPresenter, Mockito.timeout(TIMEOUT).times(2)).getAllCoins();
 	}
 	
 	@Test @GUITest
@@ -783,7 +784,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		
 		window.list("coinList").selectItem(0);
 		
-		verify(coinPresenter).getCoin(UUID_COIN_PRE);
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).getCoin(UUID_COIN_PRE);
 	}
 	
 	@Test @GUITest
@@ -810,7 +811,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.list("coinList").item(COIN_PRE.toString()).select();
 		window.button(JButtonMatcher.withText("Delete coin")).click();
 		
-		verify(coinPresenter).deleteCoin(COIN_PRE);
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).deleteCoin(COIN_PRE);
 	}
 	
 	@Test @GUITest
@@ -830,7 +831,7 @@ public class SwingViewTestCase extends AssertJSwingJUnitTestCase {
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
 		
-		verify(coinPresenter).moveCoin(COIN_COMM_1, ALBUM_COMM_2);
+		verify(coinPresenter, Mockito.timeout(TIMEOUT)).moveCoin(COIN_COMM_1, ALBUM_COMM_2);
 	}
 	
 	@Test @GUITest

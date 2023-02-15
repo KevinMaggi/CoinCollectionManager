@@ -165,18 +165,20 @@ public class SwingView extends JFrame implements View {
 			).start();
 			
 	private transient ListSelectionListener albumListSelection =
-			e -> new Thread(() -> {
+			e -> {
 				if(!e.getValueIsAdjusting()) {
 					if(albumList.getSelectedIndex() != -1) {
-						albumPresenter.getAlbum(albumList.getSelectedValue().getId());
-						coinPresenter.getCoinsByAlbum(albumList.getSelectedValue());
+						new Thread(() -> {
+							albumPresenter.getAlbum(albumList.getSelectedValue().getId());
+							coinPresenter.getCoinsByAlbum(albumList.getSelectedValue());
+						}).start();
 					} else {
 						albumSelectionLabel.setText(" ");
 						albumDeleteButton.setEnabled(false);
 						albumMoveButton.setEnabled(false);
 					}
 				}
-			}).start();
+			};
 		
 	private transient ActionListener albumDeleteAction =
 			e -> new Thread(() -> {
@@ -217,17 +219,19 @@ public class SwingView extends JFrame implements View {
 			).start();
 			
 	private transient ListSelectionListener coinListSelection = 
-			e -> new Thread(() -> {
+			e -> {
 				if(!e.getValueIsAdjusting()) {
 					if(coinList.getSelectedIndex() != -1) {
-						coinPresenter.getCoin(coinList.getSelectedValue().getId());
+						new Thread(() ->
+							coinPresenter.getCoin(coinList.getSelectedValue().getId())
+						).start();
 					} else {
 						coinSelectionLabel.setText(" ");
 						coinDeleteButton.setEnabled(false);
 						coinMoveButton.setEnabled(false);
 					}
 				}
-			}).start();
+			};
 			
 	private transient ActionListener coinDeleteAction =
 			e -> new Thread(() -> 
