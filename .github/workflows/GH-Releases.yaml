@@ -1,0 +1,59 @@
+name: Deploy jars to GitHub Releases
+
+on:
+  push:
+    tags:
+      - v*
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment
+permissions:
+  contents: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "releases"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and generate jars
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.sonar/cache
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yaml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Install tightvncserver and blackbox
+        run: sudo apt-get install -y tightvncserver blackbox
+      - name: Build and test with Maven Wrapper
+        run: ../execute-on-vnc.sh ../mvnw verify source:aggregate javadoc:aggregate-jar -Ppitest
+        working-directory: coin-collection-manager-aggregator
+      - name: Generate source and javadoc jars with  Maven Wrapper
+        run: ../mvnw source:aggregate javadoc:aggregate-jar
+        working-directory: coin-collection-manager-aggregator
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Releases the source and javadoc jars
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/*-javadoc.jar
+            target/*-sources.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

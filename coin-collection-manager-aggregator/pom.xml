@@ -16,6 +16,7 @@
 		
 		<site-url>https://KevinMaggi.github.io/CoinCollectionManager</site-url>
 		
+		<source.version>3.2.1</source.version>
 		<javadoc.version>3.4.1</javadoc.version>
 		<project-info-reports.version>3.4.1</project-info-reports.version>
 		<surefire-report.version>2.22.2</surefire-report.version>
@@ -58,6 +59,10 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${source.version}</version>
+				</plugin>
 				<plugin>
 					<!-- For when it is called directly from command line (e.g. for aggregate-jar goal) -->
 					<artifactId>maven-javadoc-plugin</artifactId>
