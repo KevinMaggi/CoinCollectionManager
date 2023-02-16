@@ -50,6 +50,7 @@
 		<sonar.version>3.9.1.2184</sonar.version>
 		<coveralls.version>4.3.0</coveralls.version>
 		<docker-plugin.version>0.40.3</docker-plugin.version>
+		<exec.version>3.1.0</exec.version>
 		
 		<!-- Docker postgres configuration -->
 		<postgres.usr>postgres-user</postgres.usr>
@@ -331,6 +332,11 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${exec.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
