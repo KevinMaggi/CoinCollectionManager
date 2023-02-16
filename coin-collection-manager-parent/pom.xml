@@ -37,7 +37,11 @@
 		<commons-lang.version>3.12.0</commons-lang.version>
 		
 		<!-- Plugin version -->
+		<clean.version>3.2.0</clean.version>
 		<compiler.version>3.10.1</compiler.version>
+		<resources.version>3.3.0</resources.version>
+		<jar.version>3.3.0</jar.version>
+		<install.version>3.1.0</install.version>
 		<surefire.version>2.22.2</surefire.version>
 		<build-helper.version>3.3.0</build-helper.version>
 		<failsafe.version>2.22.2</failsafe.version>
@@ -140,8 +144,24 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${clean.version}</version>
+				</plugin>
+				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${compiler.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${resources.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${jar.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${install.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
