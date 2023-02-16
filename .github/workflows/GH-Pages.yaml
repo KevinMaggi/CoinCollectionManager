@@ -39,12 +39,12 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.sonar/cache
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yaml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Install tightvncserver and blackbox
         run: sudo apt-get install -y tightvncserver blackbox
       - name: Build with Maven Wrapper
-        run: ../execute-on-vnc.sh ../mvnw install site site:stage -Ppitest
+        run: ../execute-on-vnc.sh ../mvnw verify site site:stage -Ppitest
         working-directory: coin-collection-manager-aggregator
       - name: Setup Pages
         uses: actions/configure-pages@v3
