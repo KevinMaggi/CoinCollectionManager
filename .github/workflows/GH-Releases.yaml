@@ -39,7 +39,7 @@ jobs:
       - name: Install tightvncserver and blackbox
         run: sudo apt-get install -y tightvncserver blackbox
       - name: Build and test with Maven Wrapper
-        run: ../execute-on-vnc.sh ../mvnw verify source:aggregate javadoc:aggregate-jar -Ppitest
+        run: ../execute-on-vnc.sh ../mvnw verify -Ppitest
         working-directory: coin-collection-manager-aggregator
       - name: Generate source and javadoc jars with  Maven Wrapper
         run: ../mvnw source:aggregate javadoc:aggregate-jar
@@ -49,10 +49,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Releases the source and javadoc jars
+      - name: Deploy to GitHub Releases the fatjar and the source and javadoc jars
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            target/*-jar-with-dependencies.jar
             target/*-javadoc.jar
             target/*-sources.jar
         env:

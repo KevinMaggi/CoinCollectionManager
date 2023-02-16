@@ -54,6 +54,7 @@
 		<module>../coin-collection-manager-core</module>
 		<module>../coin-collection-manager-business</module>
 		<module>../coin-collection-manager-ui</module>
+		<module>../coin-collection-manager-app</module>
 	</modules>
 	
 	<build>
