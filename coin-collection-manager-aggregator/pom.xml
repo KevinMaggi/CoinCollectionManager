@@ -25,7 +25,7 @@
 		<pitest.version>1.10.3</pitest.version>
 		
 		<!-- Sonar configuration -->
-		<sonar.issue.ignore.multicriteria>e1,e2,e3,e4</sonar.issue.ignore.multicriteria>
+		<sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5</sonar.issue.ignore.multicriteria>
 		
 		<!-- Rule: Define and throw a dedicated exception instead of using a generic one. -->
 		<!-- In that file is only a generic re-throw -->
@@ -46,6 +46,11 @@
 		<!-- AssertJ Swing implicit assertion are not detected -->
 		<sonar.issue.ignore.multicriteria.e4.ruleKey>java:S2699</sonar.issue.ignore.multicriteria.e4.ruleKey>
 		<sonar.issue.ignore.multicriteria.e4.resourceKey>**/*Swing*.java</sonar.issue.ignore.multicriteria.e4.resourceKey>
+		
+		<!-- Rule: Rename class to match the regular expression. -->
+		<!-- E2E tests -->
+		<sonar.issue.ignore.multicriteria.e5.ruleKey>java:S3577</sonar.issue.ignore.multicriteria.e5.ruleKey>
+		<sonar.issue.ignore.multicriteria.e5.resourceKey>**/AppE2E.java</sonar.issue.ignore.multicriteria.e5.resourceKey>
 	</properties>
 
 	<modules>
