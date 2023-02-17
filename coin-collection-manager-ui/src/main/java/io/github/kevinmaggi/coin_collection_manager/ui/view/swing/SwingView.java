@@ -597,6 +597,7 @@ public class SwingView extends JFrame implements View {
 	 * Constructor of the GUI
 	 */
 	public SwingView() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(1024, 640));
 		setLocale(Locale.ENGLISH);
 		setMinimumSize(new Dimension(1024, 640));
