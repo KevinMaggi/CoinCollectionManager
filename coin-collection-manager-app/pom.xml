@@ -64,6 +64,27 @@
 	</dependencies>
 	
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<configuration>
+						<excludes>
+							<exclude>**/app/*</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
