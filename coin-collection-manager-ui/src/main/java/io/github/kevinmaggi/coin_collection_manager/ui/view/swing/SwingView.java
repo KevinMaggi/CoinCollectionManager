@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionListener;
@@ -597,7 +598,7 @@ public class SwingView extends JFrame implements View {
 	 * Constructor of the GUI
 	 */
 	public SwingView() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(1024, 640));
 		setLocale(Locale.ENGLISH);
 		setMinimumSize(new Dimension(1024, 640));
