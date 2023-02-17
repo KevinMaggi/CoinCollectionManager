@@ -67,9 +67,9 @@ public class App implements Callable<Void> {
 				String jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s", dbUrl, dbPort, dbName);
 				
 				Map<String, String> propertiesOverriding = new HashMap<>();
-				propertiesOverriding.put("javax.persistence.jdbc.url", jdbcUrl);
-				propertiesOverriding.put("javax.persistence.jdbc.user", dbUser);
-				propertiesOverriding.put("javax.persistence.jdbc.password", dbPassword);
+				propertiesOverriding.put("jakarta.persistence.jdbc.url", jdbcUrl);
+				propertiesOverriding.put("jakarta.persistence.jdbc.user", dbUser);
+				propertiesOverriding.put("jakarta.persistence.jdbc.password", dbPassword);
 				
 				EntityManagerFactory emf = Persistence.createEntityManagerFactory("postgres", propertiesOverriding);
 				EntityManager em = emf.createEntityManager();
