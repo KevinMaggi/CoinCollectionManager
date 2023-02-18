@@ -20,8 +20,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
-import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Grade;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -30,8 +28,17 @@ import jakarta.persistence.Persistence;
 @RunWith(GUITestRunner.class)
 public class AppE2E extends AssertJSwingJUnitTestCase {
 	// Test variables
-	private Album ALBUM_COMM_1, ALBUM_COMM_2;
-	private Coin COIN_COMM_1, COIN_COMM_2;
+	private final String ALBUM_NAME = "Euro commemorative";
+	private final String ALBUM_LOCATION = "Armadio";
+	private final int ALBUM_SLOTS = 50;
+	
+	private final Grade COIN_GRADE = Grade.AG;
+	private final String COIN_1_COUNTRY = "Italy";
+	private final String COIN_2_COUNTRY = "Greece";
+	private final String COIN_YEAR = "2004";
+	private final String COIN_1_DESCRIPTION = "2€ comm. World Food Programme";
+	private final String COIN_2_DESCRIPTION = "2€ comm. Olympics Game of Athen 2004";
+	private final String COIN_NOTE = "";
 
 	// Tests
 	private static EntityManagerFactory emf;
@@ -82,12 +89,20 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	@Test @GUITest
 	public void testThatOnStartAllDatabaseElementsArePresent() {
 		assertThat(window.list("albumList").contents())
-			.anySatisfy(e -> assertThat(e).contains(ALBUM_COMM_1.toString()))
-			.anySatisfy(e -> assertThat(e).contains(ALBUM_COMM_2.toString()));
+			.anySatisfy(e -> assertThat(e).contains(
+					ALBUM_NAME + " vol.1 [0/" + ALBUM_SLOTS + "] (" + ALBUM_LOCATION + ")"
+			))
+			.anySatisfy(e -> assertThat(e).contains(
+					ALBUM_NAME + " vol.2 [0/" + ALBUM_SLOTS + "] (" + ALBUM_LOCATION + ")"
+			));
 		
 		assertThat(window.list("coinList").contents())
-			.anySatisfy(e -> assertThat(e).contains(COIN_COMM_1.toString()))
-			.anySatisfy(e -> assertThat(e).contains(COIN_COMM_2.toString()));
+			.anySatisfy(e -> assertThat(e).contains(
+					"[" + COIN_1_COUNTRY + " " + COIN_YEAR + "] {" + COIN_GRADE.toString() + "} " + COIN_1_DESCRIPTION + " (" + COIN_NOTE + ")"
+			))
+			.anySatisfy(e -> assertThat(e).contains(
+					"[" + COIN_2_COUNTRY + " " + COIN_YEAR + "] {" + COIN_GRADE.toString() + "} " + COIN_2_DESCRIPTION + " (" + COIN_NOTE + ")"
+			));
 	}
 	
 	@Override
@@ -102,24 +117,47 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	}
 
 	private void populateDB() {
-		ALBUM_COMM_1 = new Album("Euro commemorativi", 1, "Armadio", 50, 0);
-		ALBUM_COMM_2 = new Album("Euro commemorativi", 2, "Armadio", 50, 0);
+		String ALBUM_INSERT = 
+				"INSERT INTO albums (location, name, number_of_slots, number_of_occupied_slots, volume, id) " +
+				"VALUES ('%s', '%s', %s, %s, %s, '%s')";
+		String COIN_INSERT = 
+				"INSERT INTO coins (album, country, description, grade, minting_year, note, id) " +
+				"VALUES ('%s', '%s', '%s', %s, %s, '%s', '%s')";
 		
 		em.getTransaction().begin();
-		em.persist(ALBUM_COMM_1);
-		em.persist(ALBUM_COMM_2);
-		em.getTransaction().commit();
+		em.createNativeQuery(String.format(ALBUM_INSERT, 
+				ALBUM_LOCATION, 
+				ALBUM_NAME, 
+				ALBUM_SLOTS,
+				0, 
+				1, 
+				"550e8400-e29b-41d4-a716-446655440000"
+		)).executeUpdate();
+		em.createNativeQuery(String.format(ALBUM_INSERT, 
+				ALBUM_LOCATION, 
+				ALBUM_NAME, 
+				ALBUM_SLOTS, 
+				0, 
+				2, 
+				"550e8400-e29b-41d4-a716-446655440001"
+		)).executeUpdate();
 		
-		COIN_COMM_1 = new Coin(Grade.AG, "Italy", Year.of(2004), "2€ comm. World Food Programme", "", ALBUM_COMM_1.getId());
-		COIN_COMM_2 = new Coin(Grade.AG, "Greece", Year.of(2004), "2€ comm. Olympics Game of Athen 2004", "", ALBUM_COMM_1.getId());
-		
-		em.getTransaction().begin();
-		em.persist(COIN_COMM_1);
-		em.persist(COIN_COMM_2);
-		em.getTransaction().commit();
-		
-		em.getTransaction().begin();
-		em.flush();
+		em.createNativeQuery(String.format(COIN_INSERT, 
+				"550e8400-e29b-41d4-a716-446655440000", 
+				COIN_1_COUNTRY, COIN_1_DESCRIPTION, 
+				COIN_GRADE.ordinal(), 
+				Year.parse(COIN_YEAR), 
+				COIN_NOTE, 
+				"550e8400-e29b-41d4-a716-446655440002"
+		)).executeUpdate();
+		em.createNativeQuery(String.format(COIN_INSERT, 
+				"550e8400-e29b-41d4-a716-446655440000", 
+				COIN_2_COUNTRY, COIN_2_DESCRIPTION, 
+				COIN_GRADE.ordinal(), 
+				Year.parse(COIN_YEAR), 
+				COIN_NOTE, 
+				"550e8400-e29b-41d4-a716-446655440003"
+		)).executeUpdate();
 		em.getTransaction().commit();
 	}
 }
