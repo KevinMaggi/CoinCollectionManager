@@ -103,7 +103,7 @@ public class App implements Callable<Void> {
 			@Override
 			public void run() {
 				LOGGER.info("Closing connection with DB");
-				if (em != null)
+				if (em != null && em.isOpen())
 					em.close();
 				if (emf != null && emf.isOpen())
 					emf.close();
