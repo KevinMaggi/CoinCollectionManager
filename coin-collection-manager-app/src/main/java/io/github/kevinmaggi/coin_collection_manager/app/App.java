@@ -46,6 +46,9 @@ public class App implements Callable<Void> {
 
 	@Option(names = { "--postgres-password" }, description = "Postgres DB password")
 	private String dbPassword = "postgres-password";
+	
+	private EntityManagerFactory emf;
+	private EntityManager em;
 
 	/**
 	 * Starts the application with arguments.
@@ -64,6 +67,7 @@ public class App implements Callable<Void> {
 		LOGGER.info("Starting app");
 		EventQueue.invokeLater(() -> {
 			try {
+				LOGGER.info("Connecting to DB");
 				String jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s", dbUrl, dbPort, dbName);
 				
 				Map<String, String> propertiesOverriding = new HashMap<>();
@@ -71,8 +75,10 @@ public class App implements Callable<Void> {
 				propertiesOverriding.put("jakarta.persistence.jdbc.user", dbUser);
 				propertiesOverriding.put("jakarta.persistence.jdbc.password", dbPassword);
 				
-				EntityManagerFactory emf = Persistence.createEntityManagerFactory("postgres", propertiesOverriding);
-				EntityManager em = emf.createEntityManager();
+				emf = Persistence.createEntityManagerFactory("postgres", propertiesOverriding);
+				em = emf.createEntityManager();
+				
+				LOGGER.info("Connected to DB");
 				
 				PostgresTransactionManagerFactory tmf = new PostgresTransactionManagerFactory(em);
 				
@@ -92,6 +98,19 @@ public class App implements Callable<Void> {
 				LOGGER.debug(() -> String.format("Caught Exception: %s", ExceptionUtils.getStackTrace(e)));
 			}
 		});
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				LOGGER.info("Closing connection with DB");
+				if (em != null)
+					em.close();
+				if (emf != null && emf.isOpen())
+					emf.close();
+				LOGGER.info("Connection closed");
+			}
+		});
+		
 		return null;
 	}
 }
