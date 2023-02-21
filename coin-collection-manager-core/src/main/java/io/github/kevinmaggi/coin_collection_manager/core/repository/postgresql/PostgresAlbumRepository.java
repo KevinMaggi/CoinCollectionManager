@@ -6,6 +6,7 @@ import java.util.UUID;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 import io.github.kevinmaggi.coin_collection_manager.core.repository.AlbumRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -45,7 +46,14 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 		if (id == null)
 			throw new IllegalArgumentException("ID can't be null");
 		else
-			return em.find(Album.class, id);
+			try {
+				Album retrieved = em.find(Album.class, id);
+				if (retrieved != null)
+					em.refresh(retrieved);
+				return retrieved;
+			} catch (EntityNotFoundException e) {
+				return null;
+			}
 	}
 
 	/**

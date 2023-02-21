@@ -115,6 +115,37 @@ public class PostgresCoinRepositoryTestCase {
 			
 			assertThat(repo.findById(uuid)).isEqualTo(COIN_1);
 		}
+	
+		@Test
+		@DisplayName("Test that is returned the updated object in the case the object in DB is modified")
+		void testFindByIdReturnesUpdatedObjectWhenDBIsModified() {
+			populateDB();
+			UUID uuid = COIN_1.getId();
+			
+			EntityManager otherEm = emf.createEntityManager();
+			otherEm.getTransaction().begin();
+			Coin otherCoin = otherEm.find(Coin.class, uuid);
+			otherCoin.setDescription("new description");
+			otherEm.merge(otherCoin);
+			otherEm.getTransaction().commit();
+			
+			assertThat(repo.findById(uuid).getDescription()).isEqualTo("new description");
+		}
+		
+		@Test
+		@DisplayName("Test that is returned null if the object is removed from DB")
+		void testFindByIdReturnesNullWhenIsRemovedFromDB() {
+			populateDB();
+			UUID uuid = COIN_1.getId();
+			
+			EntityManager otherEm = emf.createEntityManager();
+			otherEm.getTransaction().begin();
+			Coin otherCoin = otherEm.find(Coin.class, uuid);
+			otherEm.remove(otherCoin);
+			otherEm.getTransaction().commit();
+			
+			assertThat(repo.findById(uuid)).isNull();
+		}
 	}
 	
 	@Nested
