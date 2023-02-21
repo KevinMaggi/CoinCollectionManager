@@ -292,6 +292,14 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		});
 		window.list("albumList").selectItem(ALBUM_PRE.toString());
 		
+		pause(new Condition("Label react to selection") {
+			@Override
+			public boolean test() {
+				// Is necessary to wait the perform of getCoinsByAlbum in order to allow it to release transaction
+				return !window.label("coinActual").text().contains("All coins");
+			}
+		}, timeout(TIMEOUT));
+		
 		em.getTransaction().begin();
 		em.remove(ALBUM_PRE);
 		em.getTransaction().commit();
@@ -352,6 +360,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		});
 		
 		window.list("albumList").selectItem(ALBUM_PRE.toString());
+		
+		pause(new Condition("Label react to selection") {
+			@Override
+			public boolean test() {
+				return !window.label("albumSelection").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		em.getTransaction().begin();
 		em.remove(ALBUM_PRE);
@@ -674,6 +689,13 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		});
 		
 		window.list("coinList").item(COIN_COMM_1.toString()).select();
+		
+		pause(new Condition("Label react to selection") {
+			@Override
+			public boolean test() {
+				return !window.label("coinSelection").text().trim().isEmpty();
+			}
+		}, timeout(TIMEOUT));
 		
 		em.getTransaction().begin();
 		em.remove(COIN_COMM_1);

@@ -173,8 +173,9 @@ public class SwingView extends JFrame implements View {
 				if(!e.getValueIsAdjusting()) {
 					if(albumList.getSelectedIndex() != -1) {
 						new Thread(() -> {
-							albumPresenter.getAlbum(albumList.getSelectedValue().getId());
-							coinPresenter.getCoinsByAlbum(albumList.getSelectedValue());
+							Album selected = albumList.getSelectedValue();
+							albumPresenter.getAlbum(selected.getId());
+							coinPresenter.getCoinsByAlbum(selected);
 						}).start();
 					} else {
 						albumSelectionLabel.setText(" ");
