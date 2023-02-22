@@ -103,6 +103,37 @@ class PostgresAlbumRepositoryTestCase {
 			
 			assertThat(repo.findById(uuid)).isEqualTo(ALBUM_1);
 		}
+	
+		@Test
+		@DisplayName("Test that is returned the updated object in the case the object in DB is modified")
+		void testFindByIdReturnesUpdatedObjectWhenDBIsModified() {
+			populateDB();
+			UUID uuid = ALBUM_1.getId();
+			
+			EntityManager otherEm = emf.createEntityManager();
+			otherEm.getTransaction().begin();
+			Album otherAlbum = otherEm.find(Album.class, uuid);
+			otherAlbum.setName("new name");
+			otherEm.merge(otherAlbum);
+			otherEm.getTransaction().commit();
+			
+			assertThat(repo.findById(uuid).getName()).isEqualTo("new name");
+		}
+		
+		@Test
+		@DisplayName("Test that is returned null if the object is removed from DB")
+		void testFindByIdReturnesNullWhenIsRemovedFromDB() {
+			populateDB();
+			UUID uuid = ALBUM_1.getId();
+			
+			EntityManager otherEm = emf.createEntityManager();
+			otherEm.getTransaction().begin();
+			Album otherAlbum = otherEm.find(Album.class, uuid);
+			otherEm.remove(otherAlbum);
+			otherEm.getTransaction().commit();
+			
+			assertThat(repo.findById(uuid)).isNull();
+		}
 	}
 	
 	@Nested

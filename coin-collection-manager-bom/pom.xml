@@ -15,6 +15,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<site-url>https://KevinMaggi.github.io/CoinCollectionManager/coin-collection-manager-bom</site-url>
+		
+		<clean.version>3.2.0</clean.version>
+		<install.version>3.1.0</install.version>
+		
+		<project-info-reports.version>3.4.1</project-info-reports.version>
+		<surefire-report.version>2.22.2</surefire-report.version>
+		<jxr.version>3.3.0</jxr.version>
+		<site.version>3.12.1</site.version>
 	</properties>
 
 	<dependencyManagement>
@@ -29,6 +37,16 @@
 				<artifactId>coin-collection-manager-business</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>coin-collection-manager-ui</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>coin-collection-manager-app</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	
@@ -36,22 +54,30 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${clean.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${install.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>${project-info-reports.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-report-plugin</artifactId>
-					<version>2.22.2</version>
+					<version>${surefire-report.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jxr-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>${jxr.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>${site.version}</version>
 					<configuration>
 						<topSiteURL>https://KevinMaggi.github.io/CoinCollectionManager</topSiteURL>
 					</configuration>
