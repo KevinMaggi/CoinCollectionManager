@@ -8,6 +8,7 @@ import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 import io.github.kevinmaggi.coin_collection_manager.core.model.Grade;
 import io.github.kevinmaggi.coin_collection_manager.core.repository.CoinRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -47,7 +48,14 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 		if (id == null)
 			throw new IllegalArgumentException("ID can't be null");
 		else
-			return em.find(Coin.class, id);
+			try {
+				Coin retrieved = em.find(Coin.class, id);
+				if (retrieved != null)
+					em.refresh(retrieved);
+				return retrieved;
+			} catch (EntityNotFoundException e) {
+				return null;
+			}
 	}
 
 	/**

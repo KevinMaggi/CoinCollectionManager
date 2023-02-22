@@ -201,6 +201,8 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 				return window.label("albumSelection").text() == " ";
 			}
 		}, timeout(TIMEOUT));
+		
+		assertThat(window.label("albumSelection").text().trim()).isEmpty();
 	}
 	
 	@Test @GUITest
@@ -387,6 +389,8 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 				return window.label("coinSelection").text() == " ";
 			}
 		}, timeout(TIMEOUT));
+		
+		assertThat(window.label("coinSelection").text().trim()).isEmpty();
 	}
 	
 	@Test @GUITest

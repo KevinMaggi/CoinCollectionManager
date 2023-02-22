@@ -270,6 +270,9 @@ class TransactionalServiceWithPostgresIT {
 			initCoins();
 			
 			ALBUM_COMM_1.setOccupiedSlots(ALBUM_COMM_1.getNumberOfSlots());
+			em.getTransaction().begin();
+			em.merge(ALBUM_COMM_1);
+			em.getTransaction().commit();
 			
 			assertThatThrownBy(() -> coinManager.addCoin(COIN_COMM_1))
 			.isInstanceOf(FullAlbumException.class);
