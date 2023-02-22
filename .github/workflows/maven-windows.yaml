@@ -30,7 +30,7 @@ jobs:
         run: ..\mvnw.cmd test $MAVEN_PROFILES
         working-directory: coin-collection-manager-aggregator
         env: 
-          MAVEN_PROFILES: -PGuitest
+          MAVEN_PROFILES: -PGUItest
       - name: Generate JUnit Report
         if: ${{ failure() }}
         run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false -Daggregate=true
