@@ -49,9 +49,17 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	private final String ALBUM_INSERT = 
 			"INSERT INTO albums (location, name, number_of_slots, number_of_occupied_slots, volume, id) " +
 			"VALUES ('%s', '%s', %s, %s, %s, '%s')";
+	private final String ALBUM_DELETE = 
+			"DELETE FROM albums WHERE name='%s' AND volume=%d";
+	private final String ALBUM_MODIFY = 
+			"UPDATE albums SET location = '%s' WHERE id='%s'";
 	private final String COIN_INSERT = 
 			"INSERT INTO coins (album, country, description, grade, minting_year, note, id) " +
 			"VALUES ('%s', '%s', '%s', %s, %s, '%s', '%s')";
+	private final String COIN_DELETE = 
+			"DELETE FROM coins WHERE grade=%d AND country='%s' AND description='%s' AND note='%s' AND minting_year=%d";
+	private final String COIN_MODIFY = 
+			"UPDATE coins SET album = '%s' WHERE id='%s'";
 
 	// Tests
 	private static final int TIMEOUT = 5000;
@@ -167,6 +175,21 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 		}, timeout(TIMEOUT));
 		
 		assertThat(window.label("albumSelection").text()).contains("Euro commemorative volume 1");
+	}
+	
+	@Test @GUITest
+	public void testAlbumSelectionFunctionAfterDBChange() {
+		modifyAlbum("550e8400-e29b-41d4-a716-446655440000", "cassaforte");
+		window.list("albumList").selectItem(Pattern.compile(".*Euro commemorative vol.1.*"));
+		
+		pause(new Condition("Label change value") {
+			@Override
+			public boolean test() {
+				return window.label("albumSelection").text() != " ";
+			}
+		}, timeout(TIMEOUT));
+		
+		assertThat(window.label("albumSelection").text()).contains("cassaforte");
 	}
 	
 	@Test @GUITest
@@ -358,6 +381,21 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
+	public void testCoinSelectionFunctionAfterDBChange() {
+		modifyCoin("550e8400-e29b-41d4-a716-446655440002", "550e8400-e29b-41d4-a716-446655440001");
+		window.list("coinList").selectItem(Pattern.compile(".*World Food Programme.*"));
+		
+		pause(new Condition("Label change value") {
+			@Override
+			public boolean test() {
+				return window.label("coinSelection").text() != " ";
+			}
+		}, timeout(TIMEOUT));
+		
+		assertThat(window.label("coinSelection").text()).contains("vol.2");
+	}
+	
+	@Test @GUITest
 	public void testCoinSelectionFunctionOnFail() {
 		deleteCoin(COIN_GRADE, COIN_1_COUNTRY, COIN_1_DESCRIPTION, COIN_NOTE, COIN_YEAR);
 		window.list("coinList").selectItem(Pattern.compile(".*World Food Programme.*"));
@@ -521,17 +559,27 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	}
 	
 	private void deleteAlbum(String name, int volume) {
-		String ALBUM_DELETE = "DELETE FROM albums WHERE name='%s' AND volume=%d";
 		em.getTransaction().begin();
 		em.createNativeQuery(String.format(ALBUM_DELETE, name, volume)).executeUpdate();
 		em.getTransaction().commit();
 	}
 	
 	private void deleteCoin(Grade grade, String country, String description, String note, String year) {
-		String COIN_DELETE = "DELETE FROM coins WHERE grade=%d AND country='%s' AND description='%s' AND note='%s' AND minting_year=%d";
 		em.getTransaction().begin();
 		em.createNativeQuery(String.format(COIN_DELETE, grade.ordinal(), country, description, note, Integer.valueOf(year)))
 			.executeUpdate();
+		em.getTransaction().commit();
+	}
+
+	private void modifyAlbum(String id, String newLocation) {
+		em.getTransaction().begin();
+		em.createNativeQuery(String.format(ALBUM_MODIFY, newLocation, id)).executeUpdate();
+		em.getTransaction().commit();
+	}
+	
+	private void modifyCoin(String coinId, String newAlbumId) {
+		em.getTransaction().begin();
+		em.createNativeQuery(String.format(COIN_MODIFY, newAlbumId, coinId)).executeUpdate();
 		em.getTransaction().commit();
 	}
 }
