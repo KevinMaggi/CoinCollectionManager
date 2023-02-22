@@ -21,8 +21,10 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
+          path: |
+            ~/.m2/repository
+            ~/.sonar/cache
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yaml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Build with Maven Wrapper
         run: ..\mvnw.cmd test $MAVEN_PROFILES
