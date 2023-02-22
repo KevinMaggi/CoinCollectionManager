@@ -112,11 +112,9 @@
 						<timeoutFactor>2</timeoutFactor>
 						<targetClasses>
 							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
-							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
 						</targetClasses>
 						<targetTests>
 							<param>io.github.kevinmaggi.coin_collection_manager.business.service.transactional.*</param>
-							<param>io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql.*</param>
 						</targetTests>
 						<excludedTestClasses>
 							<param>**.*IT</param>

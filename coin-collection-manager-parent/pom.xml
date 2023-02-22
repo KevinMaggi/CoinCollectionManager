@@ -257,6 +257,10 @@
 						</mutators>
 						<mutationThreshold>100</mutationThreshold>
 						
+						<avoidCallsTo>
+							<avoidCallsTo>org.apache.logging.log4j</avoidCallsTo>
+						</avoidCallsTo>
+						
 						<!-- Needed for aggregation -->
 						<exportLineCoverage>true</exportLineCoverage>
 						<outputFormats><value>XML</value></outputFormats>
