@@ -26,6 +26,8 @@ jobs:
             ~/.sonar/cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yaml') }}
           restore-keys: ${{ runner.os }}-maven-
+      - name: Change screen resolution
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
       - name: Build with Maven Wrapper
         run: ..\mvnw.cmd test $env:MAVEN_PROFILES
         working-directory: coin-collection-manager-aggregator
