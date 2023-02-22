@@ -1,4 +1,4 @@
-name: Build with Maven (Windows)
+name: Build with Maven (Windows) [only GUI tests]
 
 on:
   push:
@@ -26,13 +26,13 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
       - name: Build with Maven Wrapper
         run: ..\mvnw.cmd test $MAVEN_PROFILES
-        working-directory: coin-collection-manager-ui
+        working-directory: coin-collection-manager-aggregator
         env: 
           MAVEN_PROFILES: -PGuitest
       - name: Generate JUnit Report
         if: ${{ failure() }}
-        run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false
-        working-directory: coin-collection-manager-ui
+        run: ../mvnw surefire-report:report-only site:site -DgenerateReports=false -Daggregate=true
+        working-directory: coin-collection-manager-aggregator
       - name: Archive JUnit Report
         uses: actions/upload-artifact@v3
         if: ${{ failure() }}

@@ -384,5 +384,20 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>GUItest</id>
+				<build>
+					<plugins>
+						<plugin>
+							<artifactId>maven-surefire-plugin</artifactId>
+							<configuration>
+								<includes>
+									<include>*Swing*TestCase.java</include>
+								</includes>
+							</configuration>
+						</plugin>
+					</plugins>
+				</build>
+		</profile>
 	</profiles>
 </project>

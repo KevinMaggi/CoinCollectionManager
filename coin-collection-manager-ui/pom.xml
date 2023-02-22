@@ -115,22 +115,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<profiles>
-		<profile>
-			<id>GUItest</id>
-				<build>
-					<plugins>
-						<plugin>
-							<artifactId>maven-surefire-plugin</artifactId>
-							<configuration>
-								<includes>
-									<include>SwingViewTestCase.java</include>
-								</includes>
-							</configuration>
-						</plugin>
-					</plugins>
-				</build>
-		</profile>
-	</profiles>
 </project>
