@@ -29,15 +29,15 @@ import picocli.CommandLine.Option;
  */
 @Command(name = "Coin Collection Manager", version = "Coin Collection Manager v0.0.1-SNAPSHOT", mixinStandardHelpOptions = true)
 public class App implements Callable<Void> {
-	
+
 	private static final Logger LOGGER = LogManager.getLogger(App.class);
-	
+
 	@Option(names = { "--postgres-url" }, description = "Postgres connection url")
 	private String dbUrl = "localhost";
-	
+
 	@Option(names = { "--postgres-port" }, description = "Postgres connection port")
 	private String dbPort = "5432";
-	
+
 	@Option(names = { "--postgres-db" }, description = "Postgres DB")
 	private String dbName = "collection";
 
@@ -46,13 +46,13 @@ public class App implements Callable<Void> {
 
 	@Option(names = { "--postgres-password" }, description = "Postgres DB password")
 	private String dbPassword = "postgres-password";
-	
+
 	private EntityManagerFactory emf;
 	private EntityManager em;
 
 	/**
 	 * Starts the application with arguments.
-	 * 
+	 *
 	 * @param args		arguments
 	 */
 	public static void main(String[] args) {
@@ -69,27 +69,27 @@ public class App implements Callable<Void> {
 			try {
 				LOGGER.info("Connecting to DB");
 				String jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s", dbUrl, dbPort, dbName);
-				
+
 				Map<String, String> propertiesOverriding = new HashMap<>();
 				propertiesOverriding.put("jakarta.persistence.jdbc.url", jdbcUrl);
 				propertiesOverriding.put("jakarta.persistence.jdbc.user", dbUser);
 				propertiesOverriding.put("jakarta.persistence.jdbc.password", dbPassword);
-				
+
 				emf = Persistence.createEntityManagerFactory("postgres", propertiesOverriding);
 				em = emf.createEntityManager();
-				
+
 				LOGGER.info("Connected to DB");
-				
+
 				PostgresTransactionManagerFactory tmf = new PostgresTransactionManagerFactory(em);
-				
+
 				AlbumManager am = new AlbumTransactionalManager(tmf.getTransactionManager());
 				CoinManager cm = new CoinTransactionalManager(tmf.getTransactionManager());
-				
+
 				SwingView view = new SwingView();
-				
+
 				AlbumPresenter ap = new AlbumPresenter(view, am);
 				CoinPresenter cp = new CoinPresenter(view, cm, am);
-				
+
 				view.setPresenters(cp, ap);
 				view.setVisible(true);
 				LOGGER.info("App started");
@@ -98,7 +98,7 @@ public class App implements Callable<Void> {
 				LOGGER.debug(() -> String.format("Caught Exception: %s", ExceptionUtils.getStackTrace(e)));
 			}
 		});
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -110,7 +110,7 @@ public class App implements Callable<Void> {
 				LOGGER.info("Connection closed");
 			}
 		});
-		
+
 		return null;
 	}
 }

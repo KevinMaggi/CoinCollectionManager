@@ -18,15 +18,15 @@ import io.github.kevinmaggi.coin_collection_manager.core.repository.*;
  * This class is an implementation of {@code CoinManager} using {@code TransactionalManager}.
  */
 public class CoinTransactionalManager extends TransactionalManager implements CoinManager {
-	
+
 	private static final String DB_EXCEPTION_MSG = "Something went wrong during the DB querying";
 	private static final String DUPLICATE_COIN_MSG = "Such coin is already present in the DB";
 	private static final String FULL_ALBUM_MSG = "Can't add such coin to the album because it's already full";
 	private static final String COIN_NOT_FOUND_MSG = "Doesn't exist such coin in the DB";
-	
+
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param tm	{@code TransactionManager} to use for executing code
 	 */
 	public CoinTransactionalManager(TransactionManager tm) {
@@ -35,7 +35,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Finds all {@code Coin}s in DB.
-	 * 
+	 *
 	 * @return	A list of all the {@code Coin}s
 	 * @throws DatabaseException	if an error occurs during database querying
 	 */
@@ -50,7 +50,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Finds a specific {@code Coin}.
-	 * 
+	 *
 	 * @param id	Id of the coin
 	 * @return		The coin
 	 * @throws DatabaseException		if an error occurs during database querying
@@ -73,7 +73,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Finds {@code Coin}s contained in an {@code Album}.
-	 * 
+	 *
 	 * @param album	The album
 	 * @return		A list of all the coins
 	 * @throws DatabaseException	if an error occurs during database querying
@@ -91,7 +91,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Finds a {@code Coin} with a specific description.
-	 * 
+	 *
 	 * @param description	The description
 	 * @return				A list with {@code Coin}s with that description
 	 * @throws DatabaseException	if an error occurs during database querying
@@ -109,7 +109,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Adds a {@code Coin} to the DB.
-	 * 
+	 *
 	 * @param coin	The coin to add
 	 * @return		The coin added
 	 * @throws DatabaseException		if an error occurs during database querying
@@ -145,7 +145,7 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 
 	/**
 	 * Removes a {@code Coin} from the DB.
-	 * 
+	 *
 	 * @param coin	The coin to remove
 	 * @throws DatabaseException		if an error occurs during database querying
 	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
@@ -173,10 +173,10 @@ public class CoinTransactionalManager extends TransactionalManager implements Co
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}
 	}
-	
+
 	/**
 	 * Updates a {@code Coin} in the DB changing the album where it is located.
-	 * 
+	 *
 	 * @param coin			The coin to update
 	 * @param newAlbumId	The album where to move it
 	 * @return				The updated coin

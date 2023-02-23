@@ -26,15 +26,15 @@ public class CoinPresenter extends Presenter {
 	private static final String ALBUM_NOT_FOUND_MSG = "Impossible to complete the operation because this album doesn't exist";
 	private static final String DB_RETRIEVE_ERR_MSG = "Impossible to retrieve the coins from the database due to an error";
 	private static final String DB_ERROR_LOG_FORMAT = "Error during DB operations: %s";
-	
+
 	private static final Logger LOGGER = LogManager.getLogger(CoinPresenter.class);
-	
+
 	private CoinManager coinManager;
 	private AlbumManager albumManager;
 
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param view			view to update at each action
 	 * @param coinManager	service layer to use for Coin entities
 	 * @param albumManager	service layer to use for Album entities
@@ -58,10 +58,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
-	
+
 	/**
 	 * Retrieves all coins from DB that have place in an album and updates the view either with the list of coins or an error.
-	 * 
+	 *
 	 * @param album		album to show its content
 	 */
 	public synchronized void getCoinsByAlbum(Album album) {
@@ -82,10 +82,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album %s is not present in DB.", album.toString()));
 		}
 	}
-	
+
 	/**
 	 * Retrieves a specific coin from DB and updates the view either with the coin or an error.
-	 * 
+	 *
 	 * @param id		id of the coin to retrieve
 	 */
 	public synchronized void getCoin(UUID id) {
@@ -105,10 +105,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Coin %s is not present in DB.", id.toString()));
 		}
 	}
-	
+
 	/**
 	 * Retrieves all coins from DB that have a specific description updates the view either with the list of coins or an error.
-	 * 
+	 *
 	 * @param description	description to match
 	 */
 	public void searchCoins(String description) {
@@ -121,10 +121,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
-	
+
 	/**
 	 * Adds a coin to the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param coin		coin to add
 	 */
 	public synchronized void addCoin(Coin coin) {
@@ -155,10 +155,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
 	}
-	
+
 	/**
 	 * Delete a coin from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param coin		coin to delete
 	 */
 	public synchronized void deleteCoin(Coin coin) {
@@ -178,10 +178,10 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Coin %s to delete is not present in DB.", coin.toString()));
 		}
 	}
-	
+
 	/**
 	 * Move a coin from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param coin			coin to move
 	 * @param newAlbum		new album into which move the coin
 	 */
@@ -214,7 +214,7 @@ public class CoinPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album where to move %s is not present in DB.", coin.toString()));
 		}
 	}
-	
+
 	private void updateViewCoinsListAfterCoinNotFound(List<Coin> list) {
 		view.showError("This coin doesn't exist");
 		view.showAllCoins(list);

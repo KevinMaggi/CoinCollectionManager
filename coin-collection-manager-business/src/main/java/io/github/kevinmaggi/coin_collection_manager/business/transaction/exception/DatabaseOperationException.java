@@ -9,17 +9,17 @@ public class DatabaseOperationException extends RuntimeException {
 
 	/**
 	 * Constructs a new exception with a cause.
-	 * 
+	 *
 	 * @param message	a message
 	 * @param cause		the exception that cause the fail
 	 */
 	public DatabaseOperationException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 	/**
 	 * Constructs a new exception.
-	 * 
+	 *
 	 * @param message	a message
 	 */
 	public DatabaseOperationException(String message) {

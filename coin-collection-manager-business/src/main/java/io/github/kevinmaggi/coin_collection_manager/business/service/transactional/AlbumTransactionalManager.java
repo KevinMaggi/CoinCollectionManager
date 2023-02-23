@@ -17,14 +17,14 @@ import io.github.kevinmaggi.coin_collection_manager.core.repository.*;
  * This class is an implementation of {@code AlbumManager} using {@code TransactionalManager}.
  */
 public class AlbumTransactionalManager extends TransactionalManager implements AlbumManager {
-	
+
 	private static final String DB_EXCEPTION_MSG = "Something went wrong during the DB querying";
 	private static final String DUPLICATE_ALBUM_MSG = "Such album is already present in the DB";
 	private static final String ALBUM_NOT_FOUND_MSG = "Doesn't exist such album in the DB";
-	
+
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param tm	{@code TransactionManager} to use for executing code
 	 */
 	public AlbumTransactionalManager(TransactionManager tm) {
@@ -33,7 +33,7 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 
 	/**
 	 * Finds all {@code Album}s in DB.
-	 * 
+	 *
 	 * @return	A list of all the {@code Album}s
 	 * @throws DatabaseException	if an error occurs during database querying
 	 */
@@ -48,7 +48,7 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 
 	/**
 	 * Finds a specific {@code Album}.
-	 * 
+	 *
 	 * @param id	Id of the album
 	 * @return		The album
 	 * @throws DatabaseException		if an error occurs during database querying
@@ -71,7 +71,7 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 
 	/**
 	 * Finds an {@code Album} with specific name and volume.
-	 * 
+	 *
 	 * @param name		The name
 	 * @param volume	The volume
 	 * @return			The coin
@@ -95,7 +95,7 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 
 	/**
 	 * Adds an {@code Album} to the DB.
-	 * 
+	 *
 	 * @param album		The album to add
 	 * @return			The added album
 	 * @throws DatabaseException		if an error occurs during database querying
@@ -120,7 +120,7 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 
 	/**
 	 * Removes an {@code Album} from the DB.
-	 * 
+	 *
 	 * @param album		The album to remove
 	 * @throws DatabaseException		if an error occurs during database querying
 	 * @throws AlbumNotFoundException	if try to update an album not yet/anymore in DB
@@ -148,10 +148,10 @@ public class AlbumTransactionalManager extends TransactionalManager implements A
 			throw new DatabaseException(DB_EXCEPTION_MSG, e);
 		}
 	}
-	
+
 	/**
 	 * Updates an {@code Album} in the DB changing the location
-	 * 
+	 *
 	 * @param album			The album to update
 	 * @param newLocation	The new location to set
 	 * @return				The updated album

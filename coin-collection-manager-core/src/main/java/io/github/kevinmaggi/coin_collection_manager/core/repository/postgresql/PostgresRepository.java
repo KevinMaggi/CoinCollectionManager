@@ -13,7 +13,7 @@ public abstract class PostgresRepository {
 
 	/**
 	 * Simple constructor
-	 * 
+	 *
 	 * @param em	{@code EntityManager} to use for operation on database
 	 */
 	protected PostgresRepository(EntityManager em) {

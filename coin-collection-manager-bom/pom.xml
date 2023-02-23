@@ -8,17 +8,17 @@
 
 	<name>Coin Collection Manager [bom]</name>
 	<description>BOM for Coin Collection Manager project</description>
-	
+
 	<url>${site-url}</url>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<site-url>https://KevinMaggi.github.io/CoinCollectionManager/coin-collection-manager-bom</site-url>
-		
+
 		<clean.version>3.2.0</clean.version>
 		<install.version>3.1.0</install.version>
-		
+
 		<project-info-reports.version>3.4.1</project-info-reports.version>
 		<surefire-report.version>2.22.2</surefire-report.version>
 		<jxr.version>3.3.0</jxr.version>
@@ -49,7 +49,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -85,7 +85,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 	<distributionManagement>
 		<site>
 			<id>${project.name}</id>

@@ -16,10 +16,10 @@ import jakarta.persistence.TypedQuery;
  * Implementation of repository layer for {@code Coin} entity for Postgres DBs.
  */
 public class PostgresCoinRepository extends PostgresRepository implements CoinRepository {
-	
+
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param em {@code EntityManager} to use for database operation
 	 */
 	public PostgresCoinRepository(EntityManager em) {
@@ -28,7 +28,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Get all the {@code Coin}s contained in the database.
-	 * 
+	 *
 	 * @return		A list with all the {@code Coin}s
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Get a {@code Coin} by its id.
-	 * 
+	 *
 	 * @param id 	{@code Coin} id
 	 * @return 		the {@code Coin}
 	 * @throws IllegalArgumentException 	If the {@code id} is null
@@ -60,7 +60,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Persist (add or update) a {@code Coin} in the database.
-	 * 
+	 *
 	 * @param coin	the {@code Coin} to save
 	 * @return		the {@code Coin}
 	 * @throws IllegalArgumentException 	If the {@code Coin} is null
@@ -80,7 +80,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Remove a {@code Coin} from the database.
-	 * 
+	 *
 	 * @param coin	the {@code Coin} to delete
 	 * @throws IllegalArgumentException 	If the {@code Coin} is null
 	 */
@@ -94,7 +94,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Get {@code Coin}s by their description.
-	 * 
+	 *
 	 * @param description	{@code Coin}s' (part of) description
 	 * @return				a list with the corresponding {@code Coin}s
 	 * @throws IllegalArgumentException 	If the {@code description} is null
@@ -112,7 +112,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Get all the {@code Coin}s in a specific {@code Album}.
-	 * 
+	 *
 	 * @param id	the {@code Album}'s id
 	 * @return		a list with all the {@code Coin}s
 	 * @throws IllegalArgumentException 	If the {@code id} is null
@@ -130,7 +130,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 
 	/**
 	 * Get a specific {@code Coin}.
-	 * 
+	 *
 	 * @param grade			the {@code Grade} of the {@code Coin}
 	 * @param country		the country of the {@code Coin}
 	 * @param year			the minting year of the {@code Coin}
@@ -140,7 +140,7 @@ public class PostgresCoinRepository extends PostgresRepository implements CoinRe
 	 * @throws IllegalArgumentException 	If any argument is null
 	 */
 	@Override
-	public Coin findByGradeCountryYearDescriptionAndNote(Grade grade, String country, Year year, String description, String note) 
+	public Coin findByGradeCountryYearDescriptionAndNote(Grade grade, String country, Year year, String description, String note)
 			throws IllegalArgumentException {
 		if (grade == null)
 			throw new IllegalArgumentException("Grade can't be null");

@@ -7,7 +7,7 @@ import io.github.kevinmaggi.coin_collection_manager.business.transaction.manager
  */
 public abstract class TransactionalManager {
 	protected TransactionManager tm;
-	
+
 	protected TransactionalManager(TransactionManager tm) {
 		this.tm = tm;
 	}

@@ -14,14 +14,14 @@ public interface BaseRepository<T extends BaseEntity> {
 
 	/**
 	 * Get all the {@code T entity} contained in the database.
-	 * 
+	 *
 	 * @return		A list with all the {@code T entities}
 	 */
 	List<T> findAll();
 
 	/**
 	 * Get a {@code T entity} by its id.
-	 * 
+	 *
 	 * @param id 	{@code T entity} id
 	 * @return 		the {@code T entity}
 	 * @throws IllegalArgumentException 	If the {@code id} is null
@@ -30,7 +30,7 @@ public interface BaseRepository<T extends BaseEntity> {
 
 	/**
 	 * Persist (add or update) a {@code T entity} in the database.
-	 * 
+	 *
 	 * @param t	the {@code T entity} to save
 	 * @return		the {@code T entity}
 	 * @throws IllegalArgumentException 	If the {@code T entity} is null
@@ -39,7 +39,7 @@ public interface BaseRepository<T extends BaseEntity> {
 
 	/**
 	 * Remove a {@code T entity} from the database.
-	 * 
+	 *
 	 * @param t	the {@code T entity} to delete
 	 * @throws IllegalArgumentException 	If the {@code T entity} is null
 	 */

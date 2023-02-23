@@ -13,7 +13,7 @@ public class YearAttributeConverter implements AttributeConverter<Year, Integer>
 
 	/**
 	 * Converts an {@code Year} to an {@code Integer}.
-	 * 
+	 *
 	 * @param attribute		{@code Year} to convert
 	 */
 	@Override
@@ -26,7 +26,7 @@ public class YearAttributeConverter implements AttributeConverter<Year, Integer>
 
 	/**
 	 * Converts an {@code Integer} to an {@code Year}.
-	 * 
+	 *
 	 * @param dbData		{@code Integer} to convert
 	 */
 	@Override

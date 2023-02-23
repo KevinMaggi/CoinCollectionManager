@@ -14,17 +14,17 @@ import io.github.kevinmaggi.coin_collection_manager.core.model.Album;
 class SwingViewUtilitiesTestCase {
 
 	JComboBox<Album> cb;
-	
+
 	@BeforeEach
 	void setUp() {
 		cb = new JComboBox<>();
 	}
-	
+
 	@Test
 	@DisplayName("Test when combobox is empty should return array with null")
 	void testComboBoxToArrayWhenIsEmpty() {
 		Album[] array = comboBoxToArray(cb);
-		
+
 		assertThat(array).containsOnly((Album)null);
 	}
 
@@ -34,10 +34,10 @@ class SwingViewUtilitiesTestCase {
 		Album album = new Album("Pre-euro", 1, "armadio", 50, 0);
 		cb.addItem(album);
 		Album[] array = comboBoxToArray(cb);
-		
+
 		assertThat(array).containsExactly((Album)null, album);
 	}
-	
+
 	@Test
 	@DisplayName("Test when combobox contains multiple album should return array")
 	void testComboBoxToArrayWhenContainsMoreAlbum() {
@@ -46,7 +46,7 @@ class SwingViewUtilitiesTestCase {
 		cb.addItem(album1);
 		cb.addItem(album2);
 		Album[] array = comboBoxToArray(cb);
-		
+
 		assertThat(array).containsExactly((Album)null, album1, album2);
 	}
 }

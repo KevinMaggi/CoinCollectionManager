@@ -17,7 +17,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param em {@code EntityManager} to use for database operation
 	 */
 	public PostgresAlbumRepository(EntityManager em) {
@@ -26,7 +26,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Get all the {@code Album}s contained in the database.
-	 * 
+	 *
 	 * @return		A list with all the {@code Album}s
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Get a {@code Album} by its id.
-	 * 
+	 *
 	 * @param id 	{@code Album} id
 	 * @return 		the {@code Album}
 	 * @throws IllegalArgumentException 	If the {@code id} is null
@@ -58,7 +58,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Persist (add or update) a {@code Album} in the database.
-	 * 
+	 *
 	 * @param album	the {@code Album} to save
 	 * @return		the {@code Album}
 	 * @throws IllegalArgumentException 	If the {@code Album} is null
@@ -78,7 +78,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Remove a {@code Album} from the database.
-	 * 
+	 *
 	 * @param album	the {@code Album} to delete
 	 * @throws IllegalArgumentException 	If the {@code Album} is null
 	 */
@@ -92,7 +92,7 @@ public class PostgresAlbumRepository extends PostgresRepository implements Album
 
 	/**
 	 * Get {@code Album}s by their name.
-	 * 
+	 *
 	 * @param name		{@code Album}s' name
 	 * @param volume 	{@code Album}'s volume
 	 * @return			a list with the corresponding {@code Album}s

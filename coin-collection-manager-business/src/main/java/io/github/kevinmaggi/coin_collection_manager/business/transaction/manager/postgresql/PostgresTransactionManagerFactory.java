@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package io.github.kevinmaggi.coin_collection_manager.business.transaction.manager.postgresql;
 
@@ -19,10 +19,10 @@ public class PostgresTransactionManagerFactory implements TransactionManagerFact
 	private PostgresTransactionManager tm = null;
 	private PostgresCoinRepository cr = null;
 	private PostgresAlbumRepository ar = null;
-	
+
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param em	the {@code EntityManager} to use
 	 */
 	public PostgresTransactionManagerFactory(EntityManager em) {
@@ -31,7 +31,7 @@ public class PostgresTransactionManagerFactory implements TransactionManagerFact
 
 	/**
 	 * Get an instance of {@code PostgresTransactionManager}.
-	 * 
+	 *
 	 * @return	the {@code PostgresTransactionManager}
 	 */
 	@Override
@@ -43,7 +43,7 @@ public class PostgresTransactionManagerFactory implements TransactionManagerFact
 
 	/**
 	 * Get an instance of {@code PostgresCoinRepository}.
-	 * 
+	 *
 	 * @return	the {@code PostgresCoinRepository}
 	 */
 	@Override
@@ -55,7 +55,7 @@ public class PostgresTransactionManagerFactory implements TransactionManagerFact
 
 	/**
 	 * get an instance of {@code PostgresAlbumRepository}.
-	 * 
+	 *
 	 * @return	the {@code PostgresAlbumRepository}
 	 */
 	@Override

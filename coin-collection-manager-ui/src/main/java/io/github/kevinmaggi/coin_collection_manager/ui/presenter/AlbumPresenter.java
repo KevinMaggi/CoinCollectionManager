@@ -21,14 +21,14 @@ import io.github.kevinmaggi.coin_collection_manager.ui.view.View;
 public class AlbumPresenter extends Presenter {
 	private static final String DB_RETRIEVE_ERR_MSG = "Impossible to retrieve the albums from the database due to an error";
 	private static final String DB_ERROR_LOG_FORMAT = "Error during DB operations: %s";
-	
+
 	private static final Logger LOGGER = LogManager.getLogger(AlbumPresenter.class);
-	
+
 	private AlbumManager manager;
 
 	/**
 	 * Simple constructor.
-	 * 
+	 *
 	 * @param view		view to update at each action
 	 * @param manager	service layer to use for Album entities
 	 */
@@ -50,10 +50,10 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.debug(() -> String.format(DB_ERROR_LOG_FORMAT, ExceptionUtils.getRootCauseMessage(e)));
 		}
 	}
-	
+
 	/**
 	 * Retrieves a specific album from DB and updates the view either with the album or an error.
-	 * 
+	 *
 	 * @param id	id of the album to retrieve
 	 */
 	public synchronized void getAlbum(UUID id) {
@@ -71,10 +71,10 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album %s is not present in DB.", id.toString()));
 		}
 	}
-	
+
 	/**
 	 * Retrieves the album from DB that has specific name and volume and updates the view either with the list of albums or an error.
-	 * 
+	 *
 	 * @param name		name to match
 	 * @param volume	volume to match
 	 */
@@ -93,10 +93,10 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album \"%s vol.%d\" is not present in DB.", name, volume));
 		}
 	}
-	
+
 	/**
 	 * Adds an album to the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param album		album to add
 	 */
 	public synchronized void addAlbum(Album album) {
@@ -117,10 +117,10 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album \"%s vol.%d\" is already present in DB.", album.getName(), album.getVolume()));
 		}
 	}
-	
+
 	/**
 	 * Delete an album from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param album		album to delete
 	 */
 	public synchronized void deleteAlbum(Album album) {
@@ -140,10 +140,10 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album %s to delete is not present in DB.", album.toString()));
 		}
 	}
-	
+
 	/**
 	 * Move an album from the DB and updates the view calling appropriate feedback and invoking a success or error alert.
-	 * 
+	 *
 	 * @param album			album to move
 	 * @param newLocation	new location of the album
 	 */
@@ -164,7 +164,7 @@ public class AlbumPresenter extends Presenter {
 			LOGGER.warn(() -> String.format("Album %s to move is not present in DB.", album.toString()));
 		}
 	}
-	
+
 	private void updateViewAlbumsListAfterAlbumNotFound(List<Album> list) {
 		view.showError("This album doesn't exist");
 		view.showAllAlbums(list);

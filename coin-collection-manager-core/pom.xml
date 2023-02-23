@@ -12,7 +12,7 @@
 
 	<name>Coin Collection Manager [core]</name>
 	<description>Core module for Coin Collection Manager project (model and repository)</description>
-	
+
 	<properties>
 		<!-- Sonar configuration -->
 		<sonar.coverage.exclusions>
@@ -65,7 +65,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>

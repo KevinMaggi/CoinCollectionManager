@@ -14,31 +14,31 @@ import jakarta.persistence.UniqueConstraint;
 @Table (name = "albums", uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"name", "volume"})})
 public class Album extends BaseEntity {
-	
+
 	/**
 	 * Name of the album.
 	 */
 	@Column(name ="name", nullable = false)
 	private String name;
-	
+
 	/**
 	 * Volume of the album.
 	 */
 	@Column(name = "volume", nullable = false)
 	private int volume;
-	
+
 	/**
 	 * Where the album is located.
 	 */
 	@Column(name = "location")
 	private String location;
-	
+
 	/**
 	 * Number of slots of the album.
 	 */
 	@Column(name = "number_of_slots")
 	private int numberOfSlots;
-	
+
 	/**
 	 * number of contained coins.
 	 */
@@ -47,7 +47,7 @@ public class Album extends BaseEntity {
 
 	/**
 	 * Constructs a new {@code Album} specifying all its characteristics.
-	 * 
+	 *
 	 * @param name			Name of the album
 	 * @param volume		Volume of the album
 	 * @param location		Where the album is located
@@ -62,7 +62,7 @@ public class Album extends BaseEntity {
 		this.numberOfSlots = numberOfSlots;
 		this.occupiedSlots = occupiedSlots;
 	}
-	
+
 	protected Album() {
 		super();
 	}
@@ -106,17 +106,17 @@ public class Album extends BaseEntity {
 	public void setOccupiedSlots(int occupiedSlots) {
 		this.occupiedSlots = occupiedSlots;
 	}
-	
+
 	@Override
 	public String toString() {
 		return name + " vol." + volume + " [" + occupiedSlots + "/" + numberOfSlots + "] (" + location + ")";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.name, this.volume);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

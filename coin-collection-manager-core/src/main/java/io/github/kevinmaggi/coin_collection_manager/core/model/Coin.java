@@ -18,38 +18,38 @@ import jakarta.persistence.UniqueConstraint;
 @Table(name = "coins", uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"grade", "country", "minting_year", "description", "note"})})
 public class Coin extends BaseEntity {
-	
+
 	/**
 	 * Coin's conditions/quality.
 	 */
 	@Column(name = "grade", nullable = false)
 	private Grade grade;
-	
+
 	/**
 	 * Coin's country.
 	 */
 	@Column(name = "country", nullable = false)
 	private String country;
-	
+
 	/**
 	 * Coin's year of minting.
 	 */
 	@Column(name = "minting_year", columnDefinition = "int", nullable = false)
 	@Convert(converter = YearAttributeConverter.class)
 	private Year mintingYear;
-	
+
 	/**
 	 * Coin's description (e.g. "1$", "0.01£", "2€ commemorative: 30th anniversary of the Flag of Europe").
 	 */
 	@Column(name = "description", nullable = false)
 	private String description;
-	
+
 	/**
 	 * Possible notes (e.g. "minting error", "for exchange", ...).
 	 */
 	@Column(name = "note", nullable = false)
 	private String note;
-	
+
 	/**
 	 * Album where the coin is located.
 	 */
@@ -58,7 +58,7 @@ public class Coin extends BaseEntity {
 
 	/**
 	 * Constructs a new {@code Coin} specifying all its characteristics.
-	 * 
+	 *
 	 * @param grade			{@code Grade} of the coin
 	 * @param country		Country of the coin
 	 * @param mintingYear	Minting year of the coin
@@ -119,7 +119,7 @@ public class Coin extends BaseEntity {
 	public void setNote(String note) {
 		this.note = note;
 	}
-	
+
 	public UUID getAlbum() {
 		return album;
 	}
@@ -127,17 +127,17 @@ public class Coin extends BaseEntity {
 	public void setAlbum(UUID album) {
 		this.album = album;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + country + " " + mintingYear + "] {" + grade.toString() + "} " + description + " (" + note + ")";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.grade, this.country, this.mintingYear, this.description, this.note);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -147,8 +147,8 @@ public class Coin extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		Coin other = (Coin) obj;
-		return Objects.equals(this.grade, other.grade) && Objects.equals(this.country, other.country) && 
-				Objects.equals(this.mintingYear, other.mintingYear) && Objects.equals(this.description, other.description) && 
+		return Objects.equals(this.grade, other.grade) && Objects.equals(this.country, other.country) &&
+				Objects.equals(this.mintingYear, other.mintingYear) && Objects.equals(this.description, other.description) &&
 				Objects.equals(this.note, other.note);
 	}
 }

@@ -27,36 +27,36 @@ class PostgresTransactionManagerFactoryTestCase {
 																		.withDatabaseName("databasename")
 																		.withUsername("postgres-test")
 																		.withPassword("postgres-test");
-	
+
 	private static EntityManagerFactory emf;
 	private EntityManager em;
 	private PostgresTransactionManagerFactory factory;
-	
+
 	@BeforeAll
 	static void setUpTestCase() {
 		System.setProperty("db.port", postgreSQLContainer.getFirstMappedPort().toString());
 		emf = Persistence.createEntityManagerFactory("postgres-test");
 	}
-	
+
 	@BeforeEach
 	void setUp() {
 		em = emf.createEntityManager();
 		factory = new PostgresTransactionManagerFactory(em);
 	}
-	
+
 	@Test
 	@DisplayName("Test that ::getCoinRepository the first time instantiate and return")
 	void testGetCoinRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
 		PostgresCoinRepository cr = new PostgresCoinRepository(em);
-		
+
 		assertThat(factory.getCoinRepository()).usingRecursiveComparison().isEqualTo(cr);
 	}
-	
+
 	@Test
 	@DisplayName("Test that ::getCoinRepository the next time returns the same repository")
 	void testGetCoinRepositoryWhenFirstTimeCallThenReturnTheSame() {
 		PostgresCoinRepository cr = factory.getCoinRepository();
-		
+
 		assertThat(factory.getCoinRepository()).isSameAs(cr);
 	}
 
@@ -64,42 +64,42 @@ class PostgresTransactionManagerFactoryTestCase {
 	@DisplayName("Test that ::getAlbumRepository the first time instantiate and return")
 	void testGetAlbumRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
 		PostgresAlbumRepository ar = new PostgresAlbumRepository(em);
-		
+
 		assertThat(factory.getAlbumRepository()).usingRecursiveComparison().isEqualTo(ar);
 	}
-	
+
 	@Test
 	@DisplayName("Test that ::getAlbumRepository the next time returns the same repository")
 	void testGetAlbumRepositoryWhenFirstTimeCallThenReturnTheSame() {
 		PostgresAlbumRepository ar = factory.getAlbumRepository();
-		
+
 		assertThat(factory.getAlbumRepository()).isSameAs(ar);
 	}
-	
+
 	@Test
 	@DisplayName("Test that ::getTransactionManager the first time instantiate and return")
 	void testGetTransactionManagerRepositoryWhenFirstTimeCallThenInstantiateAndReturn() {
 		PostgresAlbumRepository ar = new PostgresAlbumRepository(em);
 		PostgresCoinRepository cr = new PostgresCoinRepository(em);
 		PostgresTransactionManager tm = new PostgresTransactionManager(em, cr, ar);
-		
+
 		assertThat(factory.getTransactionManager()).usingRecursiveComparison().isEqualTo(tm);
 	}
-	
+
 	@Test
 	@DisplayName("Test that ::getTransactionManager the next time returns the same transaction manager")
 	void testGetTransactionManagerRepositoryWhenFirstTimeCallThenReturnTheSame() {
 		PostgresTransactionManager tm = factory.getTransactionManager();
-		
+
 		assertThat(factory.getTransactionManager()).isSameAs(tm);
 	}
-	
+
 	@AfterEach
 	void cleanTest() throws Exception {
 		em.clear();
 		em.close();
 	}
-	
+
 	@AfterAll
 	static void cleanTestCase() {
 		emf.close();

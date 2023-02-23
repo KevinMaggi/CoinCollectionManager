@@ -15,43 +15,43 @@ import io.github.kevinmaggi.coin_collection_manager.core.model.Coin;
 public interface CoinManager {
 	/**
 	 * Finds all {@code Coin}s in DB.
-	 * 
+	 *
 	 * @return	A list of all the {@code Coin}s
 	 * @throws DatabaseException	if an error occurs during database querying
 	 */
 	public List<Coin> findAllCoins() throws DatabaseException;
-	
+
 	/**
 	 * Finds a specific {@code Coin}.
-	 * 
+	 *
 	 * @param id	Id of the coin
 	 * @return		The coin
 	 * @throws DatabaseException		if an error occurs during database querying
 	 * @throws CoinNotFoundException	if no coin corresponds to the id
 	 */
 	public Coin findCoinById(UUID id) throws DatabaseException, CoinNotFoundException;
-	
+
 	/**
 	 * Finds {@code Coin}s contained in an {@code Album}.
-	 * 
+	 *
 	 * @param album	The album
 	 * @return		A list of all the coins
 	 * @throws DatabaseException	if an error occurs during database querying
 	 */
 	public List<Coin> findCoinsByAlbum(UUID album) throws DatabaseException;
-	
+
 	/**
 	 * Finds a {@code Coin} with a specific description.
-	 * 
+	 *
 	 * @param description	The description
 	 * @return				A list with {@code Coin}s with that description
 	 * @throws DatabaseException	if an error occurs during database querying
 	 */
 	public List<Coin> findCoinsByDescription(String description) throws DatabaseException;
-	
+
 	/**
 	 * Adds a {@code Coin} to the DB.
-	 * 
+	 *
 	 * @param coin	The coin to add
 	 * @return		The coin added
 	 * @throws DatabaseException		if an error occurs during database querying
@@ -59,19 +59,19 @@ public interface CoinManager {
 	 * @throws DuplicateCoinException	if try to add a coin already present in DB
 	 */
 	public Coin addCoin(Coin coin) throws DatabaseException, FullAlbumException, DuplicateCoinException;
-	
+
 	/**
 	 * Removes a {@code Coin} from the DB.
-	 * 
+	 *
 	 * @param coin	The coin to remove
 	 * @throws DatabaseException		if an error occurs during database querying
 	 * @throws CoinNotFoundException	if try to update a coin not yet/anymore in DB
 	 */
 	public void deleteCoin(Coin coin) throws DatabaseException, CoinNotFoundException;
-	
+
 	/**
 	 * Updates a {@code Coin} in the DB changing the album where it is located.
-	 * 
+	 *
 	 * @param coin			The coin to update
 	 * @param newAlbumId	The album where to move it
 	 * @return				The updated coin

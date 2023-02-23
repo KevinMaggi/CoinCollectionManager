@@ -19,10 +19,10 @@
 
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		
+
 		<user.language>en</user.language>
 		<argLine>-Duser.language=${user.language}</argLine>
-		
+
 		<!-- Dependencies version -->
 		<hibernate.version>6.1.6.Final</hibernate.version>
 		<postgresql.version>42.5.1</postgresql.version>
@@ -36,7 +36,7 @@
 		<log4j.version>2.19.0</log4j.version>
 		<commons-lang.version>3.12.0</commons-lang.version>
 		<picocli.version>4.7.0</picocli.version>
-		
+
 		<!-- Plugin version -->
 		<compiler.version>3.10.1</compiler.version>
 		<resources.version>3.3.0</resources.version>
@@ -52,13 +52,13 @@
 		<coveralls.version>4.3.0</coveralls.version>
 		<docker-plugin.version>0.40.3</docker-plugin.version>
 		<exec.version>3.1.0</exec.version>
-		
+
 		<!-- Docker postgres configuration -->
 		<postgres.usr>postgres-user</postgres.usr>
 		<postgres.pw>postgres-password</postgres.pw>
 		<postgres.db>collection</postgres.db>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -85,7 +85,7 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<!-- Provider for SLF4J. TestContainers depends on SLF4J API, but no provider is provided. 
+				<!-- Provider for SLF4J. TestContainers depends on SLF4J API, but no provider is provided.
 				The version should be 1.7.36 because is the version of SLF4J API used by that version of TestContainers.
 				Can be used a more recent version, but in that case the order of dependency in inherited POM is relevant
 				(SLF4J-simple should be imported before of TestContainers) in order to have it working. -->
@@ -275,11 +275,11 @@
 							<mutator>DEFAULTS</mutator>
 						</mutators>
 						<mutationThreshold>100</mutationThreshold>
-						
+
 						<avoidCallsTo>
 							<avoidCallsTo>org.apache.logging.log4j</avoidCallsTo>
 						</avoidCallsTo>
-						
+
 						<!-- Needed for aggregation -->
 						<exportLineCoverage>true</exportLineCoverage>
 						<outputFormats><value>XML</value></outputFormats>
@@ -330,7 +330,7 @@
 										<POSTGRES_DB>${postgres.db}</POSTGRES_DB>
 									</env>
 									<wait>
-										<!-- Also "[1] LOG:  " is needed because when the container is started and 
+										<!-- Also "[1] LOG:  " is needed because when the container is started and
 										it have to create the volume, that message is shown twice -->
 										<log>\[1\] LOG:  database system is ready to accept connections</log>
 										<time>20000</time>

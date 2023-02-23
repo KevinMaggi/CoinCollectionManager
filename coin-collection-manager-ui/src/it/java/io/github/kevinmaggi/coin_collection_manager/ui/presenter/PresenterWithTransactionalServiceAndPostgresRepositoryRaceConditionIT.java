@@ -39,39 +39,39 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 	private Album ALBUM_PRE, ALBUM_COMM_1, ALBUM_COMM_2;
 	private Coin COIN_COMM_1, COIN_COMM_2, COIN_PRE;
 	private static final String NEW_LOCATION = "new location";
-	
+
 	// Tests
 	private final int NUM_THREADS = 10;
 	private CyclicBarrier barrier;
-	
+
 	private static EntityManagerFactory emf;
 	private EntityManager em;
-	
+
 	private AutoCloseable closeable;
 	@Mock
 	private View view;
-	
+
 	@BeforeAll
 	static void setUpTestCase() {
 		System.setProperty("db.port", System.getProperty("postgres.port", "5432"));
 		emf = Persistence.createEntityManagerFactory("postgres-it");
 	}
-	
+
 	@BeforeEach
 	void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
-		
+
 		em = emf.createEntityManager();
-		
+
 		// Ensure to start every test with an empty database
 		em.getTransaction().begin();
 		em.createNativeQuery("TRUNCATE TABLE albums").executeUpdate();
 		em.createNativeQuery("TRUNCATE TABLE coins").executeUpdate();
 		em.getTransaction().commit();
-		
+
 		barrier = new CyclicBarrier(NUM_THREADS);
 	}
-	
+
 	@Nested
 	@DisplayName("Tests regarding album presenter")
 	class AlbumPresenterIT {
@@ -79,47 +79,47 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		@DisplayName("Test concurrent calls to addAlbum add only one instance and don't throw exception")
 		void testConcurrentCallsToAddAlbumShouldAddOnlyOneInstanceAndDoNotThrowException() {
 			initAlbums();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
-									
+
 									new AlbumPresenter(view, albumManager).addAlbum(ALBUM_PRE);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			List<Album> fromDB = em.createQuery("SELECT a FROM Album a", Album.class).getResultList();
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB).containsExactly(ALBUM_PRE);
 		}
-		
+
 		@Test
 		@DisplayName("Test concurrent calls to deleteAlbum delete the instance and don't throw exception")
 		void testConcurrentCallsToDeleteAlbumShouldDeleteTheInstanceAndDoNotThrowException() {
 			initAlbums();
 			persistAlbums();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
-									
+
 									// Necessary because ALBUM_PRE in localEm is detached and cannot call delete on detached entities
 									localEm.getTransaction().begin();
 									Album toDelete = localEm.find(Album.class, ALBUM_PRE.getId());
@@ -128,58 +128,58 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 									try {
 										barrier.await();
 									} catch (Exception e) { }
-									
+
 									new AlbumPresenter(view, albumManager).deleteAlbum(toDelete);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			List<Album> fromDB = em.createQuery("SELECT a FROM Album a", Album.class).getResultList();
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB).isNotEmpty().doesNotContain(ALBUM_PRE);
 		}
-		
+
 		@Test
 		@DisplayName("Test concurrent calls to moveAlbum move the instance and don't throw exception")
 		void testConcurrentCallsToMoveAlbumShouldMoveTheInstanceAndDoNotThrowException() {
 			initAlbums();
 			persistAlbums();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
-									
+
 									new AlbumPresenter(view, albumManager).moveAlbum(ALBUM_PRE, NEW_LOCATION);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			Album fromDB = em.find(Album.class, ALBUM_PRE.getId());
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB.getLocation()).isEqualTo(NEW_LOCATION);
 		}
 	}
-	
+
 	@Nested
 	@DisplayName("Tests regarding coin presenter")
 	class CoinPresenterIT {
@@ -189,48 +189,48 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 			initAlbums();
 			persistAlbums();
 			initCoins();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
 									CoinManager coinManager = new CoinTransactionalManager(factory.getTransactionManager());
-									
+
 									new CoinPresenter(view, coinManager, albumManager).addCoin(COIN_PRE);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			List<Coin> fromDB = em.createQuery("SELECT c FROM Coin c", Coin.class).getResultList();
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB).containsExactly(COIN_PRE);
 		}
-		
+
 		@Test
 		@DisplayName("Test concurrent calls to deleteCoin delete the instance and don't throw exception")
 		void testConcurrentCallsToDeleteCoinShouldDeleteTheInstanceAndDoNotThrowException() {
 			populateDB();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
 									CoinManager coinManager = new CoinTransactionalManager(factory.getTransactionManager());
-									
+
 									// Necessary because COIN_PRE in localEm is detached and cannot call delete on detached entities
 									localEm.getTransaction().begin();
 									Coin toDelete = localEm.find(Coin.class, COIN_PRE.getId());
@@ -239,66 +239,66 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 									try {
 										barrier.await();
 									} catch (Exception e) { }
-									
+
 									new CoinPresenter(view, coinManager, albumManager).deleteCoin(toDelete);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			List<Coin> fromDB = em.createQuery("SELECT c FROM Coin c", Coin.class).getResultList();
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB).isNotEmpty().doesNotContain(COIN_PRE);
 		}
-		
+
 		@Test
 		@DisplayName("Test concurrent calls to moveCoin move the instance and don't throw exception")
 		void testConcurrentCallsToMoveCoinShouldMoveTheInstanceAndDoNotThrowException() {
 			populateDB();
-			
+
 			List<Thread> threads = IntStream.range(0, NUM_THREADS)
 					.mapToObj(i -> new Thread(
 								() -> {
 									EntityManager localEm = emf.createEntityManager();
 									TransactionManagerFactory factory = new PostgresTransactionManagerFactory(localEm);
-									
+
 									AlbumManager albumManager = new AlbumTransactionalManager(factory.getTransactionManager());
 									CoinManager coinManager = new CoinTransactionalManager(factory.getTransactionManager());
-									
+
 									new CoinPresenter(view, coinManager, albumManager).moveCoin(COIN_COMM_1, ALBUM_COMM_2);
-									
+
 									localEm.close();
 								}
 					))
 					.peek(Thread::start)
 					.collect(Collectors.toList());
-			
+
 			await().atMost(10, SECONDS)
 				.until(() -> threads.stream().noneMatch(Thread::isAlive));
-			
+
 			em.getTransaction().begin();
 			Coin fromDB = em.find(Coin.class, COIN_COMM_1.getId());
 			em.getTransaction().commit();
-			
+
 			assertThat(fromDB.getAlbum()).isEqualTo(ALBUM_COMM_2.getId());
 		}
 	}
-	
+
 	@AfterEach
 	void cleanTest() throws Exception {
 		em.clear();
 		em.close();
-		
+
 		closeable.close();
 	}
-	
+
 	@AfterAll
 	static void cleanTestCase() {
 		emf.close();
@@ -333,7 +333,7 @@ public class PresenterWithTransactionalServiceAndPostgresRepositoryRaceCondition
 		em.persist(ALBUM_PRE);
 		em.getTransaction().commit();
 	}
-	
+
 	private void initAlbums() {
 		ALBUM_PRE = new Album("Europa pre-euro", 1, "Armadio", 50, 0);
 		ALBUM_COMM_1 = new Album("Euro commemorativi", 1, "Armadio", 50, 0);

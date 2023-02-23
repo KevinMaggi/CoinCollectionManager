@@ -9,7 +9,7 @@ public class FullAlbumException extends RuntimeException {
 
 	/**
 	 * Constructs a new exception.
-	 * 
+	 *
 	 * @param message	the message
 	 */
 	public FullAlbumException(String message) {
@@ -18,7 +18,7 @@ public class FullAlbumException extends RuntimeException {
 
 	/**
 	 * Constructs a new exception with a cause.
-	 * 
+	 *
 	 * @param message	the message
 	 * @param cause		the exception that cause the fail
 	 */
