@@ -46,8 +46,7 @@ class TransactionalServiceWithPostgresIT {
 	
 	@BeforeAll
 	static void setUpTestCase() {
-		// In "postgres-it" persistence unit the jdbc url's port is defined using the env variable setted in POM for failsafe
-		// so is just a matter of using that persistence unit
+		System.setProperty("db.port", System.getProperty("postgres.port", "5432"));
 		emf = Persistence.createEntityManagerFactory("postgres-it");
 	}
 	
