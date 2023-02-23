@@ -73,7 +73,7 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 	public static void setUpTestCase() {
 		Map<String, String> propertiesOverriding = new HashMap<>();
 		String port = System.getProperty("postgres.port", "5432");
-		propertiesOverriding.put("jakarta.persistence.jdbc.url", "jdbc:postgresql://localhost:" + port + "/collection");
+		propertiesOverriding.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%s/collection", port));
 		propertiesOverriding.put("jakarta.persistence.jdbc.user", "postgres-user");
 		propertiesOverriding.put("jakarta.persistence.jdbc.password", "postgres-password");
 		
@@ -96,7 +96,7 @@ public class AppE2E extends AssertJSwingJUnitTestCase {
 		// Start application passing arguments
 		application("io.github.kevinmaggi.coin_collection_manager.app.App")
 			.withArgs(
-				"--postgres-port=" + System.getProperty("postgres.port")
+				"--postgres-port=" + System.getProperty("postgres.port", "5432")
 				// The other arguments use default values
 			)
 			.start();
