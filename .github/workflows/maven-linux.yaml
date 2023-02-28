@@ -32,7 +32,7 @@ jobs:
         run: ../execute-on-vnc.sh ../mvnw install $MAVEN_PROFILES $ADDITIONAL_COVERALLS_ARGS $SONAR
         working-directory: coin-collection-manager-aggregator
         env: 
-          MAVEN_PROFILES: -Pcoveralls,pitest
+          MAVEN_PROFILES: -Pcoveralls,pitest,docker-build
           ADDITIONAL_COVERALLS_ARGS: -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.pull_request.number }}
           SONAR: sonar:sonar -Dsonar.projectKey=KevinMaggi_CoinCollectionManager -Dsonar.organization=kevinmaggi -Dsonar.host.url=https://sonarcloud.io
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

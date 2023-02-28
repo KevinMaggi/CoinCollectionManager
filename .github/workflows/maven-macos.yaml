@@ -30,7 +30,7 @@ jobs:
         run: ../mvnw install $MAVEN_PROFILES $ADDITIONAL_MAVEN_ARGS
         working-directory: coin-collection-manager-aggregator
         env: 
-          MAVEN_PROFILES: 
+          MAVEN_PROFILES: -Pdocker-build
           ADDITIONAL_MAVEN_ARGS: 
       - name: Generate JUnit Report
         if: ${{ failure() }}

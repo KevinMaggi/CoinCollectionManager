@@ -315,35 +315,6 @@
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
 					<version>${docker-plugin.version}</version>
-					<configuration>
-						<images>
-							<image>
-								<name>postgres:15.1</name>
-								<alias>postgres</alias>
-								<run>
-									<ports>
-										<port>postgres.mapped.port:5432</port>
-									</ports>
-									<env>
-										<POSTGRES_USER>${postgres.usr}</POSTGRES_USER>
-										<POSTGRES_PASSWORD>${postgres.pw}</POSTGRES_PASSWORD>
-										<POSTGRES_DB>${postgres.db}</POSTGRES_DB>
-									</env>
-									<wait>
-										<!-- Also "[1] LOG:  " is needed because when the container is started and
-										it have to create the volume, that message is shown twice -->
-										<log>\[1\] LOG:  database system is ready to accept connections</log>
-										<time>20000</time>
-									</wait>
-									<cmd>postgres -c max_connections=300</cmd>
-									<log>
-										<prefix>Postgres</prefix>
-										<color>cyan</color>
-									</log>
-								</run>
-							</image>
-						</images>
-					</configuration>
 					<executions>
 						<execution>
 							<id>docker-start</id>
@@ -351,6 +322,35 @@
 							<goals>
 								<goal>start</goal>
 							</goals>
+							<configuration>
+								<images>
+									<image>
+										<name>postgres:15.1</name>
+										<alias>postgres</alias>
+										<run>
+											<ports>
+												<port>postgres.mapped.port:5432</port>
+											</ports>
+											<env>
+												<POSTGRES_USER>${postgres.usr}</POSTGRES_USER>
+												<POSTGRES_PASSWORD>${postgres.pw}</POSTGRES_PASSWORD>
+												<POSTGRES_DB>${postgres.db}</POSTGRES_DB>
+											</env>
+											<wait>
+												<!-- Also "[1] LOG:  " is needed because when the container is started and
+												it have to create the volume, that message is shown twice -->
+												<log>\[1\] LOG:  database system is ready to accept connections</log>
+												<time>20000</time>
+											</wait>
+											<cmd>postgres -c max_connections=300</cmd>
+											<log>
+												<prefix>Postgres</prefix>
+												<color>cyan</color>
+											</log>
+										</run>
+									</image>
+								</images>
+							</configuration>
 						</execution>
 						<execution>
 							<id>docker-stop</id>
@@ -358,6 +358,7 @@
 							<goals>
 								<goal>stop</goal>
 							</goals>
+							<!-- By default stops all containers started with :start goal -->
 						</execution>
 					</executions>
 				</plugin>

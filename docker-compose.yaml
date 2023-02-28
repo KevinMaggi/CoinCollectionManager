@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  coin-collection-manager:
+    image: coin-collection-manager
+    depends_on: 
+      - postgres
+    networks: 
+      - ccm-network
+    environment: 
+      - POSTGRES_URL=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=collection
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - DISPLAY=$DISPLAY
+      - GDK_DPI_SCALE=2
+    volumes:
+      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+      - /run/desktop/mnt/host/wslg:/mnt/wslg
+    
+  postgres:
+    image: postgres:15.1
+    networks: 
+      - ccm-network
+    ports:
+      - "5432:5432"
+    environment: 
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password 
+      - POSTGRES_DB=collection
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+
+networks:
+  ccm-network:
+    driver: bridge
+
+volumes:
+    postgresql_data:
