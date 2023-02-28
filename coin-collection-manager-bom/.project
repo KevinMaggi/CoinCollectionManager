@@ -36,6 +36,11 @@
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/README.md</location>
 		</link>
 		<link>
+			<name>docker-compose.wslg.yaml</name>
+			<type>1</type>
+			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/docker-compose.wslg.yaml</location>
+		</link>
+		<link>
 			<name>docker-compose.yaml</name>
 			<type>1</type>
 			<location>C:/Users/makev/Desktop/APT/Git/CoinCollectionManager/docker-compose.yaml</location>

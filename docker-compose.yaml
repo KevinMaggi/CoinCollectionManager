@@ -16,8 +16,7 @@ services:
       - DISPLAY=$DISPLAY
       - GDK_DPI_SCALE=2
     volumes:
-      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
-      - /run/desktop/mnt/host/wslg:/mnt/wslg
+      - /tmp/.X11-unix:/tmp/.X11-unix
     
   postgres:
     image: postgres:15.1
