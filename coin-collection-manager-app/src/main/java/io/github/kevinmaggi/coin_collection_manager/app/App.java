@@ -27,7 +27,7 @@ import picocli.CommandLine.Option;
 /**
  * This class is the main class for the application.
  */
-@Command(name = "Coin Collection Manager", version = "Coin Collection Manager v0.0.1-SNAPSHOT", mixinStandardHelpOptions = true)
+@Command(name = "Coin Collection Manager", version = "Coin Collection Manager v1.0.0", mixinStandardHelpOptions = true)
 public class App implements Callable<Void> {
 
 	private static final Logger LOGGER = LogManager.getLogger(App.class);

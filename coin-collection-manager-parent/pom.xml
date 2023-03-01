@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.KevinMaggi</groupId>
 		<artifactId>coin-collection-manager-bom</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../coin-collection-manager-bom</relativePath>
 	</parent>
 
