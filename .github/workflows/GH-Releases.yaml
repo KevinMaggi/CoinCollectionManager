@@ -44,17 +44,31 @@ jobs:
       - name: Generate source and javadoc jars with  Maven Wrapper
         run: ../mvnw source:aggregate javadoc:aggregate-jar
         working-directory: coin-collection-manager-aggregator
+      - name: Archive jar with dependencies
+        uses: actions/upload-artifact@v3
+        with:
+          path: '**/target/*-jar-with-dependencies.jar'
+      - name: Archive source jar
+        uses: actions/upload-artifact@v3
+        with:
+          path: '**/target/*-sources.jar'
+      - name: Archive javadoc jar
+        uses: actions/upload-artifact@v3
+        with:
+          path: '**/target/*-javadoc.jar'
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Download all jars
+        uses: actions/download-artifact@v3
       - name: Deploy to GitHub Releases the fatjar and the source and javadoc jars
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/*-jar-with-dependencies.jar
-            target/*-javadoc.jar
-            target/*-sources.jar
+            **/*-jar-with-dependencies.jar
+            **/*-javadoc.jar
+            **/*-sources.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
