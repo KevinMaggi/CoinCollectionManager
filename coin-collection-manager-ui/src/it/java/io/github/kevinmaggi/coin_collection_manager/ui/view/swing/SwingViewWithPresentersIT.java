@@ -337,7 +337,7 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		pause(new Condition("List contain updated element") {
 			@Override
 			public boolean test() {
-				return window.label("albumSelection").text().contains("New location");
+				return window.list("albumList").selection()[0].contains("New location");
 			}
 		}, timeout(TIMEOUT));
 
@@ -363,7 +363,7 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		pause(new Condition("Label react to selection") {
 			@Override
 			public boolean test() {
-				return !window.label("albumSelection").text().trim().isEmpty();
+				return !window.label("albumSelection").text().trim().isEmpty() && !window.label("coinActual").text().contains("All coins");
 			}
 		}, timeout(TIMEOUT));
 
@@ -666,10 +666,10 @@ public class SwingViewWithPresentersIT extends AssertJSwingJUnitTestCase {
 		window.dialog().comboBox().selectItem(ALBUM_COMM_2.toString());
 		window.dialog().button(JButtonMatcher.withText("OK")).click();
 
-		pause(new Condition("List contain updated element") {
+		pause(new Condition("Status updated") {
 			@Override
 			public boolean test() {
-				return window.label("coinSelection").text().contains(ALBUM_COMM_2.getName());
+				return window.label("status").text().contains("successfully");
 			}
 		}, timeout(TIMEOUT));
 
