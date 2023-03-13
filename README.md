@@ -6,7 +6,7 @@ This work is part of the exam *Advanced Programming Techniques* (6CFU version) b
 
 ###### Project report:
 
-[IT] *cooming soon*
+[IT] [Relazione](https://github.com/KevinMaggi/CoinCollectionManager/blob/main/APT%20report%20-%20Coin%20Collection%20Manager%20-%20Kevin%20Maggi.pdf)
 
 ###### Project documentation (by [GitHub Pages](https://pages.github.com/)):
 
