@@ -14,4 +14,51 @@
 	<natures>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>.github</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.github</locationURI>
+		</link>
+		<link>
+			<name>.gitignore</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.gitignore</locationURI>
+		</link>
+		<link>
+			<name>.mvn</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.mvn</locationURI>
+		</link>
+		<link>
+			<name>README.md</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/README.md</locationURI>
+		</link>
+		<link>
+			<name>docker-compose.wslg.yaml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/docker-compose.wslg.yaml</locationURI>
+		</link>
+		<link>
+			<name>docker-compose.yaml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/docker-compose.yaml</locationURI>
+		</link>
+		<link>
+			<name>execute-on-vnc.sh</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/execute-on-vnc.sh</locationURI>
+		</link>
+		<link>
+			<name>mvnw</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/mvnw</locationURI>
+		</link>
+		<link>
+			<name>mvnw.cmd</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/mvnw.cmd</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
