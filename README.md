@@ -1,8 +1,15 @@
 # Coin Collection Manager
 
-A coin collection manager application developed with advanced programming techniques practices, like TDD, build automation and continuous integration.
+This work is part of the exam *Advanced Programming Techniques* by Prof. *Lorenzo Bettini* in Laurea Magistrale in Ingegneria Informatica at University of Florence.
 
-This work is part of the exam *Advanced Programming Techniques* (6CFU version) by Prof. *Lorenzo Bettini* in Laurea Magistrale in Ingegneria Informatica at University of Florence.
+- Academic Year: 2022/2023
+- Project Title: Coin Collection Manager
+- Student: Kevin Maggi
+- CFUs: 6
+
+> :warning: **Please attention**: as you can see this work is publicly available and anyone is obviously free of taking ideas from that. Anyway if it will be found that someone is copying the code (in the mean CTRL-C / CTRL-V) for its own project of the *same* exam, they will be reported to the Professor.
+
+A coin collection manager application developed with advanced programming techniques practices, like TDD, build automation and continuous integration.
 
 ###### Project report:
 
